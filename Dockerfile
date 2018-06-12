@@ -1,7 +1,4 @@
 FROM sonarqube:6.7.1
-RUN apt update && apt install ca-certificates
-COPY certs/* /usr/local/share/ca-certificates/
-RUN update-ca-certificates
 ENV SONAR_RUNNER_HOME=/opt/sonar-scanner-3.0.3
 ENV PATH $PATH:/opt/sonar-scanner-3.0.3
 ENV HOME /opt/sonarqube 
