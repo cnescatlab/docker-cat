@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset>
+  <rule ref="rulesets/java/design.xml/AssignmentToNonFinalStatic">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/optimizations.xml/AvoidArrayLoops">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/optimizations.xml/AvoidInstantiatingObjectsInLoops">
+    <priority>4</priority>
+  </rule>
+  <rule ref="rulesets/java/basic.xml/AvoidThreadGroup">
+    <priority>2</priority>
+  </rule>
+  <rule ref="rulesets/java/controversial.xml/AvoidUsingNativeCode">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/controversial.xml/AvoidUsingShortType">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/controversial.xml/AvoidUsingVolatile">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/design.xml/BadComparison">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/basic.xml/BigIntegerInstantiation">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/naming.xml/BooleanGetMethodName">
+    <priority>3</priority>
+    <properties>
+      <property name="checkParameterizedMethods" value="false" />
+    </properties>
+  </rule>
+  <rule ref="rulesets/java/basic.xml/BooleanInstantiation">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/migrating.xml/ByteInstantiation">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/controversial.xml/CallSuperInConstructor">
+    <priority>4</priority>
+  </rule>
+  <rule ref="rulesets/java/comments.xml/CommentRequired">
+    <priority>4</priority>
+  </rule>
+  <rule ref="rulesets/java/design.xml/ConfusingTernary">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/controversial.xml/DefaultPackage">
+    <priority>4</priority>
+  </rule>
+  <rule ref="rulesets/java/basic.xml/DontUseFloatTypeForLoopIndices">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/basic.xml/DoubleCheckedLocking">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/design.xml/EmptyMethodInAbstractClassShouldBeAbstract">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/logging-jakarta-commons.xml/GuardDebugLogging">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/logging-jakarta-commons.xml/GuardLogStatement">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/logging-java.xml/GuardLogStatementJavaUtil">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/design.xml/ImmutableField">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/strings.xml/InefficientEmptyStringCheck">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/migrating.xml/IntegerInstantiation">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/coupling.xml/LawOfDemeter">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/optimizations.xml/LocalVariableCouldBeFinal">
+    <priority>4</priority>
+  </rule>
+  <rule ref="rulesets/java/migrating.xml/LongInstantiation">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/controversial.xml/NullAssignment">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/design.xml/OptimizableToArrayCall">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/migrating.xml/ShortInstantiation">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/design.xml/SimpleDateFormatNeedsLocale">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/design.xml/SimplifyConditional">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/optimizations.xml/SimplifyStartsWith">
+    <priority>4</priority>
+  </rule>
+  <rule ref="rulesets/java/design.xml/SingularField">
+    <priority>4</priority>
+  </rule>
+  <rule ref="rulesets/java/unnecessary.xml/UnusedNullCheckInEquals">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/optimizations.xml/UseArraysAsList">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/controversial.xml/UseConcurrentHashMap">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/design.xml/UseLocaleWithCaseConversions">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/optimizations.xml/UseStringBufferForStringAppends">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/java/strings.xml/UseStringBufferLength">
+    <priority>4</priority>
+  </rule>
+  <rule ref="rulesets/java/unnecessary.xml/UselessOperationOnImmutable">
+    <priority>2</priority>
+  </rule>
+</ruleset>
+
