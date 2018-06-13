@@ -26,7 +26,8 @@ RUN wget -P /opt/sonarqube/extensions/plugins/ \
     https://github.com/willemsrb/sonar-rci-plugin/releases/download/sonar-rci-plugin-1.0.1/sonar-rci-plugin-1.0.1.jar \
     https://sonarsource.bintray.com/Distribution/sonar-scm-git-plugin/sonar-scm-git-plugin-1.2.jar \
     https://sonarsource.bintray.com/Distribution/sonar-scm-svn-plugin/sonar-scm-svn-plugin-1.4.0.522.jar \
-    https://github.com/stefanrinderle/sonar-softvis3d-plugin/releases/download/sonar-softVis3D-plugin-0.3.5/sonar-softVis3D-plugin-0.3.5.jar \
+    #Outdated
+    #https://github.com/stefanrinderle/sonar-softvis3d-plugin/releases/download/sonar-softVis3D-plugin-0.3.5/sonar-softVis3D-plugin-0.3.5.jar \
     https://sonarsource.bintray.com/Distribution/sonar-typescript-plugin/sonar-typescript-plugin-1.1.0.1079.jar \
     https://sonarsource.bintray.com/Distribution/sonar-web-plugin/sonar-web-plugin-2.5.0.476.jar \
     https://sonarsource.bintray.com/Distribution/sonar-xml-plugin/sonar-xml-plugin-1.4.3.1027.jar \
