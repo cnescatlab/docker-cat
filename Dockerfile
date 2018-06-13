@@ -18,7 +18,7 @@ RUN wget -P /opt/sonarqube/extensions/plugins/ \
     https://github.com/SonarOpenCommunity/sonar-cxx/releases/download/cxx-0.9.7/sonar-cxx-plugin-0.9.7.jar \
     https://github.com/spotbugs/sonar-findbugs/releases/download/3.7.0/sonar-findbugs-plugin-3.7.0.jar \
     https://sonarsource.bintray.com/Distribution/sonar-flex-plugin/sonar-flex-plugin-2.4.0.1222.jar \
-    https://sonarsource.bintray.com/Distribution/sonar-java-plugin/sonar-java-plugin-4.11.0.10660.jar \
+    https://sonarsource.bintray.com/Distribution/sonar-java-plugin/sonar-java-plugin-5.4.0.14284.jar \
     https://sonarsource.bintray.com/Distribution/sonar-javascript-plugin/sonar-javascript-plugin-3.1.1.5128.jar \
     https://sonarsource.bintray.com/Distribution/sonar-php-plugin/sonar-php-plugin-2.10.0.2087.jar \
     https://sonarsource.bintray.com/Distribution/sonar-pmd-plugin/sonar-pmd-plugin-2.5.jar \
