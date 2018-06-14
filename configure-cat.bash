@@ -196,13 +196,13 @@ stop_sonarqube(){
 }
 
 ## SONARQUBE_URL 
-if [ -z ${SONARQUBE_URL:?${SONARQUBE_URL_DEFAULT}} ]
+if [ -z "${SONARQUBE_URL}" ]
 then 
 	log_info "Using environment variable SONARQUBE_URL=${SONARQUBE_URL} for API calls."
 else 
-	log_info "Using default ${SONARQUBE_URL_DEFAULT} for API calls."
+	log_info "Setting environment varibable SONARQUBE_URL with default value ${SONARQUBE_URL_DEFAULT} for API calls."
+	export SONARQUBE_URL=$SONARQUBE_URL_DEFAULT;	
 fi
-SONARQUBE_URL=${SONARQUBE_URL:=${SONARQUBE_URL_DEFAULT}}
 
 #run_sonarqube&
 create_quality_profiles&&
