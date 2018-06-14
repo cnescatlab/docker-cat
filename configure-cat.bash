@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # CONSTANTS
-SONARQUBE_URL_DEFAULT="http://localhost:9000"
+SONARQUBE_URL="http://localhost:9000"
 
 ##
 # Parameters : 
@@ -195,14 +195,6 @@ stop_sonarqube(){
   pkill -u sonarqube
 }
 
-## SONARQUBE_URL 
-if [ -z "${SONARQUBE_URL}" ]
-then 
-	log_info "Using environment variable SONARQUBE_URL=${SONARQUBE_URL} for API calls."
-else 
-	log_info "Setting environment varibable SONARQUBE_URL with default value ${SONARQUBE_URL_DEFAULT} for API calls."
-	export SONARQUBE_URL=$SONARQUBE_URL_DEFAULT;	
-fi
 
 #run_sonarqube&
 create_quality_profiles&&
