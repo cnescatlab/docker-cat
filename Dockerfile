@@ -1,6 +1,6 @@
 FROM sonarqube:6.7.1
-ENV SONAR_RUNNER_HOME=/opt/sonar-scanner-3.0.3
-ENV PATH $PATH:/opt/sonar-scanner-3.0.3
+ENV SONAR_RUNNER_HOME=/opt/sonar-scanner
+ENV PATH $PATH:/opt/sonar-scanner
 ENV HOME /opt/sonarqube 
 RUN mkdir /opt/sonar \
     && ln -s /opt/sonar /opt/sonarqube
@@ -44,7 +44,8 @@ RUN apt update && apt install -y unzip \
     && mkdir /tmp/scanners \
     && wget -P /tmp/scanners \
     https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.0.3.778-linux.zip \
-    && unzip /tmp/scanners/sonar-scanner-cli-3.0.3.778-linux.zip -d /opt/sonarqube/sonar-scanner \ 
+    && unzip /tmp/scanners/sonar-scanner-cli-3.0.3.778-linux.zip -d /opt/ \
+    && mv /opt/sonar-scanner-3.0.3.778-linux /opt/sonar-scanner \ 
     && rm -rf /tmp/scanners
 
 	
@@ -70,13 +71,25 @@ RUN apt update && apt install -y python-setuptools \
     && cd /opt/python/astroid-astroid-1.4.9/ && python setup.py install \
     && cd /opt/python/pylint-pylint-1.5/ && python setup.py install \
     && rm -rf /tmp/python
+
+# C and C++ tools installation
+RUN apt update && apt install -y cppcheck vera\+\+ gcc make
+RUN wget http://downloads.sourceforge.net/project/expat/expat/2.0.1/expat-2.0.1.tar.gz \
+    && tar -xvzf expat-2.0.1.tar.gz \
+    && cd expat-2.0.1 \
+    && wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/rough-auditing-tool-for-security/rats-2.4.tgz \
+    && ./configure && make && make install \
+    && tar -xzvf rats-2.4.tgz \
+    && cd rats-2.4 \
+    && ./configure --with-expat-lib=/usr/local/lib && make && make install \
+    && ./rats
 	
 # Make sonarqube owner of it's installation directories	
 RUN chown sonarqube:sonarqube -R /opt \
     && ls -lrta /opt/ \
     && chown sonarqube:sonarqube -R /home \
     && ls -lrta /home/ \
-	&& chown sonarqube:sonarqube -R /tmp/conf
+    && chown sonarqube:sonarqube -R /tmp/conf
 
 # jq required for configure-cat script.	
 RUN apt install -y jq
