@@ -34,7 +34,7 @@ RUN wget -P /opt/sonarqube/extensions/plugins/ \
     && ls /opt/sonarqube/extensions/plugins
 
 # CNES report installation
-RUN wget -P /opt/sonarqube/extensions/cnes/ \
+RUN wget -P /opt/sonar/extensions/cnes/ \
     https://github.com/lequal/sonar-cnes-report/releases/download/v1.1.0/sonar-report-cnes.jar \
     https://github.com/lequal/sonar-cnes-report/releases/download/v1.1.0/issues-template.xlsx \
     https://github.com/lequal/sonar-cnes-report/releases/download/v1.1.0/code-analysis-template.docx
