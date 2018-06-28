@@ -2,8 +2,7 @@ FROM sonarqube:6.7.1
 ENV SONAR_RUNNER_HOME=/opt/sonar-scanner
 ENV PATH $PATH:/opt/sonar-scanner
 ENV HOME /opt/sonarqube 
-RUN mkdir /opt/sonar \
-    && ln -s /opt/sonar /opt/sonarqube
+RUN mkdir /opt/sonar
 COPY ./conf /tmp/conf  
 
 # Download Sonarqubes plugins.
@@ -73,7 +72,9 @@ RUN apt update && apt install -y python-setuptools \
     && rm -rf /tmp/python
 
 # C and C++ tools installation
+## CPPCheck, gcc, make, vera++
 RUN apt update && apt install -y cppcheck vera\+\+ gcc make
+## Expat, rats
 RUN wget http://downloads.sourceforge.net/project/expat/expat/2.0.1/expat-2.0.1.tar.gz \
     && tar -xvzf expat-2.0.1.tar.gz \
     && cd expat-2.0.1 \
@@ -82,7 +83,24 @@ RUN wget http://downloads.sourceforge.net/project/expat/expat/2.0.1/expat-2.0.1.
     && tar -xzvf rats-2.4.tgz \
     && cd rats-2.4 \
     && ./configure --with-expat-lib=/usr/local/lib && make && make install \
-    && ./rats
+    && ./rats \ 
+    && cd ../../ \ 
+    && rm -rf ./expat-2.0.1.targz ./expat-2.0.1
+## DrMemory --Future version
+#RUN wget https://github.com/DynamoRIO/drmemory/releases/download/release_1.11.0/DrMemory-Linux-1.11.0-2.tar.gz \
+#    && tar -zvf DrMemory-Linux-1.11.0-2.tar.gz \
+#    && mkdir /opt/tools \
+#    && mv DrMemory-Linux-1.11.0-2 /opt/tools/DrMemory \
+#    && rm DrMemory-Linux-1.11.0-2 \
+#    && apt install -y glibc-devel libstdc++-devel.i686 glibec-devel.i686 glibc-devel.i686
+## Valgrind --future version
+#RUN apt install -y valgrind
+## CLang and scan-build --future version
+#RUN apt install -y ocaml \
+#    && export PATH=/usr/bin/ocaml:$PATH \
+#    && apt install -y perl-Digest-MD5 cmake \
+#    && export PATH=/usr/bin/cmake:$PATH \
+ #   && apt install -y cmake3    
 	
 # Make sonarqube owner of it's installation directories	
 RUN chown sonarqube:sonarqube -R /opt \
