@@ -1,0 +1,33 @@
+version: "2"
+
+services:
+  db:
+    image: postgres:latest
+    networks:
+      - sonarnet
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASS=sonar
+      - POSTGRES_DB=sonar
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+  docker-cat:
+    #image : waldofr/docker-cat:latest
+    build: .
+    networks:
+      - sonarnet
+    environment:
+      - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
+      - ALLOWED_GROUPS=1000;1001;1002
+    ports:
+      - "9000:9000"
+    volumes:
+      - /home/waldmao:/media/sf_Shared
+
+networks :
+  sonarnet:
+    driver: bridge
+volumes:
+  postgresql:
+  postgresql_data:
