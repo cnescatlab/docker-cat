@@ -155,7 +155,7 @@ add_profile(){
   fi
 }
 #############################################################################################
-# function add_rule
+# function add_rules
 #
 # Parameters : 
 # - 1 : Rules file in JSON format correponding the the following format (Sonarqube 6.7.1 API /api/rules answer)
@@ -165,7 +165,7 @@ add_profile(){
 #
 #
 ##############################################################################################
-add_rule(){
+add_rules(){
    file=$1
    log_info "Processing rules addition from file ${file}"
    total=$(jq '.total' ${file})
