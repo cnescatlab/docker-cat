@@ -134,13 +134,15 @@ create_quality_gates(){
 }
 
 ########################################################
-# function configure_sonarqube
+# function add_profile
 #
+# Parameters : 
+# - 1 : Quality profile's file to import
+# 
 # Description : 
-# Periodically verify Sonarqube's server status and wait until it's UP
-# Once run, import quality profiles from /tmp/conf directory (Regex : *-quality-profile.xml)
+# Add quality profile in parameter in Sonarqube's  
+# 
 ################################################################################
-
 add_profile(){
   file=$1
   log_info "processing profile addition for file ${file}"
@@ -152,7 +154,36 @@ add_profile(){
     log_warning "impossible to create ${file} quality profile" "$( echo ${RES} | jq '.errors[].msg' )"
   fi
 }
+#############################################################################################
+# function add_rule
+#
+# Parameters : 
+# - 1 : Rules file in JSON format correponding the the following format (Sonarqube 6.7.1 API /api/rules answer)
+# 
+# Description :
+# Read JSON formatted file and add each rules in it with it's parameters into SonarQube's configuration.
+#
+#
+##############################################################################################
+add_rule(){
+   file=$1
+   log_info "Processing rules addition from file ${file}"
+   total=$(jq '.total' ${file})
+   for i in $(seq 0 ${total});
+   do
+	echo $(jq '.rules[${i}]' ${file})
+   done
 
+}
+
+
+########################################################
+# function create_quality_profiles
+#
+# Description : 
+# Periodically verify Sonarqube's server status and wait until it's UP
+# Once run, import quality profiles from /tmp/conf directory (Regex : *-quality-profile.xml)
+################################################################################
 create_quality_profiles(){
   sonar_status="DOWN"
   log_info "initiating connection with Sonarqube"
@@ -165,8 +196,14 @@ create_quality_profiles(){
     log_info "detected status ${sonar_status} for Sonarqube, expecting it to be UP."
   done
   log_info "detected status ${sonar_status} for Sonarqube, starting configuration of quality profiles."
+  
+  # Find all rules templates named "*-rules-template.json" in the folder /tmp/conf and add rules into sonarqube configuration.
+  find /tmp/conf -name "*-rules-template.json" -type f -print0 | while IFS= read -rd $'\0' file; do
+      add_rules ${file}
+  done
 
-  find /tmp/conf -name "*.xml" -type f -print0 | while IFS= read -rd $'\0' file; do
+  # Find all files named "*-quality-profile.xml" in the folder /tmp/conf and add it in Sonarqube Quality profiles
+  find /tmp/conf -name "*-quality-profile.xml" -type f -print0 | while IFS= read -rd $'\0' file; do
     add_profile "${file}"
   done 
 

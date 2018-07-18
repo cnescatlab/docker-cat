@@ -100,7 +100,7 @@ RUN wget http://downloads.sourceforge.net/project/expat/expat/2.0.1/expat-2.0.1.
 #    && export PATH=/usr/bin/ocaml:$PATH \
 #    && apt install -y perl-Digest-MD5 cmake \
 #    && export PATH=/usr/bin/cmake:$PATH \
- #   && apt install -y cmake3    
+#    && apt install -y cmake3    
 	
 # Make sonarqube owner of it's installation directories	
 RUN chown sonarqube:sonarqube -R /opt \
