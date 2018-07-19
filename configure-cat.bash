@@ -167,14 +167,57 @@ add_profile(){
 ##############################################################################################
 add_rules(){
    file=$1
-   log_info "Processing rules addition from file ${file}"
+   #log_info "Processing rules addition from file ${file}"
    total=$(jq '.total' ${file})
+   total=$((${total}-1))
    for i in $(seq 0 ${total});
    do
-	echo $(jq '.rules[${i}]' ${file})
+	echo "Adding custom rule $(jq '.rules['${i}'].key' ${file})"
+	############## /API/RULES/CREATE	
+	#### Rules informations regristred using the rules creation API 	
+	custom_key=$(jq '.rules['${i}'].key' ${file})
+	markdown_description=$(jq '.rules['${i}'].mdDesc' ${file})
+	name=$(jq '.rules['${i}'].name' ${file})
+	severity=$(jq '.rules['${i}'].severity' ${file})
+	status=$(jq '.rules['${i}'].status' ${file})
+	template_key=$(jq '.rules['${i}'].templateKey' ${file})
+        type=$(jq '.rules['${i}'].type' ${file})   
+	### Handling parameters
+	parameters="params="
+	for j in $(seq 0 $(($(jq '.rules['${i}'].params | length' ${file})-1)) );
+	do
+	   echo "The rule $name parameters contains $(jq '.rules['${i}'].params['${j}'] | length' ${file}) optional parameters parameters."
+	   for k in $(seq 0 $(($(jq '.rules['${i}'].params['${j}'] | length' ${file})-1)));
+   	   do
+	      param_key=$(jq '.rules['$i'].params['$j'] | keys['$k']' ${file})
+	      param_value=$(jq '.rules['$i'].params['$j'].'${param_key} ${file})
+              parameters="${parameters}${param_key}=${param_value};"
+	   done
+	done
+	RES=$(curl -su admin:admin -X POST "${SONARQUBE_URL}/api/rules/create?costum_key=${custom_key}&markdown_description=${markdown_description}&name=${name}&severity=${severity}&status=${status}&template_key=${template_key}&type=${type}&${parameters}")
+	if [ "$(echo ${RES} | jq '(.errors | length)')" == "0" ] 
+	then
+	    log_info "rule ${name} created in Sonarqube.."
+        else
+	    log_error "impossible to create the rule ${name}" "$( echo ${RES} | jq '.errors[].msg' )"
+	fi
+	############ /API/RULES/UPDATE
+	### Rules informations registred using the rule's update API.
+	remediation_fn_base_effort=$(jq '.rules['${i}'].remFnBaseEffort' ${file})
+	remediation_fn_type=$(jq '.rules['${i}'].defaultDebtRemFnType' ${file})
+        remediation_fy_gap_multiplier=$(jq '.rules['${i}'].debtRemFnOffset' ${file})
+	RES=$(curl -su admin:admin -X POST "${SONARQUBE_URL}/api/rules/update?key=$custom_key&remediation_fn_base_effort=${remediation_fn_base_effort}&remediation_fn_type=${remediation_fn_type}&remediation_fy_gap_multiplier=${remediation_fy_gap_multiplier}")
+	if [ "$(echo ${RES} | jq '(.errors | length)')" == "0" ] 
+	then
+	    log_info "rule ${name} updated in Sonarqube."
+        else
+	    log_error "impossible to update the rule ${name}" "$( echo ${RES} | jq '.errors[].msg' )"
+	fi
    done
 
 }
+
+    
 
 
 ########################################################
