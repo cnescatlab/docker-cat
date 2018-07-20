@@ -1,4 +1,4 @@
-FROM sonarqube:6.7.1
+FROM sonarqube:6.7.4
 ENV SONAR_RUNNER_HOME=/opt/sonar-scanner
 ENV PATH $PATH:/opt/sonar-scanner
 ENV HOME /opt/sonarqube 
