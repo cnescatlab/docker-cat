@@ -114,7 +114,6 @@ RUN apt install -y jq
 # Entry point files
 COPY ./configure-cat.bash /tmp/
 COPY ./init.bash /tmp/
-COPY ./plugin/ /opt/sonarqube/extension/plugins/
 RUN chmod 750 /tmp/init.bash
 ENTRYPOINT ["/tmp/init.bash"]
 
