@@ -156,6 +156,7 @@ add_profile(){
 }
 #############################################################################################
 # function add_rules
+# Status : NOT WORKING
 #
 # Parameters : 
 # - 1 : Rules file in JSON format correponding the the following format (Sonarqube 6.7.1 API /api/rules answer)
@@ -167,12 +168,12 @@ add_profile(){
 ##############################################################################################
 add_rules(){
    file=$1
-   #log_info "Processing rules addition from file ${file}"
+   log_info "Processing rules addition from file ${file}"
    total=$(jq '.total' ${file})
    total=$((${total}-1))
    for i in $(seq 0 ${total});
    do
-	echo "Adding custom rule $(jq '.rules['${i}'].key' ${file})"
+	log_info "Adding custom rule $(jq '.rules['${i}'].key' ${file})"
 	############## /API/RULES/CREATE	
 	#### Rules informations regristred using the rules creation API 	
 	custom_key=$(jq '.rules['${i}'].key' ${file})
@@ -186,7 +187,7 @@ add_rules(){
 	parameters="params="
 	for j in $(seq 0 $(($(jq '.rules['${i}'].params | length' ${file})-1)) );
 	do
-	   echo "The rule $name parameters contains $(jq '.rules['${i}'].params['${j}'] | length' ${file}) optional parameters parameters."
+	   log_info "The rule $name parameters contains $(jq '.rules['${i}'].params['${j}'] | length' ${file}) optional parameters parameters."
 	   for k in $(seq 0 $(($(jq '.rules['${i}'].params['${j}'] | length' ${file})-1)));
    	   do
 	      param_key=$(jq '.rules['$i'].params['$j'] | keys['$k']' ${file})
@@ -194,6 +195,7 @@ add_rules(){
               parameters="${parameters}${param_key}=${param_value};"
 	   done
 	done
+
 	RES=$(curl -su admin:admin -X POST "${SONARQUBE_URL}/api/rules/create?costum_key=${custom_key}&markdown_description=${markdown_description}&name=${name}&severity=${severity}&status=${status}&template_key=${template_key}&type=${type}&${parameters}")
 	if [ "$(echo ${RES} | jq '(.errors | length)')" == "0" ] 
 	then
@@ -239,11 +241,12 @@ create_quality_profiles(){
     log_info "detected status ${sonar_status} for Sonarqube, expecting it to be UP."
   done
   log_info "detected status ${sonar_status} for Sonarqube, starting configuration of quality profiles."
-  
+  # Not executed : expecting news from https://community.sonarsource.com/t/using-rules-create-api/1243
+  # API is returnin no detail informations
   # Find all rules templates named "*-rules-template.json" in the folder /tmp/conf and add rules into sonarqube configuration.
-  find /tmp/conf -name "*-rules-template.json" -type f -print0 | while IFS= read -rd $'\0' file; do
-      add_rules ${file}
-  done
+  #find /tmp/conf -name "*-rules-template.json" -type f -print0 | while IFS= read -rd $'\0' file; do
+  #    add_rules ${file}
+  #done
 
   # Find all files named "*-quality-profile.xml" in the folder /tmp/conf and add it in Sonarqube Quality profiles
   find /tmp/conf -name "*-quality-profile.xml" -type f -print0 | while IFS= read -rd $'\0' file; do
