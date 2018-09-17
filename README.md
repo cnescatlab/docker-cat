@@ -1,12 +1,24 @@
 # docker-cat
 Docker Code Analysis Tools (CAT) is a SonarQube docker image containing configuration to realize code analysis.
+# Quick install
+Step by setp : 
+
+Find group IDs to allow SonarQube analysis to (for Sonar CNES Scan plugin):
+* Using `getent group <group_name> | cut -d : -f3` to reach a group id from a known group name;
+* Using `cat /etc/groups`to list all group IDs.
+
+Run a container :
+```
+docker pull lequal/docker-cat
+docker run -v <host_project_folder>:/media/sf_Shared:rw -p 9000:9000 -p 9001:9001 -e ALLOWED_GROUPS="<GID_1>;<GID_2>;<GID_...>" lequal/docker-cat
+```
+Once the container is active, use the [Sonar CNES Scan plugin](https://github.com/lequal/sonar-cnes-scan-plugin) documentation to run an analysis.
 
 # Content
-Image contains the following tools : 
 
 ## Analysis tools
 - Sonarqube 6.7.4
-- Sonar scaner 3.0.3
+- Sonar scanner 3.0.3
 - gcc *latest*
 - make *latest*
 - cppcheck *latest*
@@ -45,15 +57,4 @@ Image contains the following tools :
 - Sonar Python plugin 1.8.0.149
 
 
-# Quick install
-Step by setp : 
 
-Find group IDs to allow SonarQube analysis to (for Sonar CNES Scan plugin):
-* Using `getent group <group_name> | cut -d : -f3` to reach a group id from a known group name;
-* Using `cat /etc/groups`to list all group IDs.
-
-Run a container :
-```
-docker pull lequal/docker-cat
-docker run -v <host_project_folder>:/media/sf_Shared:rw -p 9000:9000 -p 9001:9001 -e ALLOWED_GROUPS="<GID_1>;<GID_2>;<GID_...>" lequal/docker-cat
-```
