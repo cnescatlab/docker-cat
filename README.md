@@ -1,11 +1,11 @@
 # docker-cat
 Docker Code Analysis Tools (CAT) is a SonarQube docker image containing configuration to realize code analysis.
 # Quick install
-Step by setp : 
+Step by step : 
 
 Find group IDs to allow SonarQube analysis to (for Sonar CNES Scan plugin):
 * Using `getent group <group_name> | cut -d : -f3` to reach a group id from a known group name;
-* Using `cat /etc/groups`to list all group IDs.
+* Using `cat /etc/group`to list all group IDs.
 
 Run a container :
 ```
