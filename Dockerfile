@@ -85,7 +85,7 @@ RUN wget http://downloads.sourceforge.net/project/expat/expat/2.0.1/expat-2.0.1.
     && ./configure --with-expat-lib=/usr/local/lib && make && make install \
     && ./rats \ 
     && cd ../../ \ 
-    && rm -rf ./expat-2.0.1.targz ./expat-2.0.1
+    && rm -rf ./expat-2.0.1.tar.gz ./expat-2.0.1
 ## DrMemory --Future version
 #RUN wget https://github.com/DynamoRIO/drmemory/releases/download/release_1.11.0/DrMemory-Linux-1.11.0-2.tar.gz \
 #    && tar -zvf DrMemory-Linux-1.11.0-2.tar.gz \
