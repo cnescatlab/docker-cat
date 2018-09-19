@@ -39,7 +39,7 @@ RUN wget -P /opt/sonar/extensions/cnes/ \
     https://github.com/lequal/sonar-cnes-report/releases/download/v1.1.0/code-analysis-template.docx
 
 # Sonar scanner installation
-RUN apt update && apt install -y unzip \
+RUN apt update && apt install -y unzip && rm -rf /var/lib/apt/lists/* \
     && mkdir /tmp/scanners \
     && wget -P /tmp/scanners \
     https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.0.3.778-linux.zip \
@@ -51,7 +51,7 @@ RUN apt update && apt install -y unzip \
 # Python, Pylint and CNES pylint setup 	
 ENV PYTHONPATH $PYTHONPATH:/opt/python/cnes-pylint-extension-1.0/checkers/
 
-RUN apt update && apt install -y python-setuptools \
+RUN apt update && apt install -y python-setuptools && rm -rf /var/lib/apt/lists/* \
     && mkdir /opt/python && mkdir /tmp/python \
     && wget -P /tmp/python \
     https://github.com/tartley/colorama/archive/v0.3.3.tar.gz \
@@ -73,7 +73,7 @@ RUN apt update && apt install -y python-setuptools \
 
 # C and C++ tools installation
 ## CPPCheck, gcc, make, vera++
-RUN apt update && apt install -y cppcheck vera\+\+ gcc make
+RUN apt update && apt install -y cppcheck vera\+\+ gcc make && rm -rf /var/lib/apt/lists/*
 ## Expat, rats
 RUN wget http://downloads.sourceforge.net/project/expat/expat/2.0.1/expat-2.0.1.tar.gz \
     && tar -xvzf expat-2.0.1.tar.gz \
@@ -110,7 +110,7 @@ RUN chown sonarqube:sonarqube -R /opt \
     && chown sonarqube:sonarqube -R /tmp/conf
 
 # jq required for configure-cat script.	
-RUN apt install -y jq
+RUN apt update && apt install -y jq && rm -rf /var/lib/apt/lists/*
 # Entry point files
 COPY ./configure-cat.bash /tmp/
 COPY ./init.bash /tmp/
