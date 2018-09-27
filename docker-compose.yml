@@ -13,8 +13,8 @@ services:
       - postgresql:/var/lib/postgresql
       - postgresql_data:/var/lib/postgresql/data
   docker-cat:
-    #image : waldofr/docker-cat:latest
-    build: .
+    image : lequal/docker-cat:latest
+    #build: .
     networks:
       - sonarnet
     environment:
@@ -23,7 +23,7 @@ services:
     ports:
       - "9000:9000"
     volumes:
-      - /home/waldmao:/media/sf_Shared
+      - /home/user:/media/sf_Shared
 
 networks :
   sonarnet:
