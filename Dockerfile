@@ -119,5 +119,6 @@ RUN apt update && apt install -y jq && rm -rf /var/lib/apt/lists/*
 COPY ./configure-cat.bash /tmp/
 COPY ./init.bash /tmp/
 RUN chmod 750 /tmp/init.bash
+WORKDIR $SONARQUBE_HOME
 ENTRYPOINT ["/tmp/init.bash"]
 
