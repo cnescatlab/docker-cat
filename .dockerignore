@@ -1,6 +1,5 @@
 .git
 .travis-ci.yml
 README.md
-Makefile
 docker-compose.yml
 
