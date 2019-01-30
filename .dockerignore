@@ -1,9 +1,6 @@
 .git
-.gitignore
-LICENSE
-VERSION
+.travis-ci.yml
 README.md
-Changelog.md
 Makefile
 docker-compose.yml
-docs
+
