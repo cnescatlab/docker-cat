@@ -278,10 +278,22 @@ stop_sonarqube(){
   pkill -u sonarqube
 }
 
+########################################################
+# function custom_server_config
+#
+# Description :
+# Customize SonarQube server configuration
+# 
+################################################################################
+custom_server_config(){
+  # Disable telemetry
+  sed -i 's/#sonar\.telemetry\.enable=true/sonar\.telemetry\.enable=false/' /opt/sonarqube/conf/sonar.properties
+}
 
 #run_sonarqube&
 create_quality_profiles&&
 create_quality_gates
+custom_server_config
 
 
 #stop_sonarqube
