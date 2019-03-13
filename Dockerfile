@@ -52,7 +52,7 @@ ENV PYTHONPATH $PYTHONPATH:/opt/python/cnes-pylint-extension-1.0/checkers/
 
 ADD https://github.com/tartley/colorama/archive/v0.3.3.tar.gz \
     https://github.com/ionelmc/python-lazy-object-proxy/archive/v1.2.1.tar.gz \
-    https://github.com/CloudAutomationNTools/python-six/archive/1.9.0.tar.gz \
+    https://files.pythonhosted.org/packages/16/64/1dc5e5976b17466fd7d712e59cbe9fb1e18bec153109e5ba3ed6c9102f1a/six-1.9.0.tar.gz \
     https://github.com/GrahamDumpleton/wrapt/archive/1.10.5.tar.gz \
     https://github.com/PyCQA/astroid/archive/astroid-1.4.9.tar.gz \
     https://github.com/PyCQA/pylint/archive/pylint-1.5.tar.gz \
@@ -65,7 +65,7 @@ RUN apt update && apt install -y python-setuptools && rm -rf /var/lib/apt/lists/
     && ls /opt/python \
     && cd /opt/python/colorama-0.3.3/ && python setup.py install \
     && cd /opt/python/python-lazy-object-proxy-1.2.1/ && python setup.py install \
-    && cd /opt/python/python-six-1.9.0/ && python setup.py install \
+    && cd /opt/python/six-1.9.0/ && python setup.py install \
     && cd /opt/python/wrapt-1.10.5/ && python setup.py install \
     && cd /opt/python/astroid-astroid-1.4.9/ && python setup.py install \
     && cd /opt/python/pylint-pylint-1.5/ && python setup.py install \
