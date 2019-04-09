@@ -911,7 +911,7 @@
             <parameters>
                 <parameter>
                     <key>max</key>
-                    <value>75</value>
+                    <value>5</value>
                 </parameter>
             </parameters>
         </rule>
