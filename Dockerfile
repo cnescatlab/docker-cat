@@ -32,9 +32,9 @@ ADD https://github.com/lequal/sonar-cnes-scan-plugin/releases/download/v1.2.0/so
     /opt/sonarqube/extensions/plugins/
 
 # CNES report installation
-ADD https://github.com/lequal/sonar-cnes-report/releases/download/v1.1.0/sonar-report-cnes.jar \
-    https://github.com/lequal/sonar-cnes-report/releases/download/v1.1.0/issues-template.xlsx \
-    https://github.com/lequal/sonar-cnes-report/releases/download/v1.1.0/code-analysis-template.docx \
+ADD https://github.com/lequal/sonar-cnes-report/releases/download/2.1.0/cnesreport.jar \
+    https://github.com/lequal/sonar-cnes-report/releases/download/2.1.0/issues-template.xlsx \
+    https://github.com/lequal/sonar-cnes-report/releases/download/2.1.0/code-analysis-template.docx \
     /opt/sonar/extensions/cnes/
 
 # Sonar scanner installation
