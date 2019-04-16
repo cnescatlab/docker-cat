@@ -6,7 +6,7 @@ RUN mkdir /opt/sonar
 COPY ./conf /tmp/conf  
 
 # Download Sonarqubes plugins.
-ADD https://github.com/lequal/sonar-cnes-scan-plugin/releases/download/v1.2.0/sonar-cnes-scan-plugin-1.2.jar \
+ADD https://github.com/lequal/sonar-cnes-scan-plugin/releases/download/v1.3.0/sonar-cnes-scan-plugin-1.3.jar \
     https://github.com/checkstyle/sonar-checkstyle/releases/download/3.7/checkstyle-sonar-plugin-3.7.jar \
     https://github.com/lequal/sonar-cnes-cxx-plugin/releases/download/v1.1.0/sonar-cnes-cxx-plugin-1.1.jar \
     https://github.com/lequal/sonar-cnes-export-plugin/releases/download/v1.1.0/sonar-cnes-export-plugin-1.1.jar \
