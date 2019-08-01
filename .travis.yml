@@ -10,8 +10,8 @@ script:
   - chmod 777 shared
   - docker run -d -v shared:/media/Sf_Shared -p 9000:9000 -p 9001:9001 --name cat cat-travis
   - echo "Waiting few seconds while docker is starting"
-  - sleep 30
+  - sleep 300
   - docker ps -a
   - docker logs cat
-  - docker exec cat frama-c --help
-  - docker exec cat shellcheck --help
+  - docker exec cat shellcheck -V
+  - docker exec cat frama-c -v
