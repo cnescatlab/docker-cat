@@ -115,14 +115,14 @@ RUN tar -xzvf rats-2.4.tgz \
 RUN apt update && apt install -y jq && rm -rf /var/lib/apt/lists/*
 
 #Install shellcheck
-RUN apt install shellcheck -y
+RUN apt update && apt install shellcheck -y
 
 
 
 
 ## ====================== BUILD FRAMA-C STAGE ===============================
 #Build with same base as sornaqube
-FROM debian:buster-slim AS build-frama-c
+FROM sonarqube:6.7.7-community AS build-frama-c
 USER root
 #Install frama-c
 RUN apt update
@@ -148,7 +148,8 @@ RUN chown sonarqube:sonarqube -R /opt \
 
 
 # Install frama-c
-COPY --from=build-frama-c /root/.opam/system/bin/* /usr/bin
+COPY --from=build-frama-c /root/.opam/system/bin/ /usr/bin
+RUN  ls /usr/bin
 
 
 # Entry point files
