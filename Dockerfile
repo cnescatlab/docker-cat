@@ -32,7 +32,7 @@ ADD https://github.com/checkstyle/sonar-checkstyle/releases/download/3.7/checkst
     https://binaries.sonarsource.com/Distribution/sonar-web-plugin/sonar-web-plugin-2.5.0.476.jar \
     https://binaries.sonarsource.com/Distribution/sonar-xml-plugin/sonar-xml-plugin-1.4.3.1027.jar \
     ## TMP: For dev -- switch to release when merged
-    https://github.com/lequal/sonar-cnes-scan-plugin/releases/download/untagged-5dd2f88d9fac5868c85c/sonar-cnes-scan-plugin-1.4.jar \
+    https://github.com/lequal/sonar-cnes-scan-plugin/releases/download/1.4.0/sonar-cnes-scan-plugin-1.4.jar \
     /opt/sonarqube/extensions/plugins/
 
 
