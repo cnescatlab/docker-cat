@@ -4,10 +4,11 @@ services:
   - docker
 
 script:
-  - docker build -t lequal/docker-cat .
+  - docker build -t cat-travis .
+  - docker image list
   - mkdir shared
   - chmod 777 shared
-  - docker run -d -v shared:/media/Sf_Shared -p 9000:9000 -p 9001:9001 --name cat lequal/docker-cat
+  - docker run -d -v shared:/media/Sf_Shared -p 9000:9000 -p 9001:9001 --name cat cat-travis
   - echo "Waiting few seconds while docker is starting"
   - sleep 30
   - docker ps -a
