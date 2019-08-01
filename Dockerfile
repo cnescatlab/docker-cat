@@ -9,8 +9,7 @@ RUN mkdir /opt/sonar
 COPY ./conf /tmp/conf
 
 # Download Sonarqubes plugins.
-ADD https://github.com/lequal/sonar-cnes-scan-plugin/releases/download/v1.3.0/sonar-cnes-scan-plugin-1.3.jar \
-    https://github.com/checkstyle/sonar-checkstyle/releases/download/3.7/checkstyle-sonar-plugin-3.7.jar \
+ADD https://github.com/checkstyle/sonar-checkstyle/releases/download/3.7/checkstyle-sonar-plugin-3.7.jar \
     https://github.com/lequal/sonar-cnes-cxx-plugin/releases/download/v1.1.0/sonar-cnes-cxx-plugin-1.1.jar \
     https://github.com/lequal/sonar-cnes-export-plugin/releases/download/v1.1.0/sonar-cnes-export-plugin-1.1.jar \
     https://github.com/lequal/sonar-cnes-python-plugin/releases/download/1.1/sonar-cnes-python-plugin-1.1.jar \
@@ -32,13 +31,17 @@ ADD https://github.com/lequal/sonar-cnes-scan-plugin/releases/download/v1.3.0/so
     https://binaries.sonarsource.com/Distribution/sonar-typescript-plugin/sonar-typescript-plugin-1.1.0.1079.jar \
     https://binaries.sonarsource.com/Distribution/sonar-web-plugin/sonar-web-plugin-2.5.0.476.jar \
     https://binaries.sonarsource.com/Distribution/sonar-xml-plugin/sonar-xml-plugin-1.4.3.1027.jar \
+    ## TMP: For dev -- switch to release when merged
+    https://github.com/lequal/sonar-cnes-scan-plugin/releases/download/untagged-5dd2f88d9fac5868c85c/sonar-cnes-scan-plugin-1.4.jar \
     /opt/sonarqube/extensions/plugins/
 
+
+
 # CNES report installation
-## TODO: REMOVE CNES REPORT
-ADD https://github.com/lequal/sonar-cnes-report/releases/download/2.1.0/cnesreport.jar \
-    https://github.com/lequal/sonar-cnes-report/releases/download/2.1.0/issues-template.xlsx \
-    https://github.com/lequal/sonar-cnes-report/releases/download/2.1.0/code-analysis-template.docx \
+ADD https://github.com/lequal/sonar-cnes-report/releases/download/2.2.0/sonar-cnes-report.jar \
+    /opt/sonarqube/extensions/plugins/cnesreport.jar
+ADD https://github.com/lequal/sonar-cnes-report/releases/download/2.2.0/issues-template.xlsx \
+    https://github.com/lequal/sonar-cnes-report/releases/download/2.2.0/code-analysis-template.docx \
     /opt/sonar/extensions/cnes/
 
 
@@ -138,6 +141,9 @@ RUN opam install frama-c -y
 ## ====================== CONFIGURATION STAGE ===============================
 
 FROM apt-stage AS final-configuration-stage
+ENV SONAR_RUNNER_HOME=/opt/sonar-scanner
+ENV PATH $PATH:/opt/sonar-scanner
+ENV HOME /opt/sonarqube
 USER root
 # Make sonarqube owner of it's installation directories
 RUN chown sonarqube:sonarqube -R /opt \
