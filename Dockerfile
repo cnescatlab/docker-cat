@@ -1,9 +1,12 @@
-FROM sonarqube:6.7.4
+## ====================== DOWNLOAD DEPENDENCIES STAGE ===============================
+
+FROM sonarqube:6.7.7-community AS download-stage
 ENV SONAR_RUNNER_HOME=/opt/sonar-scanner
 ENV PATH $PATH:/opt/sonar-scanner
-ENV HOME /opt/sonarqube 
+ENV HOME /opt/sonarqube
+USER root
 RUN mkdir /opt/sonar
-COPY ./conf /tmp/conf  
+COPY ./conf /tmp/conf
 
 # Download Sonarqubes plugins.
 ADD https://github.com/lequal/sonar-cnes-scan-plugin/releases/download/v1.3.0/sonar-cnes-scan-plugin-1.3.jar \
@@ -11,6 +14,8 @@ ADD https://github.com/lequal/sonar-cnes-scan-plugin/releases/download/v1.3.0/so
     https://github.com/lequal/sonar-cnes-cxx-plugin/releases/download/v1.1.0/sonar-cnes-cxx-plugin-1.1.jar \
     https://github.com/lequal/sonar-cnes-export-plugin/releases/download/v1.1.0/sonar-cnes-export-plugin-1.1.jar \
     https://github.com/lequal/sonar-cnes-python-plugin/releases/download/1.1/sonar-cnes-python-plugin-1.1.jar \
+    https://github.com/lequal/sonar-icode-cnes-plugin/releases/download/1.1.0/sonaricode-1.1.0.jar \
+    https://github.com/lequal/sonar-frama-c-plugin/releases/download/V2.0.0/sonarframac-2.0.0.jar \
     https://github.com/galexandre/sonar-cobertura/releases/download/1.9.1/sonar-cobertura-plugin-1.9.1.jar \
     https://github.com/SonarSource/sonar-csharp/releases/download/6.1.0.2359/sonar-csharp-plugin-6.1.0.2359.jar \
     https://github.com/SonarOpenCommunity/sonar-cxx/releases/download/cxx-0.9.7/sonar-cxx-plugin-0.9.7.jar \
@@ -24,30 +29,44 @@ ADD https://github.com/lequal/sonar-cnes-scan-plugin/releases/download/v1.3.0/so
     https://github.com/willemsrb/sonar-rci-plugin/releases/download/sonar-rci-plugin-1.0.1/sonar-rci-plugin-1.0.1.jar \
     https://binaries.sonarsource.com/Distribution/sonar-scm-git-plugin/sonar-scm-git-plugin-1.2.jar \
     https://binaries.sonarsource.com/Distribution/sonar-scm-svn-plugin/sonar-scm-svn-plugin-1.4.0.522.jar \
-    #Outdated
-    #https://github.com/stefanrinderle/sonar-softvis3d-plugin/releases/download/sonar-softVis3D-plugin-0.3.5/sonar-softVis3D-plugin-0.3.5.jar \
     https://binaries.sonarsource.com/Distribution/sonar-typescript-plugin/sonar-typescript-plugin-1.1.0.1079.jar \
     https://binaries.sonarsource.com/Distribution/sonar-web-plugin/sonar-web-plugin-2.5.0.476.jar \
     https://binaries.sonarsource.com/Distribution/sonar-xml-plugin/sonar-xml-plugin-1.4.3.1027.jar \
     /opt/sonarqube/extensions/plugins/
 
 # CNES report installation
+## TODO: REMOVE CNES REPORT
 ADD https://github.com/lequal/sonar-cnes-report/releases/download/2.1.0/cnesreport.jar \
     https://github.com/lequal/sonar-cnes-report/releases/download/2.1.0/issues-template.xlsx \
     https://github.com/lequal/sonar-cnes-report/releases/download/2.1.0/code-analysis-template.docx \
     /opt/sonar/extensions/cnes/
 
+
+# I-Code
+ADD https://github.com/lequal/i-CodeCNES/releases/download/v3.1.0/i-CodeCNES-3.1.0-CLI-linux.gtk.x86_64.zip /tmp
+RUN unzip /tmp/i-CodeCNES-3.1.0-CLI-linux.gtk.x86_64.zip -d /tmp;chmod +x /tmp/icode/icode;mv /tmp/icode/* /usr/bin
+RUN rm -r /tmp/icode
+RUN rm /tmp/i-CodeCNES-3.1.0-CLI-linux.gtk.x86_64.zip
+
+## ====================== APT / INSTALLATIONS STAGE ===============================
+
+FROM download-stage AS apt-stage
+ENV SONAR_RUNNER_HOME=/opt/sonar-scanner
+ENV PATH $PATH:/opt/sonar-scanner
+ENV HOME /opt/sonarqube
+USER root
+
 # Sonar scanner installation
 ADD https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.0.3.778-linux.zip \
     /tmp/scanners/
 
-RUN apt update && apt install -y unzip && rm -rf /var/lib/apt/lists/* \
+RUN apt update && apt install -y unzip apt-utils && rm -rf /var/lib/apt/lists/* \
     && unzip /tmp/scanners/sonar-scanner-cli-3.0.3.778-linux.zip -d /opt/ \
-    && mv /opt/sonar-scanner-3.0.3.778-linux /opt/sonar-scanner \ 
+    && mv /opt/sonar-scanner-3.0.3.778-linux /opt/sonar-scanner \
     && rm -rf /tmp/scanners
 
-	
-# Python, Pylint and CNES pylint setup 	
+
+# Python, Pylint and CNES pylint setup
 ENV PYTHONPATH $PYTHONPATH:/opt/python/cnes-pylint-extension-1.0/checkers/
 
 ADD https://github.com/tartley/colorama/archive/v0.3.3.tar.gz \
@@ -75,7 +94,8 @@ RUN apt update && apt install -y python-setuptools && rm -rf /var/lib/apt/lists/
 WORKDIR /tmp
 ## CPPCheck, gcc, make, vera++
 RUN apt update && apt install -y cppcheck vera\+\+ gcc make && rm -rf /var/lib/apt/lists/*
-## Expat, rats 
+
+## Expat, rats
 ADD http://downloads.sourceforge.net/project/expat/expat/2.0.1/expat-2.0.1.tar.gz /tmp/
 RUN tar -xvzf expat-2.0.1.tar.gz \
     && cd expat-2.0.1 \
@@ -87,38 +107,53 @@ ADD https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.
 RUN tar -xzvf rats-2.4.tgz \
     && cd rats-2.4 \
     && ./configure --with-expat-lib=/usr/local/lib && make && make install \
-    && ./rats \ 
-    && cd .. \ 
+    && ./rats \
+    && cd .. \
     && rm -rf ./rats-2.4.tgz ./rats-2.4
-## DrMemory --Future version
-#RUN wget https://github.com/DynamoRIO/drmemory/releases/download/release_1.11.0/DrMemory-Linux-1.11.0-2.tar.gz \
-#    && tar -zvf DrMemory-Linux-1.11.0-2.tar.gz \
-#    && mkdir /opt/tools \
-#    && mv DrMemory-Linux-1.11.0-2 /opt/tools/DrMemory \
-#    && rm DrMemory-Linux-1.11.0-2 \
-#    && apt install -y glibc-devel libstdc++-devel.i686 glibec-devel.i686 glibc-devel.i686
-## Valgrind --future version
-#RUN apt install -y valgrind
-## CLang and scan-build --future version
-#RUN apt install -y ocaml \
-#    && export PATH=/usr/bin/ocaml:$PATH \
-#    && apt install -y perl-Digest-MD5 cmake \
-#    && export PATH=/usr/bin/cmake:$PATH \
-#    && apt install -y cmake3    
-	
-# Make sonarqube owner of it's installation directories	
+
+# jq required for configure-cat script.
+RUN apt update && apt install -y jq && rm -rf /var/lib/apt/lists/*
+
+#Install shellcheck
+RUN apt install shellcheck -y
+
+
+
+
+## ====================== BUILD FRAMA-C STAGE ===============================
+#Build with same base as sornaqube
+FROM debian:buster-slim AS build-frama-c
+USER root
+#Install frama-c
+RUN apt update
+RUN apt install opam graphviz libgnomecanvas2-dev pkg-config -y
+RUN opam init -y; opam update
+RUN opam install depext -y
+RUN opam depext conf-autoconf.0.1 -y
+RUN opam depext conf-gmp.1 -y
+RUN opam depext conf-gtksourceview.2 -y
+RUN opam install frama-c -y
+
+
+## ====================== CONFIGURATION STAGE ===============================
+
+FROM apt-stage AS final-configuration-stage
+USER root
+# Make sonarqube owner of it's installation directories
 RUN chown sonarqube:sonarqube -R /opt \
     && ls -lrta /opt/ \
     && chown sonarqube:sonarqube -R /home \
     && ls -lrta /home/ \
     && chown sonarqube:sonarqube -R /tmp/conf
 
-# jq required for configure-cat script.	
-RUN apt update && apt install -y jq && rm -rf /var/lib/apt/lists/*
+
+# Install frama-c
+COPY --from=build-frama-c /root/.opam/system/bin/* /usr/bin
+
+
 # Entry point files
 COPY ./configure-cat.bash /tmp/
 COPY ./init.bash /tmp/
 RUN chmod 750 /tmp/init.bash
 WORKDIR $SONARQUBE_HOME
 ENTRYPOINT ["/tmp/init.bash"]
-
