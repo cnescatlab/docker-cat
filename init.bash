@@ -50,6 +50,5 @@ allow_sonarqube &
 wait %1
 # Call for configure-cat script to set quality profiles and quality gates.
 bash /tmp/configure-cat.bash &
-#sudo -u sonarqube exec ${SONARQUBE_HOME}/bin/run.sh
 su sonarqube
-exec "${SONARQUBE_HOME}/bin/run.sh"
+exec ${SONARQUBE_HOME}/bin/run.sh
