@@ -109,7 +109,9 @@ RUN rm /usr/local/lib/libexpat.so.1 \
     && dpkg --configure -a \
     && opam init -y; opam update; opam install frama-c -y \
     && rm -rf /var/lib/apt/lists/* \
-    && ln -s /opt/sonarqube/.opam/system/bin/frama-c /bin/frama-c
+    && ln -s /opt/sonarqube/.opam/system/bin/frama-c /bin/frama-c \
+    && apt remove opam -y \
+    && apt autoremove -y
 
 
 ## ====================== CONFIGURATION STAGE ===============================
@@ -131,7 +133,9 @@ RUN chown sonarqube:sonarqube -R /opt \
     && chown sonarqube:sonarqube -R /home \
     && ls -lrta /home/ \
     && chown sonarqube:sonarqube -R /tmp/conf \
-    && ln -s /opt/sonarqube/extensions/plugins/ /opt/sonar/extensions/plugins
+    && ln -s /opt/sonarqube/extensions/plugins/ /opt/sonar/extensions/plugins \
+    && mkdir -p /opt/sonarqube/frama-c/ \
+    && root@5c0462e329d4:/tmp# ln -s /bin/frama-c /opt/sonarqube/frama-c/frama-c
 
 WORKDIR $SONARQUBE_HOME
 ENTRYPOINT ["/tmp/init.bash"]
