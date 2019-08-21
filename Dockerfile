@@ -135,7 +135,7 @@ RUN chown sonarqube:sonarqube -R /opt \
     && chown sonarqube:sonarqube -R /tmp/conf \
     && ln -s /opt/sonarqube/extensions/plugins/ /opt/sonar/extensions/plugins \
     && mkdir -p /opt/sonarqube/frama-c/ \
-    && root@5c0462e329d4:/tmp# ln -s /bin/frama-c /opt/sonarqube/frama-c/frama-c
+    && ln -s /bin/frama-c /opt/sonarqube/frama-c/frama-c
 
 WORKDIR $SONARQUBE_HOME
 ENTRYPOINT ["/tmp/init.bash"]
