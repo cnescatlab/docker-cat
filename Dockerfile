@@ -104,10 +104,9 @@ RUN apt update && apt install unzip python-setuptools cppcheck vera\+\+ gcc make
 ENV HOME /home/sonarqube
 RUN rm /usr/local/lib/libexpat.so.1 \
     && apt update \
-    && apt install autoconf debianutils libgmp-dev libgtksourceview2.0-dev pkg-config graphviz libgnomecanvas2-dev -y; rm /usr/local/lib/libexpat.so.1 \
+    && apt install opam autoconf debianutils libgmp-dev libgtksourceview2.0-dev pkg-config graphviz libgnomecanvas2-dev -y; rm /usr/local/lib/libexpat.so.1 \
     && dpkg --configure -a \
-    && sh <(curl -sL https://raw.githubusercontent.com/ocaml/opam/master/shell/install.sh) \\
-    && opam update; opam install frama-c -y \
+    && opam init -y; opam update; opam install frama-c -y \
     && ln -s /home/sonarqube/.opam/system/bin/frama-c /bin/frama-c \
     && apt remove opam -y \
     && apt autoremove -y \
