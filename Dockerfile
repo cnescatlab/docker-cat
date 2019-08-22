@@ -36,11 +36,8 @@ ADD https://github.com/checkstyle/sonar-checkstyle/releases/download/3.7/checkst
 
 
 # CNES report installation
-ADD https://github.com/lequal/sonar-cnes-report/releases/download/2.2.0/sonar-cnes-report.jar \
+ADD https://github.com/lequal/sonar-cnes-report/releases/download/3.0.0/sonar-cnes-report.jar \
     /opt/sonarqube/extensions/plugins/cnesreport.jar
-ADD https://github.com/lequal/sonar-cnes-report/releases/download/2.2.0/issues-template.xlsx \
-    https://github.com/lequal/sonar-cnes-report/releases/download/2.2.0/code-analysis-template.docx \
-    /opt/sonar/extensions/cnes/
 
 # Download softwares
 ADD https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/rough-auditing-tool-for-security/rats-2.4.tgz \
@@ -103,15 +100,19 @@ RUN apt update && apt install unzip python-setuptools cppcheck vera\+\+ gcc make
 ## Install frama-c
 ## Need to be installed after, this script resolve mannualy dependencies and fix a python bug
 ## which generate an error when dpkg try to configure python.
+
+ENV HOME /home/sonarqube
 RUN rm /usr/local/lib/libexpat.so.1 \
     && apt update \
-    && apt install opam autoconf debianutils libgmp-dev libgtksourceview2.0-dev pkg-config graphviz libgnomecanvas2-dev -y; rm /usr/local/lib/libexpat.so.1 \
+    && apt install autoconf debianutils libgmp-dev libgtksourceview2.0-dev pkg-config graphviz libgnomecanvas2-dev -y; rm /usr/local/lib/libexpat.so.1 \
     && dpkg --configure -a \
-    && opam init -y; opam update; opam install frama-c -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && ln -s /opt/sonarqube/.opam/system/bin/frama-c /bin/frama-c \
+    && sh <(curl -sL https://raw.githubusercontent.com/ocaml/opam/master/shell/install.sh) \\
+    && opam update; opam install frama-c -y \
+    && ln -s /home/sonarqube/.opam/system/bin/frama-c /bin/frama-c \
     && apt remove opam -y \
-    && apt autoremove -y
+    && apt autoremove -y \
+    && rm -rf /var/lib/apt/lists/*
+ENV HOME /opt/sonarqube
 
 
 ## ====================== CONFIGURATION STAGE ===============================
@@ -130,10 +131,9 @@ COPY ./init.bash /tmp/
 RUN chown sonarqube:sonarqube -R /opt \
     && ls -lrta /opt/ \
     && chmod 750 /tmp/init.bash \
-    && chown sonarqube:sonarqube -R /home \
-    && ls -lrta /home/ \
     && chown sonarqube:sonarqube -R /tmp/conf \
-    && ln -s /opt/sonarqube/extensions/plugins/ /opt/sonar/extensions/plugins \
+    && mkdir -p /opt/sonarqube/extensions/ \
+    && ln -s /opt/sonarqube/extensions/plugins /opt/sonar/extensions/plugins \
     && mkdir -p /opt/sonarqube/frama-c/ \
     && ln -s /bin/frama-c /opt/sonarqube/frama-c/frama-c
 
