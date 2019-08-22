@@ -1,9 +1,8 @@
-## ====================== DOWNLOAD DEPENDENCIES STAGE ===============================
+## ====================== DOWNLOAD DEPENDENCIES ===============================
 
-FROM sonarqube:6.7.4 AS download-stage
+FROM sonarqube:6.7.4
 ENV SONAR_RUNNER_HOME=/opt/sonar-scanner
 ENV PATH $PATH:/opt/sonar-scanner
-ENV HOME /opt/sonarqube
 RUN mkdir /opt/sonar
 COPY ./conf /tmp/conf
 
@@ -30,7 +29,7 @@ ADD https://github.com/checkstyle/sonar-checkstyle/releases/download/3.7/checkst
     https://binaries.sonarsource.com/Distribution/sonar-web-plugin/sonar-web-plugin-2.5.0.476.jar \
     https://binaries.sonarsource.com/Distribution/sonar-xml-plugin/sonar-xml-plugin-1.4.3.1027.jar \
     https://github.com/lequal/sonar-cnes-scan-plugin/releases/download/1.4.0/sonar-cnes-scan-plugin-1.4.jar \
-    https://github.com/lequal/sonar-frama-c-plugin/releases/download/V2.0.0/sonarframac-2.0.0.jar \
+    https://github.com/lequal/sonar-frama-c-plugin/releases/download/V2.0.1/sonarframac-2.0.1.jar \
     /opt/sonarqube/extensions/plugins/
 
 
@@ -63,8 +62,10 @@ ADD https://github.com/tartley/colorama/archive/v0.3.3.tar.gz \
     /tmp/python/
 
 
+## ====================== INSTALL DEPENDENCIES ===============================
+ENV HOME /home/sonarqube
 RUN apt update && apt install unzip python-setuptools cppcheck vera\+\+ gcc make jq shellcheck -y\
-    && rm -rf /var/lib/apt/lists/* \
+    && mkdir /home/sonarqube \
     #Install i-code
     && unzip /tmp/i-CodeCNES-3.1.0-CLI-linux.gtk.x86_64.zip -d /tmp;chmod +x /tmp/icode/icode;mv /tmp/icode/* /usr/bin \
     && rm -r /tmp/icode \
@@ -73,7 +74,7 @@ RUN apt update && apt install unzip python-setuptools cppcheck vera\+\+ gcc make
     && unzip /tmp/scanners/sonar-scanner-cli-3.0.3.778-linux.zip -d /opt/ \
     && mv /opt/sonar-scanner-3.0.3.778-linux /opt/sonar-scanner \
     && rm -rf /tmp/scanners \
-    ## Python, Pylin et CNES pylint setup
+    ## Python, Pylint & CNES pylint setup
     && mkdir /opt/python \
     && find /tmp/python -maxdepth 1 -name \*.tar.gz -exec tar -xvzf {} -C /opt/python \; \
     && ls /opt/python \
@@ -95,15 +96,13 @@ RUN apt update && apt install unzip python-setuptools cppcheck vera\+\+ gcc make
     && ./configure --with-expat-lib=/usr/local/lib && make && make install \
     && ./rats \
     && cd .. \
-    && rm -rf ./rats-2.4.tgz ./rats-2.4
-
-## Install frama-c
-## Need to be installed after, this script resolve mannualy dependencies and fix a python bug
-## which generate an error when dpkg try to configure python.
-
-ENV HOME /home/sonarqube
-RUN rm /usr/local/lib/libexpat.so.1 \
-    && apt update \
+    && rm -rf ./rats-2.4.tgz ./rats-2.4 \
+    && chown sonarqube:sonarqube -R /opt \
+    && chown sonarqube:sonarqube -R /home \
+    ## Install tools & frama-c
+    ## Frama-c need to be installed after, this script resolve mannualy dependencies and fix a python bug
+    ## which generate an error when dpkg try to configure python.
+    && rm /usr/local/lib/libexpat.so.1 \
     && apt install opam autoconf debianutils libgmp-dev libgtksourceview2.0-dev pkg-config graphviz libgnomecanvas2-dev -y; rm /usr/local/lib/libexpat.so.1 \
     && dpkg --configure -a \
     && opam init -y; opam update; opam install frama-c -y \
@@ -111,27 +110,21 @@ RUN rm /usr/local/lib/libexpat.so.1 \
     && apt remove opam -y \
     && apt autoremove -y \
     && rm -rf /var/lib/apt/lists/*
+
+
+## ====================== CONFIGURATION ===============================
+
 ENV HOME /opt/sonarqube
-
-
-## ====================== CONFIGURATION STAGE ===============================
-
-FROM download-stage AS configuration-stage
-
-
-
-
 
 # Entry point files
 COPY ./configure-cat.bash /tmp/
 COPY ./init.bash /tmp/
 
 # Make sonarqube owner of it's installation directories
-RUN chown sonarqube:sonarqube -R /opt \
-    && ls -lrta /opt/ \
+RUN ls -lrta /opt/ \
     && chmod 750 /tmp/init.bash \
     && chown sonarqube:sonarqube -R /tmp/conf \
-    && mkdir -p /opt/sonarqube/extensions/ \
+    && mkdir -p /opt/sonar/extensions/ \
     && ln -s /opt/sonarqube/extensions/plugins /opt/sonar/extensions/plugins \
     && mkdir -p /opt/sonarqube/frama-c/ \
     && ln -s /bin/frama-c /opt/sonarqube/frama-c/frama-c
