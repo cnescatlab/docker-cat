@@ -18,11 +18,13 @@ Once the container is active, use the [Sonar CNES Scan plugin](https://github.co
 
 ## Analysis tools
 - Sonarqube 6.7.4
-- Sonar scanner 3.0.3
+- Sonar scanner 3.0.3.778
 - gcc *latest*
 - make *latest*
 - cppcheck *latest*
 - vera++ *latest*
+- ShellCheck *latest*
+- Frama-C 18.0
 - expat 2.0.1
 - rats 2.4  
 - Python :
@@ -37,24 +39,29 @@ Once the container is active, use the [Sonar CNES Scan plugin](https://github.co
   - python-setuptools *latest*
 
 ## SonarQube extensions
-- Sonar CNES Report 2.1.0
+- Sonar CNES Report 3.0.0
 
 ## SonarQube plugins
 - Checkstyle sonar plugin 3.7
 - Sonar CNES CXX plugin 1.1
 - Sonar CNES Export plugin 1.1
 - Sonar CNES Python plugin 1.1
-- Sonar CNES Scan plugin 1.3
+- Sonar CNES I-Code plugin 1.1
+- Sonar CNES Scan plugin 1.4
+- Sonar CNES frama-c plugin 2.0.1
 - Sonar Corbetura plugin 1.9.1
 - Sonar C# plugin 6.1.0.2359
-- Sonar CXX plugin 0.9.7
-- Sonar Findbugs plugin
-- Sonar Flex plugin
-- Sonar Java plugin 4.11.0.10660
+- Sonar CXX plugin 1.1.0
+- Sonar Findbugs plugin 3.7.0
+- Sonar Flex plugin  2.5.1.1831
+- Sonar Java plugin 5.4.0.14284
 - Sonar JavaScript plugin 3.1.1.5128
 - Sonar PHP plugin 2.10.0.2087
 - Sonar PMD plugin 2.6
 - Sonar Python plugin 1.8.0.149
-
+- Sonar RCI plugin 1.0.1
+- Sonar Typescript plugin 1.9.0.3766
+- Sonar Web plugin 2.5.0.476
+- Sonar XML plugin 1.4.3.1027
 
 
