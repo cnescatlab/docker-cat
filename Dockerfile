@@ -98,7 +98,7 @@ RUN apt update && apt install unzip python-setuptools cppcheck vera\+\+ gcc make
     && dpkg --configure -a \
     && cd /tmp && wget "https://github.com/ocaml/opam/releases/download/2.0.5/opam-2.0.5-x86_64-linux" \
     && mv opam-2.0.5-x86_64-linux /bin/opam \
-    && chmod a+x /tmp/opam \
+    && chmod a+x /bin/opam \
     && opam init -y --disable-sandboxing; opam update \
     && opam install frama-c -y --unlock-base \
     && rm /bin/opam \
