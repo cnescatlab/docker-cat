@@ -97,11 +97,11 @@ RUN apt update && apt install unzip python-setuptools cppcheck vera\+\+ gcc make
     && apt install wget autoconf debianutils libgmp-dev libgtksourceview2.0-dev pkg-config graphviz libgnomecanvas2-dev -y; rm /usr/local/lib/libexpat.so.1 \
     && dpkg --configure -a \
     && cd /tmp && wget "https://github.com/ocaml/opam/releases/download/2.0.5/opam-2.0.5-x86_64-linux" \
-    && mv opam-2.0.5-x86_64-linux opam \
+    && mv opam-2.0.5-x86_64-linux /bin/opam \
     && chmod a+x /tmp/opam \
-    && /tmp/opam init -y --disable-sandboxing; /tmp/opam update \
-    && /tmp/opam install frama-c -y --unlock-base \
-    && rm /tmp/opam \
+    && opam init -y --disable-sandboxing; opam update \
+    && opam install frama-c -y --unlock-base \
+    && rm /bin/opam \
     && ln -s /home/sonarqube/.opam/default/bin/frama-c /bin/frama-c \
     && rm -rf /var/lib/apt/lists/*
 
