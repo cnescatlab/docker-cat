@@ -39,6 +39,7 @@ Once the container is active, use the [Sonar CNES Scan plugin](https://github.co
   - python-setuptools *latest*
 
 ## SonarQube extensions
+
 - Sonar CNES Report 3.0.0
 
 ## SonarQube plugins

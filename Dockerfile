@@ -44,6 +44,7 @@ ADD https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.
     https://github.com/lequal/i-CodeCNES/releases/download/v3.1.0/i-CodeCNES-3.1.0-CLI-linux.gtk.x86_64.zip \
     /tmp/
 
+
 # Sonar scanner installation
 ADD https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.0.3.778-linux.zip \
     /tmp/scanners/
