@@ -2,12 +2,12 @@
 
 ########################################################
 # init.bash
-# 
-# IMPORTANT : 
+#
+# IMPORTANT :
 # This file is intended to run be run while running SonarQube on the docker image "docker-cat".
 # This file should be run as an ENTRYPOINT of docker's image. If you re-use the docker-cat image, call this file inside your entrypoint.
-# The Dockerfile docker-cat inherit Sonarqube 6.7.1 image. This script run Sonarqube's entrypoint.
-# 
+# The Dockerfile docker-cat inherit Sonarqube 6.7.7 image. This script run Sonarqube's entrypoint.
+#
 # Description :
 # This file configure Sonarqube, also, it's perform permissions modifications to allow CNES scanner to involve in the project (creating sonar-properties files, etc...).
 #
@@ -18,7 +18,7 @@ sonar_configuration="INIT"
 ########################################################
 # function allow_sonarqube
 #
-# Description : 
+# Description :
 # For each GID specified in the env variable ALLOWED_GROUPS, create a new group
 # siwht the specified GID and then add it to Sonarqube.
 ################################################################################
@@ -42,7 +42,7 @@ allow_sonarqube(){
     else
       echo "[INFO] Docker-cat could not find any specified permission for Sonarqube. Use allow-group command to set new ones."
     fi
-	
+
     echo "[INFO] Docker-cat permissions for sonarqube finished."
 }
 
