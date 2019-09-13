@@ -10,24 +10,19 @@ COPY ./conf /tmp/conf
 
 # Download Sonarqubes plugins.
 ADD https://github.com/checkstyle/sonar-checkstyle/releases/download/4.21/checkstyle-sonar-plugin-4.21.jar \
-    https://github.com/lequal/sonar-cnes-cxx-plugin/releases/download/v1.1.0/sonar-cnes-cxx-plugin-1.1.jar \
-    https://github.com/lequal/sonar-cnes-export-plugin/releases/download/v1.1.0/sonar-cnes-export-plugin-1.1.jar \
-    https://github.com/lequal/sonar-cnes-python-plugin/releases/download/1.1/sonar-cnes-python-plugin-1.1.jar \
-    # A VOIR == PR ? == https://github.com/lequal/sonar-icode-cnes-plugin/releases/download/1.1.0/sonaricode-1.1.0.jar \
     https://github.com/galexandre/sonar-cobertura/releases/download/1.9.1/sonar-cobertura-plugin-1.9.1.jar \
     https://github.com/SonarOpenCommunity/sonar-cxx/releases/download/cxx-1.1.0/sonar-cxx-plugin-1.1.0.jar \
     https://github.com/spotbugs/sonar-findbugs/releases/download/3.11.0/sonar-findbugs-plugin-3.11.0.jar \
-    https://binaries.sonarsource.com/Distribution/sonar-flex-plugin/sonar-flex-plugin-2.5.1.1831.jar \
     https://github.com/willemsrb/sonar-rci-plugin/releases/download/sonar-rci-plugin-1.0.1/sonar-rci-plugin-1.0.1.jar \
-    https://github.com/lequal/sonar-cnes-scan-plugin/releases/download/1.4.0/sonar-cnes-scan-plugin-1.4.jar \
-    # A VOIR == https://github.com/lequal/sonar-frama-c-plugin/releases/download/V2.0.1/sonarframac-2.0.1.jar \
-    https://github.com/lequal/sonar-cnes-scan-plugin/releases/download/1.4.0/sonar-cnes-scan-plugin-1.4.jar \
+    https://binaries.sonarsource.com/Distribution/sonar-flex-plugin/sonar-flex-plugin-2.5.1.1831.jar \
+    https://github.com/lequal/sonar-cnes-cxx-plugin/releases/download/v1.1.0/sonar-cnes-cxx-plugin-1.1.jar \
+    https://github.com/lequal/sonar-cnes-export-plugin/releases/download/v1.2.0/sonar-cnes-export-plugin-1.2.jar \
+    https://github.com/lequal/sonar-cnes-python-plugin/releases/download/1.1/sonar-cnes-python-plugin-1.1.jar \
+    https://github.com/lequal/sonar-icode-cnes-plugin/releases/download/1.3.0/sonaricode-1.3.0.jar \
+    https://github.com/lequal/sonar-frama-c-plugin/releases/download/V2.1.0/sonarframac-2.1.0.jar \
+    https://github.com/lequal/sonar-cnes-scan-plugin/releases/download/1.5.0/sonar-cnes-scan-plugin-1.5.jar \
+    https://github.com/lequal/sonar-cnes-report/releases/download/3.1.0/sonar-cnes-report-3.1.0.jar \
     /opt/sonarqube/extensions/plugins/
-
-
-# CNES report installation
-ADD https://github.com/lequal/sonar-cnes-report/releases/download/3.0.0/sonar-cnes-report.jar \
-    /opt/sonarqube/extensions/plugins/cnesreport.jar
 
 # Download softwares
 ADD https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/rough-auditing-tool-for-security/rats-2.4.tgz \
@@ -55,7 +50,7 @@ ADD https://github.com/tartley/colorama/archive/v0.3.3.tar.gz \
 
 ## ====================== INSTALL DEPENDENCIES ===============================
 ENV HOME /home/sonarqube
-RUN apt update && apt install unzip python-setuptools cppcheck vera\+\+ gcc make jq shellcheck -y   \
+RUN apt update && apt install unzip python-setuptools cppcheck vera\+\+ gcc make jq -y   \
     && mkdir /home/sonarqube \
     #Install i-code
     && unzip /tmp/i-CodeCNES-3.1.0-CLI-linux.gtk.x86_64.zip -d /tmp;chmod +x /tmp/icode/icode;mv /tmp/icode/* /usr/bin \
@@ -107,8 +102,6 @@ RUN apt update && apt install unzip python-setuptools cppcheck vera\+\+ gcc make
 
 
 ## ====================== CONFIGURATION ===============================
-
-ENV HOME /opt/sonarqube
 
 # Entry point files
 COPY ./configure-cat.bash /tmp/
