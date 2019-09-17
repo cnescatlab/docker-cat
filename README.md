@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/lequal/docker-cat.svg?branch=master)](https://travis-ci.org/lequal/docker-cat)
 # docker-cat
 Docker Code Analysis Tools (CAT) is a SonarQube docker image containing configuration to realize code analysis.
 # Quick install
@@ -17,14 +18,14 @@ Once the container is active, use the [Sonar CNES Scan plugin](https://github.co
 # Content
 
 ## Analysis tools
-- Sonarqube 6.7.4
+- Sonarqube 7.9.1
 - Sonar scanner 3.0.3.778
 - gcc *latest*
 - make *latest*
 - cppcheck *latest*
 - vera++ *latest*
 - ShellCheck *latest*
-- Frama-C 18.0
+- Frama-C 19.0
 - expat 2.0.1
 - rats 2.4  
 - Python :
@@ -37,31 +38,29 @@ Once the container is active, use the [Sonar CNES Scan plugin](https://github.co
   - pylint 1.5
   - cnes-pylint-extension 1.0
   - python-setuptools *latest*
-
-## SonarQube extensions
-- Sonar CNES Report 3.0.0
-
+  
 ## SonarQube plugins
-- Checkstyle sonar plugin 3.7
-- Sonar CNES CXX plugin 1.1
-- Sonar CNES Export plugin 1.1
-- Sonar CNES Python plugin 1.1
-- Sonar CNES I-Code plugin 1.1
-- Sonar CNES Scan plugin 1.4
-- Sonar CNES frama-c plugin 2.0.1
+- Checkstyle sonar plugin 4.21
+- Sonar CNES CXX plugin 1.1.0
+- Sonar CNES Export plugin 1.2.0
+- Sonar CNES Python plugin 1.1.0
+- Sonar CNES I-Code plugin 1.3.0
+- Sonar CNES Scan plugin 1.5
+- Sonar CNES frama-c plugin 2.1.0
+- Sonar CNES Report 3.1.0
 - Sonar Corbetura plugin 1.9.1
-- Sonar C# plugin 6.1.0.2359
+- Sonar C# plugin 7.15
 - Sonar CXX plugin 1.1.0
-- Sonar Findbugs plugin 3.7.0
+- Sonar Findbugs plugin 3.11.0
 - Sonar Flex plugin  2.5.1.1831
-- Sonar Java plugin 5.4.0.14284
-- Sonar JavaScript plugin 3.1.1.5128
-- Sonar PHP plugin 2.10.0.2087
-- Sonar PMD plugin 2.6
-- Sonar Python plugin 1.8.0.149
+- Sonar Java plugin 5.13.1
+- Sonar JavaScript plugin 5.2.1
+- Sonar PHP plugin 3.2.0.4868
+- Sonar PMD plugin 3.2.1
+- Sonar Python plugin 1.14.1
 - Sonar RCI plugin 1.0.1
 - Sonar Typescript plugin 1.9.0.3766
-- Sonar Web plugin 2.5.0.476
-- Sonar XML plugin 1.4.3.1027
+- Sonar Web plugin 3.1
+- Sonar XML plugin 2.0.1
 
 
