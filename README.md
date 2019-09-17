@@ -1,14 +1,15 @@
 [![Build Status](https://travis-ci.org/lequal/docker-cat.svg?branch=master)](https://travis-ci.org/lequal/docker-cat)
 # docker-cat
 Docker Code Analysis Tools (CAT) is a SonarQube docker image containing configuration to realize code analysis.
+
 # Quick install
-Step by step : 
+Step by step: 
 
 Find group IDs to allow SonarQube analysis to (for Sonar CNES Scan plugin):
 * Using `getent group <group_name> | cut -d : -f3` to reach a group id from a known group name;
 * Using `cat /etc/group`to list all group IDs.
 
-Run a container :
+Run a container:
 ```
 docker pull lequal/docker-cat
 docker run -v <host_project_folder>:/media/sf_Shared:rw -p 9000:9000 -p 9001:9001 -e ALLOWED_GROUPS="<GID_1>;<GID_2>;<GID_...>" lequal/docker-cat
@@ -38,13 +39,13 @@ Once the container is active, use the [Sonar CNES Scan plugin](https://github.co
   - pylint 1.5
   - cnes-pylint-extension 1.0
   - python-setuptools *latest*
-  
+
 ## SonarQube plugins
 - Checkstyle sonar plugin 4.21
 - Sonar CNES CXX plugin 1.1.0
 - Sonar CNES Export plugin 1.2.0
 - Sonar CNES Python plugin 1.1.0
-- Sonar CNES I-Code plugin 1.3.0
+- Sonar CNES i-Code plugin 1.3.0
 - Sonar CNES Scan plugin 1.5
 - Sonar CNES frama-c plugin 2.1.0
 - Sonar CNES Report 3.1.0
