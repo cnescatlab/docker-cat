@@ -1,42 +1,29 @@
 ## ====================== DOWNLOAD DEPENDENCIES ===============================
 
-FROM sonarqube:6.7.4
+#FROM sonar
+FROM sonarqube:7.9.1-community
 ENV SONAR_RUNNER_HOME=/opt/sonar-scanner
 ENV PATH $PATH:/opt/sonar-scanner
+USER root
 RUN mkdir /opt/sonar
 COPY ./conf /tmp/conf
 
 # Download Sonarqubes plugins.
-ADD https://github.com/checkstyle/sonar-checkstyle/releases/download/3.7/checkstyle-sonar-plugin-3.7.jar \
-    https://github.com/lequal/sonar-cnes-cxx-plugin/releases/download/v1.1.0/sonar-cnes-cxx-plugin-1.1.jar \
-    https://github.com/lequal/sonar-cnes-export-plugin/releases/download/v1.1.0/sonar-cnes-export-plugin-1.1.jar \
-    https://github.com/lequal/sonar-cnes-python-plugin/releases/download/1.1/sonar-cnes-python-plugin-1.1.jar \
-    https://github.com/lequal/sonar-icode-cnes-plugin/releases/download/1.1.0/sonaricode-1.1.0.jar \
+ADD https://github.com/checkstyle/sonar-checkstyle/releases/download/4.21/checkstyle-sonar-plugin-4.21.jar \
     https://github.com/galexandre/sonar-cobertura/releases/download/1.9.1/sonar-cobertura-plugin-1.9.1.jar \
-    https://github.com/SonarSource/sonar-csharp/releases/download/6.1.0.2359/sonar-csharp-plugin-6.1.0.2359.jar \
     https://github.com/SonarOpenCommunity/sonar-cxx/releases/download/cxx-1.1.0/sonar-cxx-plugin-1.1.0.jar \
-    https://github.com/spotbugs/sonar-findbugs/releases/download/3.7.0/sonar-findbugs-plugin-3.7.0.jar \
-    https://binaries.sonarsource.com/Distribution/sonar-flex-plugin/sonar-flex-plugin-2.5.1.1831.jar \
-    https://binaries.sonarsource.com/Distribution/sonar-java-plugin/sonar-java-plugin-5.4.0.14284.jar \
-    https://binaries.sonarsource.com/Distribution/sonar-javascript-plugin/sonar-javascript-plugin-3.1.1.5128.jar \
-    https://binaries.sonarsource.com/Distribution/sonar-php-plugin/sonar-php-plugin-2.10.0.2087.jar \
-    https://binaries.sonarsource.com/Distribution/sonar-pmd-plugin/sonar-pmd-plugin-2.5.jar \
-    https://binaries.sonarsource.com/Distribution/sonar-python-plugin/sonar-python-plugin-1.14.0.3086.jar \
+    https://github.com/spotbugs/sonar-findbugs/releases/download/3.11.0/sonar-findbugs-plugin-3.11.0.jar \
     https://github.com/willemsrb/sonar-rci-plugin/releases/download/sonar-rci-plugin-1.0.1/sonar-rci-plugin-1.0.1.jar \
-    https://binaries.sonarsource.com/Distribution/sonar-scm-git-plugin/sonar-scm-git-plugin-1.8.0.1574.jar \
-    https://binaries.sonarsource.com/Distribution/sonar-scm-svn-plugin/sonar-scm-svn-plugin-1.8.0.1168.jar \
-    https://binaries.sonarsource.com/Distribution/sonar-typescript-plugin/sonar-typescript-plugin-1.9.0.3766.jar \
-    https://binaries.sonarsource.com/Distribution/sonar-web-plugin/sonar-web-plugin-2.5.0.476.jar \
-    https://binaries.sonarsource.com/Distribution/sonar-xml-plugin/sonar-xml-plugin-1.4.3.1027.jar \
-    https://github.com/lequal/sonar-cnes-scan-plugin/releases/download/1.4.0/sonar-cnes-scan-plugin-1.4.jar \
-    https://github.com/lequal/sonar-frama-c-plugin/releases/download/V2.0.1/sonarframac-2.0.1.jar \
+    https://binaries.sonarsource.com/Distribution/sonar-flex-plugin/sonar-flex-plugin-2.5.1.1831.jar \
+    https://github.com/lequal/sonar-cnes-cxx-plugin/releases/download/v1.1.0/sonar-cnes-cxx-plugin-1.1.jar \
+    https://github.com/lequal/sonar-cnes-export-plugin/releases/download/v1.2.0/sonar-cnes-export-plugin-1.2.jar \
+    https://github.com/lequal/sonar-cnes-python-plugin/releases/download/1.1/sonar-cnes-python-plugin-1.1.jar \
+    https://github.com/lequal/sonar-icode-cnes-plugin/releases/download/1.3.0/sonaricode-1.3.0.jar \
+    https://github.com/lequal/sonar-frama-c-plugin/releases/download/V2.1.0/sonarframac-2.1.0.jar \
+    https://github.com/lequal/sonar-cnes-scan-plugin/releases/download/1.5.0/sonar-cnes-scan-plugin-1.5.jar \
+    https://github.com/lequal/sonar-cnes-report/releases/download/3.1.0/sonar-cnes-report-3.1.0.jar \
+    https://github.com/jensgerdes/sonar-pmd/releases/download/3.2.1/sonar-pmd-plugin-3.2.1.jar \
     /opt/sonarqube/extensions/plugins/
-
-
-
-# CNES report installation
-ADD https://github.com/lequal/sonar-cnes-report/releases/download/3.0.0/sonar-cnes-report.jar \
-    /opt/sonarqube/extensions/plugins/cnesreport.jar
 
 # Download softwares
 ADD https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/rough-auditing-tool-for-security/rats-2.4.tgz \
@@ -65,7 +52,7 @@ ADD https://github.com/tartley/colorama/archive/v0.3.3.tar.gz \
 
 ## ====================== INSTALL DEPENDENCIES ===============================
 ENV HOME /home/sonarqube
-RUN apt update && apt install unzip python-setuptools cppcheck vera\+\+ gcc make jq shellcheck -y\
+RUN apt update && apt install unzip python-setuptools cppcheck vera\+\+ gcc make jq -y   \
     && mkdir /home/sonarqube \
     #Install i-code
     && unzip /tmp/i-CodeCNES-3.1.0-CLI-linux.gtk.x86_64.zip -d /tmp;chmod +x /tmp/icode/icode;mv /tmp/icode/* /usr/bin \
@@ -104,18 +91,19 @@ RUN apt update && apt install unzip python-setuptools cppcheck vera\+\+ gcc make
     ## Frama-c need to be installed after, this script resolve mannualy dependencies and fix a python bug
     ## which generate an error when dpkg try to configure python.
     && rm /usr/local/lib/libexpat.so.1 \
-    && apt install opam autoconf debianutils libgmp-dev libgtksourceview2.0-dev pkg-config graphviz libgnomecanvas2-dev -y; rm /usr/local/lib/libexpat.so.1 \
+    && apt install wget autoconf debianutils libgmp-dev libgtksourceview2.0-dev pkg-config graphviz libgnomecanvas2-dev -y; rm /usr/local/lib/libexpat.so.1 \
     && dpkg --configure -a \
-    && opam init -y; opam update; opam install frama-c -y \
-    && ln -s /home/sonarqube/.opam/system/bin/frama-c /bin/frama-c \
-    && apt remove opam -y \
-    && apt autoremove -y \
+    && cd /tmp && wget "https://github.com/ocaml/opam/releases/download/2.0.5/opam-2.0.5-x86_64-linux" \
+    && mv opam-2.0.5-x86_64-linux /bin/opam \
+    && chmod a+x /bin/opam \
+    && opam init -y --disable-sandboxing; opam update \
+    && opam install frama-c -y --unlock-base \
+    && rm /bin/opam \
+    && ln -s /home/sonarqube/.opam/default/bin/frama-c /bin/frama-c \
     && rm -rf /var/lib/apt/lists/*
 
 
 ## ====================== CONFIGURATION ===============================
-
-ENV HOME /opt/sonarqube
 
 # Entry point files
 COPY ./configure-cat.bash /tmp/
