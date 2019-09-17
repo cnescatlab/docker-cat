@@ -22,6 +22,7 @@ ADD https://github.com/checkstyle/sonar-checkstyle/releases/download/4.21/checks
     https://github.com/lequal/sonar-frama-c-plugin/releases/download/V2.1.0/sonarframac-2.1.0.jar \
     https://github.com/lequal/sonar-cnes-scan-plugin/releases/download/1.5.0/sonar-cnes-scan-plugin-1.5.jar \
     https://github.com/lequal/sonar-cnes-report/releases/download/3.1.0/sonar-cnes-report-3.1.0.jar \
+    https://github.com/jensgerdes/sonar-pmd/releases/download/3.2.1/sonar-pmd-plugin-3.2.1.jar \
     /opt/sonarqube/extensions/plugins/
 
 # Download softwares
