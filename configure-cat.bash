@@ -39,46 +39,30 @@ log_info(){
 #  - 2 : metric_key
 #  - 3 : metric_operator [EQ,NE, LT or GT]
 #  - 4 : gate_id
-#  - 5 : overleak period 1 or 0
-#  - 6 : metric's warning threshold ("none" if not to set)
-#  - 7 : metric's error threshold ("none" if not to set)
+#  - 5 : metric's error threshold ("none" if not to set)
 add_condition(){
   metric_name=$1
   metric_key=$2
   metric_operator=$3
   gate_id=$4
-  overleak=$5
-  metric_warnings=$6
-  metric_errors=$7
+  metric_errors=$5
 
 
-  log_info "adding CNES quality gate condition : ${metric_name} ${metric_operator} thresholds : [ warnings: ${metric_warnings} ] [ errors: ${metric_errors}] and overleak set on ${overleak}"
+  log_info "adding CNES quality gate condition : ${metric_name} ${metric_operator} thresholds : [ errors: ${metric_errors} ]"
 
-  if [ "${metric_warnings}" != "none" ] && [ "${metric_errors}" != "none" ]
-  then
-    threshold="&warning=${metric_warnings}&error=${metric_errors}"
-  elif [ "${metric_errors}" != "none" ]
+  if [ "${metric_errors}" != "none" ]
   then
     threshold="&error=${metric_errors}"
-  elif [ "${metric_warnings}" != "none" ]
-  then
-    threshold="&warning=${metric_warnings}"
   fi
   echo "threshold=${threshold}"
-  if [ "${overleak}" != "1" ]
-  then
-    unset overleak
-  else
-    overleak="&period=1"
-  fi
-  RES=$(curl -su admin:admin -X POST "${SONARQUBE_URL}/api/qualitygates/create_condition?gateId=${gate_id}&metric=${metric_key}&op=${metric_operator}${overleak}${threshold}")
+
+  RES=$(curl -su admin:admin -X POST "${SONARQUBE_URL}/api/qualitygates/create_condition?gateId=${gate_id}&metric=${metric_key}&op=${metric_operator}${threshold}")
   if [ "$(echo ${RES} | jq '(.errors | length)')" == "0" ]
   then
     log_info "metric $metric_name condition succesfully added."
   else
     log_warning "impossible to add $metric_name condition" "$( echo ${RES} | jq '.errors[].msg' )"
   fi
-
 
 }
 
@@ -115,16 +99,17 @@ create_quality_gates(){
     log_warning "impossible to set CNES quality gate as default gate" "$( echo ${RES} | jq '.errors[].msg' )"
   fi
 
-  # add comment_lines condition
-  add_condition "Blocker violations" blocker_violations NE ${GATEID} 0 none 0
-  add_condition "Comment (%)" comment_lines_density LT ${GATEID} 0 30 20
-  add_condition "Comment (%)" comment_lines_density LT ${GATEID} 1 0 none
-  add_condition "Critical Issues" critical_violations NE ${GATEID} 0 none 0
-  add_condition "Duplicated Lines (%)" duplicated_lines_density GT ${GATEID} 0 10 15
-  add_condition "Duplicated Lines on New Code (%)" new_duplicated_lines_density GT ${GATEID} 1 0 10
-  add_condition "Major Issues" major_violations NE ${GATEID} 0 0 none
-  add_condition "New Major Issues" new_major_violations GT ${GATEID} 1 none 0
-  #add_condition "Technical Debt ratio" sqale_rating GT ${GATEID} 1 0 5
+  # add quality gate conditions
+  add_condition "Blocker violations" blocker_violations GT ${GATEID} 0
+  add_condition "Comment (%)" comment_lines_density LT ${GATEID} 30
+  add_condition "Critical Issues" critical_violations GT ${GATEID} 0
+  add_condition "Duplicated Lines (%)" duplicated_lines_density GT ${GATEID} 10
+  add_condition "Duplicated Lines on New Code (%)" new_duplicated_lines GT ${GATEID} 0
+  add_condition "Major Issues" major_violations GT ${GATEID} 0
+  add_condition "New Issues" new_violations GT ${GATEID} 0
+  add_condition "Technical Debt ratio" new_sqale_debt_ratio GT ${GATEID} 5
+  add_condition "Technical Debt ratio" new_coverage LT ${GATEID} 90
+
 }
 
 
