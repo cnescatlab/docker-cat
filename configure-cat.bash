@@ -101,7 +101,7 @@ create_quality_gates(){
 
   # add quality gate conditions
   add_condition "Blocker violations" blocker_violations GT ${GATEID} 0
-  add_condition "Comment (%)" comment_lines_density LT ${GATEID} 30
+  add_condition "Comment (%)" comment_lines_density LT ${GATEID} 20
   add_condition "Critical Issues" critical_violations GT ${GATEID} 0
   add_condition "Duplicated Lines (%)" duplicated_lines_density GT ${GATEID} 10
   add_condition "Duplicated Lines on New Code (%)" new_duplicated_lines GT ${GATEID} 0
