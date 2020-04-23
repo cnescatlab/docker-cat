@@ -31,52 +31,56 @@ Once the container is active:
 - use SonarSource's scanners as described in the [official documentation](https://docs.sonarqube.org/display/SONAR/Analyzing%20Source%20Code)
 
 ### Configuration of the latest image
+
+> New and updated software are marked with emoji :new:.
+
 | Tool                                                  | Version                                               | 
 |-------------------------------------------------------|-------------------------------------------------------|
-| Sonarqube                                             | 7.9.1                                                 |
-| Sonar scanner                                         | 3.0.3.778                                             |
-| gcc                                                   | *latest*                                              |
-| make                                                  | *latest*                                              |
-| cppcheck                                              | *latest*                                              |
-| vera++                                                | *latest*                                              |
-| ShellCheck                                            | *latest*                                              |
-| Frama-C                                               | 19.0                                                  |
-| expat                                                 | 2.0.1                                                 |
-| rats                                                  | 2.4                                                   |
-| python                                                | 2.7.13                                                |
-| colorama                                              | 0.3.3                                                 |
-| python-lazy-object-proxy                              | 1.2.1                                                 |
-| python-six                                            | 1.9.0                                                 |
-| wrapt                                                 | 1.10.5                                                |
-| astroid                                               | 1.4.9                                                 |
-| pylint                                                | 1.5                                                   |
-| cnes-pylint-extension                                 | 1.0                                                   |
-| python-setuptools                                     | *latest*                                              |
+| :new:SonarQube                                        | `7.9.3`                                               |
+| :new:Sonar Scanner                                    | `4.2.0.1873`                                          |
+| gcc                                                   | `latest`                                              |
+| make                                                  | `latest`                                              |
+| cppcheck                                              | `latest`                                              |
+| vera++                                                | `latest`                                              |
+| ShellCheck                                            | `latest`                                              |
+| :new:i-Code CNES                                      | `4.1.0`                                               |
+| Frama-C                                               | `19.0`                                                |
+| expat                                                 | `2.0.1`                                               |
+| rats                                                  | `2.4`                                                 |
+| python                                                | `2.7.13`                                              |
+| colorama                                              | `0.3.3`                                               |
+| python-lazy-object-proxy                              | `1.2.1`                                               |
+| python-six                                            | `1.9.0`                                               |
+| wrapt                                                 | `1.10.5`                                              |
+| astroid                                               | `1.4.9`                                               |
+| pylint                                                | `1.5`                                                 |
+| cnes-pylint-extension                                 | `1.0`                                                 |
+| python-setuptools                                     | `latest`                                              |
  
 | SonarQube plugin                                      | Version                                               | 
 |-------------------------------------------------------|-------------------------------------------------------|
-| Checkstyle sonar plugin                               | 4.21                                                  |
-| Sonar CNES CXX plugin                                 | 1.3.1.1807                                            |
-| Sonar CNES Export plugin                              | 1.2.0                                                 |
-| Sonar CNES Python plugin                              | 1.1.0                                                 |
-| Sonar CNES i-Code plugin                              | 1.3.0                                                 |
-| Sonar CNES Scan plugin                                | 1.5                                                   |
-| Sonar CNES frama-c plugin                             | 2.1.0                                                 |
-| Sonar CNES Report                                     | 3.1.0                                                 |
-| Sonar Corbetura plugin                                | 1.9.1                                                 |
-| Sonar C# plugin                                       | 7.15                                                  |
-| Sonar CXX plugin                                      | 1.1.0                                                 |
-| Sonar Findbugs plugin                                 | 3.11.0                                                |
-| Sonar Flex plugin                                     | 2.5.1.1831                                            |
-| Sonar Java plugin                                     | 5.13.1                                                |
-| Sonar JavaScript plugin                               | 5.2.1                                                 |
-| Sonar PHP plugin                                      | 3.2.0.4868                                            |
-| Sonar PMD plugin                                      | 3.2.1                                                 |
-| Sonar Python plugin                                   | 1.14.1                                                |
-| Sonar RCI plugin                                      | 1.0.1                                                 |
-| Sonar Typescript plugin                               | 1.9.0.3766                                            |
-| Sonar Web plugin                                      | 3.1                                                   |
-| Sonar XML plugin                                      | 2.0.1                                                 |
+| Checkstyle sonar plugin                               | `4.21`                                                |
+| Sonar CNES CXX plugin                                 | `1.3.1.1807`                                          |
+| Sonar CNES Export plugin                              | `1.2.0`                                               |
+| :new:Sonar CNES Python plugin                         | `1.3.0`                                               |
+| :new:Sonar CNES i-Code plugin                         | `2.0.2`                                               |
+| Sonar CNES Scan plugin                                | `1.5`                                                 |
+| :new:Sonar CNES frama-c plugin                        | `2.1.1`                                               |
+| :new:Sonar CNES Report                                | `3.2.2`                                               |
+| Sonar Corbetura plugin                                | `1.9.1`                                               |
+| Sonar C# plugin                                       | `7.15`                                                |
+| Sonar CXX plugin                                      | `1.1.0`                                               |
+| Sonar Findbugs plugin                                 | `3.11.0`                                              |
+| Sonar Flex plugin                                     | `2.5.1.1831`                                          |
+| Sonar Java plugin                                     | `5.13.1`                                              |
+| Sonar JavaScript plugin                               | `5.2.1`                                               |
+| Sonar PHP plugin                                      | `3.2.0.4868`                                          |
+| Sonar PMD plugin                                      | `3.2.1`                                               |
+| Sonar Python plugin                                   | `1.14.1`                                              |
+| Sonar RCI plugin                                      | `1.0.1`                                               |
+| Sonar Typescript plugin                               | `1.9.0.3766`                                          |
+| Sonar Web plugin                                      | `3.1`                                                 |
+| Sonar XML plugin                                      | `2.0.1`                                               |
 
 ### How to contribute
 If you experienced a problem with the plugin please open an issue. Inside this issue please explain us how to reproduce this issue and paste the log. 
