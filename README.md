@@ -40,8 +40,8 @@ Once the container is active:
 | :new:Sonar Scanner                                    | `4.2.0.1873`                                          |
 | gcc                                                   | `latest`                                              |
 | make                                                  | `latest`                                              |
-| cppcheck                                              | `latest`                                              |
-| vera++                                                | `latest`                                              |
+| :new:cppcheck                                         | `1.90-4`                                              |
+| :new:vera++                                           | `1.2.1-2+b5`                                          |
 | ShellCheck                                            | `latest`                                              |
 | :new:i-Code CNES                                      | `4.1.0`                                               |
 | Frama-C                                               | `19.0`                                                |
