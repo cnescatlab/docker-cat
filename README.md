@@ -1,5 +1,6 @@
 # Docker CAT
 [![Build Status](https://travis-ci.org/lequal/docker-cat.svg?branch=master)](https://travis-ci.org/lequal/docker-cat)
+[![Docker Image Version (tag latest semver)](https://img.shields.io/docker/v/lequal/docker-cat/latest)](https://hub.docker.com/r/lequal/docker-cat)
 
 Docker Code Analysis Tool (CAT) is a SonarQube Docker image containing configuration to realize code analysis.
 
