@@ -53,9 +53,16 @@ ADD https://github.com/tartley/colorama/archive/v0.3.3.tar.gz \
 ## ====================== INSTALL DEPENDENCIES ===============================
 
 ENV HOME /home/sonarqube
-#RUN echo 'deb http://ftp.de.debian.org/debian bullseye main' >> /etc/apt/sources.list \
 RUN apt update -y \
-    && apt install -y unzip python-setuptools cppcheck vera\+\+=1.2.1-2\+b5 gcc make jq \
+    && apt install -y \
+       unzip \
+       python-setuptools=40.8.0-1 \
+       cppcheck \
+       vera\+\+=1.2.1-2\+b5 \
+       shellcheck=0.5.0-3 \
+       gcc=4:8.3.0-1 \
+       make=4.2.1-1.2 \
+       jq \
     && mkdir /home/sonarqube \
     ## Install i-Code CNES
     && unzip /tmp/icode-4.1.0.zip -d /tmp \
@@ -103,21 +110,35 @@ RUN apt update -y \
     && rm -rf ./rats-2.4.tgz ./rats-2.4 \
     && chown sonarqube:sonarqube -R /opt \
     && chown sonarqube:sonarqube -R /home
+
+    ## Install Cppcheck
+RUN echo 'deb http://ftp.de.debian.org/debian bullseye main' >> /etc/apt/sources.list \
+    && apt update -y \
+    && apt install -y cppcheck=1.90-4
+
     
     ## Install tools & Frama-C
-    ## Frama-c need to be installed after, this script resolve mannualy dependencies and fix a python bug
-    ## which generate an error when dpkg try to configure python.
-#    && rm /usr/local/lib/libexpat.so.1 \
-#    && apt install wget autoconf debianutils libgmp-dev libgtksourceview2.0-dev pkg-config graphviz libgnomecanvas2-dev -y; rm /usr/local/lib/libexpat.so.1 \
-#    && dpkg --configure -a \
-#    && cd /tmp && wget "https://github.com/ocaml/opam/releases/download/2.0.5/opam-2.0.5-x86_64-linux" \
-#    && mv opam-2.0.5-x86_64-linux /bin/opam \
-#    && chmod a+x /bin/opam \
-#    && opam init -y --disable-sandboxing; opam update \
-#    && opam install frama-c -y --unlock-base \
-#    && rm /bin/opam \
-#    && ln -s /home/sonarqube/.opam/default/bin/frama-c /bin/frama-c \
-#    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update -y \
+    && apt-get install -y \
+       git \
+       ocaml \
+       ocaml-native-compilers \
+       liblablgtk2-ocaml-dev \
+       liblablgtksourceview2-ocaml-dev \
+       menhir \
+       why3 \
+       libyojson-ocaml-dev=1.7.0-1\+b3 \
+       libocamlgraph-ocaml-dev \
+       libzarith-ocaml-dev \
+       build-essential \
+    && rm -rf /var/lib/apt/lists/* \
+    && git clone --single-branch https://github.com/Frama-C/Frama-C-snapshot.git /tmp/framac \
+    && cd /tmp/framac \
+    && git checkout -b tags/19.1 \
+    &&  ./configure \
+    && make \
+    && make install \
+    && rm -rf /tmp/framac
 
 
 ## ====================== CONFIGURATION ===============================
@@ -136,7 +157,7 @@ RUN ls -lrta /opt/ \
     && ln -s /bin/frama-c /opt/sonarqube/frama-c/frama-c
 
 
-## ====================== INITIALIZATION ===============================
+## ====================== STARTING ===============================
 
 WORKDIR $SONARQUBE_HOME
 ENTRYPOINT ["/tmp/init.bash"]

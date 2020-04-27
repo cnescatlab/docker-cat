@@ -38,13 +38,13 @@ Once the container is active:
 |-------------------------------------------------------|-------------------------------------------------------|
 | :new:SonarQube                                        | `7.9.3`                                               |
 | :new:Sonar Scanner                                    | `4.2.0.1873`                                          |
-| gcc                                                   | `latest`                                              |
-| make                                                  | `latest`                                              |
-| :new:cppcheck                                         | `1.90-4`                                              |
+| gcc                                                   | `4:8.3.0-1`                                           |
+| make                                                  | `4.2.1-1.2`                                           |
+| :new:Cppcheck                                         | `1.90-4`                                              |
 | :new:vera++                                           | `1.2.1-2+b5`                                          |
-| ShellCheck                                            | `latest`                                              |
+| :new:ShellCheck                                       | `0.5.0-3`                                             |
 | :new:i-Code CNES                                      | `4.1.0`                                               |
-| Frama-C                                               | `19.0`                                                |
+| :new:Frama-C                                          | `19.1`                                                |
 | expat                                                 | `2.0.1`                                               |
 | rats                                                  | `2.4`                                                 |
 | python                                                | `2.7.13`                                              |
@@ -53,9 +53,9 @@ Once the container is active:
 | python-six                                            | `1.9.0`                                               |
 | wrapt                                                 | `1.10.5`                                              |
 | astroid                                               | `1.4.9`                                               |
-| pylint                                                | `1.5`                                                 |
+| Pylint                                                | `1.5`                                                 |
 | cnes-pylint-extension                                 | `1.0`                                                 |
-| python-setuptools                                     | `latest`                                              |
+| python-setuptools                                     | `40.8.0-1`                                            |
  
 | SonarQube plugin                                      | Version                                               | 
 |-------------------------------------------------------|-------------------------------------------------------|
