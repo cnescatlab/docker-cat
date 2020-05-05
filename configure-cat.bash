@@ -266,13 +266,10 @@ custom_server_config(){
   sed -i 's/#sonar\.telemetry\.enable=true/sonar\.telemetry\.enable=false/' /opt/sonarqube/conf/sonar.properties
 }
 
-#run_sonarqube&
 create_quality_profiles&&
 create_quality_gates
 custom_server_config
 
-
-#stop_sonarqube
-
+echo "[INFO] Docker CAT is ready to go and find bugs!"
 
 exit 0
