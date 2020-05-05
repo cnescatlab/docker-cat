@@ -30,6 +30,18 @@ Once the container is active:
 - use the [Sonar CNES Scan plugin](https://github.com/lequal/sonar-cnes-scan-plugin) documentation to run an analysis via your Web browser
 - use SonarSource's scanners as described in the [official documentation](https://docs.sonarqube.org/display/SONAR/Analyzing%20Source%20Code)
 
+### Image compatibility matrix
+
+> This table list operating system on which Docker CAT has been tested (marked as :heavy_check_mark:) or not (marked as:question:) or simply not supported (marked as :x:).
+
+| Docker CAT version       | Linux (Centos & Debian) | Mac OS                   | Windows                 |
+|:------------------------:|:-----------------------:|:------------------------:|:-----------------------:|
+| `< 2.0.0`                | :heavy_check_mark:      | :question:               | :heavy_check_mark:      |
+| `2.0.1`                  | :heavy_check_mark:      | :question:               | :question:              |
+| `2.0.2`                  | :heavy_check_mark:      | :question:               | :question:              |
+| `2.1.0`                  | :heavy_check_mark:      | :question:               | :question:              |
+                             
+
 ### Configuration of the latest image
 
 > New and updated software are marked with emoji :new:.
