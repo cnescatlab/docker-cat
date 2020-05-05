@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/lequal/docker-cat.svg?branch=master)](https://travis-ci.org/lequal/docker-cat)
 [![Docker Image Version (tag latest semver)](https://img.shields.io/docker/v/lequal/docker-cat/latest)](https://hub.docker.com/r/lequal/docker-cat)
 
-Docker Code Analysis Tool (CAT) is a SonarQube Docker image containing configuration to realize code analysis.
+Docker Code Analysis Tool (CAT) is a SonarQube Docker image containing custom configuration and plugins to realize code analysis.
 
 SonarQube is an open platform to manage code quality.
 
@@ -15,20 +15,38 @@ You can get SonarQube on GitHub: [SonarSource/sonarqube](https://github.com/Sona
 Step by step: 
 
 1. Find group IDs to allow SonarQube analysis to (for Sonar CNES Scan plugin):
-* Using `getent group <group_name> | cut -d : -f3` to reach a group id from a known group name;
-* Using `cat /etc/group`to list all group IDs.
+    - Using `getent group <group_name> | cut -d : -f3` to reach a group id from a known group name;
+    - Using `cat /etc/group`to list all group IDs.
+    
+2. Find the version you want to use on DockerHub: https://hub.docker.com/r/lequal/docker-cat or simply use the `latest` image which correspond to the master branch of this project.
 
-2. Run the Docker CAT container:
+3. Run the Docker CAT container:
 ```
 docker pull lequal/docker-cat
-docker run --rm --name=cat -v <host_project_folder>:/media/sf_Shared:rw -p 9000:9000 -p 9001:9001 -e ALLOWED_GROUPS="<GID_1>;<GID_2>;<GID_...>" lequal/docker-cat
+docker run --rm --name=cat -v <your_folder>:/media/sf_Shared:rw -p 9000:9000 -e ALLOWED_GROUPS="<GID_1>;<GID_2>;<GID_...>" lequal/docker-cat:<version>
 ```
+
+> :exclamation: This example use `--rm` option so when the container will stop and will be destroyed with all its data.
+
+### Advanced configuration
+
+#### Default account
+You can log in Docker CAT's SonarQube as administrator with the default SonarQube credentials. As it is not secured (everybody knows it!), be sure to run Docker CAT in a secured environment or change the default credentials.
+- **username**: `admin`
+- **password**: `admin`
+
+#### Persist your Docker CAT instance
+By default, Docker CAT use the embedded H2 database which is integrated to SonarQube: it should not be use for long term use. That's why if you expect to keep your data for a while, you should consider setting up a stronger database as described in the [official documentation](https://docs.sonarqube.org/setup/install-server/).
 
 ### Analyzing source code
 
-Once the container is active:
-- use the [Sonar CNES Scan plugin](https://github.com/lequal/sonar-cnes-scan-plugin) documentation to run an analysis via your Web browser
-- use SonarSource's scanners as described in the [official documentation](https://docs.sonarqube.org/display/SONAR/Analyzing%20Source%20Code)
+#### Using web user interface
+Once the container is active, you can use the web interface provided by [Sonar CNES Scan plugin](https://github.com/lequal/sonar-cnes-scan-plugin) to run an analysis directly via your Web browser.
+
+#### Using classical way
+You can run an analysis with the classic method by using one of scanners provided by SonarSource. You simply have to give the `URL` or `IP` where Docker CAT has been launched and the matching port you give in your docker command for port `9000`. For more information use SonarSource's scanners as described in the [official documentation](https://docs.sonarqube.org/display/SONAR/Analyzing%20Source%20Code).
+
+> :exclamation: with these method autolaunched tools like `cppcheck`, `vera++`, `rats` and `frama-c` may not work, if they are not correctly set.
 
 ### Image compatibility matrix
 
