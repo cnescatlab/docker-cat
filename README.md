@@ -63,6 +63,8 @@ Once the container is active, you can use the web interface provided by [Sonar C
 ##### 3. Go to CNES Analysis page
 > When SonarQube has loaded, click on `More` in the black upper toolbar and select `CNES Analysis`. A new page should appear with the analysis form.
 
+![CNES Analysis menu](/img/cnes-menu.png)
+
 ##### 4. Fill in the form
 > Fill in the form by paying attention to:
 > - fields with a red asterisk: they are mandatory
@@ -70,6 +72,8 @@ Once the container is active, you can use the web interface provided by [Sonar C
 > - `Workspace` fields: by default let a point `.` in this field. If you want to limit the files/path considered as source files (by opposition to test files), type a coma-separated list of relative path starting from the `Workspace` directory.
 > - `Run C/C++ tools`: turn on ths button if you want to run embedded tools (cppcheck, vera++ and rats). If you analyze C or C++ code and you already have cppcheck, vera++ or rats results in your working directory you can use the `sonar-project.properties` field to designate the location of these results and turn off the analysis. Refer to [sonar-cxx documentation](https://github.com/SonarOpenCommunity/sonar-cxx) for further information.
 > - `sonar-project.properties` field: use this field to add more advanced configuration. Refer to [official documentation](https://docs.sonarqube.org/latest/analysis/analysis-parameters/).
+
+![CNES Analysis form](/img/cnes-form.png)
 
 ##### 5. Run the analysis
 > Just click on the `Analyze` button on the bottom of the page to run the analysis. When successfully run, an archive download should start in your web browser. It contains all the results of your analysis. If you already have analysis in your CAT instance, you can regenerate the report without rerunning analysis by using form in `More` > `CNES Report`.
