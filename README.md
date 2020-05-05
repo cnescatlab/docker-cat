@@ -10,6 +10,15 @@ This project is free software; you can redistribute it and/or modify it under th
 
 You can get SonarQube on GitHub: [SonarSource/sonarqube](https://github.com/SonarSource/sonarqube).
 
+### Table of contents
+- [Quick install](#Quick-install)
+- [Advanced configuration](#Advanced-configuration)
+- [Analyzing source code](#Analyzing-source-code)
+- [Image compatibility matrix](#Image-compatibility-matrix)
+- [Configuration of the latest image](#Configuration-of-the-latest-image)
+- [How to contribute](#How-to-contribute)
+- [Feedback and Support](#Feedback-and-Support)
+- [License](#License)
 
 ### Quick install
 1. Find group IDs to allow SonarQube analysis to (for Sonar CNES Scan plugin):
@@ -35,7 +44,7 @@ You can log in Docker CAT's SonarQube as administrator with the default SonarQub
 
 > As administrator you are able to change any configuration you want as default values, activated rules or quality gate conditions...
 
-#### Persist your Docker CAT instance
+#### Persisting your Docker CAT instance
 By default, Docker CAT use the embedded H2 database which is integrated to SonarQube: it should not be use for long term use. That's why if you expect to keep your data for a while, you should consider setting up a stronger database as described in the [official documentation](https://docs.sonarqube.org/setup/install-server/).
 
 ### Analyzing source code
