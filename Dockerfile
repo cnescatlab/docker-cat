@@ -57,7 +57,6 @@ RUN apt update -y \
     && apt install -y \
        unzip \
        python-setuptools=40.8.0-1 \
-       cppcheck \
        vera\+\+=1.2.1-2\+b5 \
        shellcheck=0.5.0-3 \
        gcc=4:8.3.0-1 \
