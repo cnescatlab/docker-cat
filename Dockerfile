@@ -1,4 +1,4 @@
-FROM sonarqube:7.9.3-community
+FROM sonarqube:7.9.3-community AS base
 ENV SONAR_RUNNER_HOME=/opt/sonar-scanner
 ENV PATH $PATH:/opt/sonar-scanner
 USER root
@@ -53,16 +53,20 @@ ADD https://github.com/tartley/colorama/archive/v0.3.3.tar.gz \
 ## ====================== INSTALL DEPENDENCIES ===============================
 
 ENV HOME /home/sonarqube
-RUN apt update -y \
+RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >> /etc/apt/sources.list \
+    && apt update -y \
     && apt install -y \
        unzip \
-       python-setuptools=40.8.0-1 \
-       cppcheck \
+       python-setuptools=44.0.0-2 \
        vera\+\+=1.2.1-2\+b5 \
-       shellcheck=0.5.0-3 \
-       gcc=4:8.3.0-1 \
+       shellcheck=0.7.1-1 \
+       gcc=4:9.2.1-3.1 \
        make=4.2.1-1.2 \
        jq \
+       cppcheck=1.90-4 \
+       frama-c-base=20191204+calcium-0.1 \
+    && apt autoremove -y \
+    && rm -rf /var/lib/apt/lists/* \
     && mkdir /home/sonarqube \
     ## Install i-Code CNES
     && unzip /tmp/icode-4.1.0.zip -d /tmp \
@@ -79,17 +83,17 @@ RUN apt update -y \
     && find /tmp/python -maxdepth 1 -name \*.tar.gz -exec tar -xvzf {} -C /opt/python \; \
     && ls /opt/python \
     && cd /opt/python/colorama-0.3.3/ \
-    && python setup.py install \
+    && python2 setup.py install \
     && cd /opt/python/python-lazy-object-proxy-1.2.1/ \
-    && python setup.py install \
+    && python2 setup.py install \
     && cd /opt/python/six-1.9.0/ \
-    && python setup.py install \
+    && python2 setup.py install \
     && cd /opt/python/wrapt-1.10.5/ \
-    && python setup.py install \
+    && python2 setup.py install \
     && cd /opt/python/astroid-astroid-1.4.9/ \
-    && python setup.py install \
+    && python2 setup.py install \
     && cd /opt/python/pylint-pylint-1.5/ \
-    && python setup.py install \
+    && python2 setup.py install \
     && rm -rf /tmp/python \
     ## C and C++ tools installation
     && cd /tmp \
@@ -111,35 +115,6 @@ RUN apt update -y \
     && chown sonarqube:sonarqube -R /opt \
     && chown sonarqube:sonarqube -R /home
 
-    ## Install Cppcheck
-RUN echo 'deb http://ftp.de.debian.org/debian bullseye main' >> /etc/apt/sources.list \
-    && apt update -y \
-    && apt install -y cppcheck=1.90-4
-
-    
-    ## Install tools & Frama-C
-RUN apt-get update -y \
-    && apt-get install -y \
-       git \
-       ocaml \
-       ocaml-native-compilers \
-       liblablgtk2-ocaml-dev \
-       liblablgtksourceview2-ocaml-dev \
-       menhir \
-       why3 \
-       libyojson-ocaml-dev=1.7.0-1\+b3 \
-       libocamlgraph-ocaml-dev \
-       libzarith-ocaml-dev \
-       build-essential \
-    && rm -rf /var/lib/apt/lists/* \
-    && git clone --single-branch https://github.com/Frama-C/Frama-C-snapshot.git /tmp/framac \
-    && cd /tmp/framac \
-    && git checkout -b tags/19.1 \
-    &&  ./configure \
-    && make \
-    && make install \
-    && rm -rf /tmp/framac
-
 
 ## ====================== CONFIGURATION ===============================
 
@@ -154,7 +129,7 @@ RUN ls -lrta /opt/ \
     && mkdir -p /opt/sonar/extensions/ \
     && ln -s /opt/sonarqube/extensions/plugins /opt/sonar/extensions/plugins \
     && mkdir -p /opt/sonarqube/frama-c/ \
-    && ln -s /bin/frama-c /opt/sonarqube/frama-c/frama-c
+    && ln -s /usr/bin/frama-c /opt/sonarqube/frama-c/frama-c
 
 
 ## ====================== STARTING ===============================

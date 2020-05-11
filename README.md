@@ -103,13 +103,13 @@ You can run an analysis with the classic method by using one of scanners provide
 |-------------------------------------------------------|-------------------------------------------------------|
 | :new:SonarQube                                        | `7.9.3`                                               |
 | :new:Sonar Scanner                                    | `4.2.0.1873`                                          |
-| gcc                                                   | `4:8.3.0-1`                                           |
+| gcc                                                   | `4:9.2.1-3.1`                                         |
 | make                                                  | `4.2.1-1.2`                                           |
-| :new:Cppcheck                                         | `1.90-4`                                              |
+| :new:Cppcheck                                         | `1.90`                                                |
 | :new:vera++                                           | `1.2.1-2+b5`                                          |
-| :new:ShellCheck                                       | `0.5.0-3`                                             |
+| :new:ShellCheck                                       | `0.7.1-1`                                             |
 | :new:i-Code CNES                                      | `4.1.0`                                               |
-| :new:Frama-C                                          | `19.1`                                                |
+| :new:Frama-C                                          | `20.0`                                                |
 | expat                                                 | `2.0.1`                                               |
 | rats                                                  | `2.4`                                                 |
 | python                                                | `2.7.13`                                              |
@@ -120,7 +120,7 @@ You can run an analysis with the classic method by using one of scanners provide
 | astroid                                               | `1.4.9`                                               |
 | Pylint                                                | `1.5`                                                 |
 | cnes-pylint-extension                                 | `1.0`                                                 |
-| python-setuptools                                     | `40.8.0-1`                                            |
+| python-setuptools                                     | `44.0.0-2`                                            |
  
 | SonarQube plugin                                      | Version                                               | 
 |-------------------------------------------------------|-------------------------------------------------------|
