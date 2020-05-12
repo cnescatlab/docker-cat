@@ -256,27 +256,9 @@ stop_sonarqube(){
   pkill -u sonarqube
 }
 
-########################################################
-# function custom_server_config
-#
-# Description :
-# Customize SonarQube server configuration
-# 
-################################################################################
-custom_server_config(){
-  # Disable telemetry
-  sed -i 's/#sonar\.telemetry\.enable=true/sonar\.telemetry\.enable=false/' /opt/sonarqube/conf/sonar.properties
-  # Set default report path for Cppcheck
-  echo 'sonar.cxx.cppcheck.reportPath=cppcheck-report.xml' >> /opt/sonarqube/conf/sonar.properties
-  # Set default report path for Vera++
-  echo 'sonar.cxx.vera.reportPath=vera-report.xml' >> /opt/sonarqube/conf/sonar.properties
-  # Set default report path for RATS
-  echo 'sonar.cxx.rats.reportPath=rats-report.xml' >> /opt/sonarqube/conf/sonar.properties
-}
 
 create_quality_profiles&&
 create_quality_gates
-custom_server_config
 
 echo "[INFO] Docker CAT is ready to go and find bugs!"
 

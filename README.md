@@ -53,7 +53,7 @@ By default, Docker CAT use the embedded H2 database which is integrated to Sonar
 Once the container is active, you can use the web interface provided by [Sonar CNES Scan plugin](https://github.com/lequal/sonar-cnes-scan-plugin) to run an analysis directly via your Web browser.
 
 ##### 1. If not already done, move your code in `<your_folder>`
-> To be reachable by all included tools, your source code must be placed in the previously mounted Docker volume.
+> To be reachable by all included tools, your source code must be placed in the previously mounted Docker volume **and** the group whose GUID has been given to `-e ALLOWED_GROUPS=...` parameter should have permissions on the whole directory.
 
 :exclamation: If you encounter some difficulties with permissions on files in mounted volumes (due to your system configuration) you can directly copy your code into the container. Execute the `docker run` command by removing any `-v` or `--volume` options and copy your directory in the directory `/media/sf_Shared` of the container by using this command `docker cp <my_directory> cat:/media/sf_Shared`.
 

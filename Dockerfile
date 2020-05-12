@@ -130,6 +130,15 @@ RUN ls -lrta /opt/ \
     && ln -s /opt/sonarqube/extensions/plugins /opt/sonar/extensions/plugins \
     && mkdir -p /opt/sonarqube/frama-c/ \
     && ln -s /usr/bin/frama-c /opt/sonarqube/frama-c/frama-c \
+###### Disable telemetry
+    && sed -i 's/#sonar\.telemetry\.enable=true/sonar\.telemetry\.enable=false/' /opt/sonarqube/conf/sonar.properties \
+###### Set default report path for Cppcheck
+    && echo 'sonar.cxx.cppcheck.reportPath=cppcheck-report.xml' >> /opt/sonar-scanner/conf/sonar-scanner.properties \
+###### Set default report path for Vera++
+    && echo 'sonar.cxx.vera.reportPath=vera-report.xml' >> /opt/sonar-scanner/conf/sonar-scanner.properties \
+###### Set default report path for RATS
+    && echo 'sonar.cxx.rats.reportPath=rats-report.xml' >> /opt/sonar-scanner/conf/sonar-scanner.properties \
+###### Solve following error: https://github.com/lequal/docker-cat/issues/30
     && chmod -R 777 /opt/sonarqube/temp
 
 
