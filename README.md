@@ -35,6 +35,8 @@ docker run --rm --name=cat -v <your_folder>:/media/sf_Shared:rw -p 9000:9000 -e 
 
 :exclamation: This example use `--rm` option so when the container will stop and will be destroyed with all its data.
 
+:exclamation: Avoid using `0` as GUID (e.g.: `-e ALLOWED_GROUPS=0`): it can cause conflicts with container's root user.
+
 ### Advanced configuration
 
 #### Default account
