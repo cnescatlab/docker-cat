@@ -129,7 +129,8 @@ RUN ls -lrta /opt/ \
     && mkdir -p /opt/sonar/extensions/ \
     && ln -s /opt/sonarqube/extensions/plugins /opt/sonar/extensions/plugins \
     && mkdir -p /opt/sonarqube/frama-c/ \
-    && ln -s /usr/bin/frama-c /opt/sonarqube/frama-c/frama-c
+    && ln -s /usr/bin/frama-c /opt/sonarqube/frama-c/frama-c \
+    && chmod -R 777 /opt/sonarqube/temp
 
 
 ## ====================== STARTING ===============================
