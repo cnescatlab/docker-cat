@@ -11,7 +11,7 @@ The following is a set of guidelines for contributing to Frama-C plugin for Sona
   * [Git Commit Messages](#git-commit-messages)
 
 ## Code of Conduct
-This project and everyone participating in it is governed by the [Lequal Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [L-lequal@cnes.fr](mailto:L-lequal@cnes.fr).
+This project and everyone participating in it is governed by the [Lequal Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to administrators via GitHub issues.
 
 ## How Can I Contribute?
 

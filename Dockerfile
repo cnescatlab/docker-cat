@@ -1,3 +1,35 @@
+FROM sonarqube:7.9.3-community AS framac
+
+## ====================== INSTALL FRAMA-C =============================
+
+USER root
+WORKDIR /tmp/framac
+
+RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >> /etc/apt/sources.list \
+    && apt-get update -y \
+    && apt-get install -y \
+       git \
+       ocaml \
+       ocaml-native-compilers \
+       liblablgtk2-ocaml-dev \
+       liblablgtksourceview2-ocaml-dev \
+       libocamlgraph-ocaml-dev \
+       menhir \
+       why3 \
+       libyojson-ocaml-dev \
+       libocamlgraph-ocaml-dev \
+       libzarith-ocaml-dev \
+       build-essential \
+    && rm -rf /var/lib/apt/lists/* \
+    && git clone --single-branch https://github.com/Frama-C/Frama-C-snapshot.git . \
+    && git checkout -b tags/20.0 \
+    && ./configure \
+    && make \
+    && make install
+
+
+## ====================== BUILD FINAL IMAGE ===================================
+
 FROM sonarqube:7.9.3-community
 ENV SONAR_RUNNER_HOME=/opt/sonar-scanner
 ENV PATH $PATH:/opt/sonar-scanner
@@ -52,19 +84,26 @@ ADD https://github.com/tartley/colorama/archive/v0.3.3.tar.gz \
 
 ## ====================== INSTALL DEPENDENCIES ===============================
 
+## Install Frama-C from previous stage
+COPY --from=framac /usr/local/ /usr/local/
+ENV PATH /usr/local/bin:${PATH}
+
 ENV HOME /home/sonarqube
 RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >> /etc/apt/sources.list \
     && apt update -y \
     && apt install -y \
        unzip \
-       python-setuptools=44.0.0-2 \
-       vera\+\+=1.2.1-2\+b5 \
-       shellcheck=0.7.1-1 \
-       gcc=4:9.2.1-3.1 \
-       make=4.2.1-1.2 \
+       python-setuptools=44.0.0-* \
+       vera\+\+=1.2.1-* \
+       shellcheck=0.7.1-* \
+       gcc=4:9.2.1-* \
+       make=4.2.1-* \
+       cppcheck=1.90-* \
+       libfindlib-ocaml \
+       libocamlgraph-ocaml-dev \
+       libzarith-ocaml \
+       libyojson-ocaml \
        jq \
-       cppcheck=1.90-4 \
-       frama-c-base=20191204+calcium-0.1 \
     && apt autoremove -y \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir /home/sonarqube \
@@ -113,7 +152,9 @@ RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >
     && cd .. \
     && rm -rf ./rats-2.4.tgz ./rats-2.4 \
     && chown sonarqube:sonarqube -R /opt \
-    && chown sonarqube:sonarqube -R /home
+    && chown sonarqube:sonarqube -R /home \
+    && apt remove -y make \
+    && apt autoremove -y
 
 
 ## ====================== CONFIGURATION ===============================
@@ -129,7 +170,7 @@ RUN ls -lrta /opt/ \
     && mkdir -p /opt/sonar/extensions/ \
     && ln -s /opt/sonarqube/extensions/plugins /opt/sonar/extensions/plugins \
     && mkdir -p /opt/sonarqube/frama-c/ \
-    && ln -s /usr/bin/frama-c /opt/sonarqube/frama-c/frama-c \
+    && ln -s /usr/local/bin/frama-c /opt/sonarqube/frama-c/frama-c \
 ###### Disable telemetry
     && sed -i 's/#sonar\.telemetry\.enable=true/sonar\.telemetry\.enable=false/' /opt/sonarqube/conf/sonar.properties \
 ###### Set default report path for Cppcheck
