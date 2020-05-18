@@ -1,4 +1,4 @@
-FROM sonarqube:7.9.3-community AS base
+FROM sonarqube:7.9.3-community
 ENV SONAR_RUNNER_HOME=/opt/sonar-scanner
 ENV PATH $PATH:/opt/sonar-scanner
 USER root
