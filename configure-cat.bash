@@ -100,15 +100,17 @@ create_quality_gates(){
   fi
 
   # add quality gate conditions
-  add_condition "Blocker violations" blocker_violations GT ${GATEID} 0
-  add_condition "Comment (%)" comment_lines_density LT ${GATEID} 20
-  add_condition "Critical Issues" critical_violations GT ${GATEID} 0
-  add_condition "Duplicated Lines (%)" duplicated_lines_density GT ${GATEID} 10
-  add_condition "Duplicated Lines on New Code (%)" new_duplicated_lines GT ${GATEID} 0
-  add_condition "Major Issues" major_violations GT ${GATEID} 0
-  add_condition "New Issues" new_violations GT ${GATEID} 0
-  add_condition "Technical Debt ratio" new_sqale_debt_ratio GT ${GATEID} 5
-  add_condition "Technical Debt ratio" new_coverage LT ${GATEID} 90
+  add_condition "Blocker violations"                 blocker_violations        GT ${GATEID} 0
+  add_condition "Comment (%)"                        comment_lines_density     LT ${GATEID} 20
+  add_condition "Critical Issues"                    critical_violations       GT ${GATEID} 0
+  add_condition "Duplicated Lines (%)"               duplicated_lines_density  GT ${GATEID} 10
+  add_condition "Duplicated Lines on New Code (%)"   new_duplicated_lines      GT ${GATEID} 0
+  add_condition "Major Issues"                       major_violations          GT ${GATEID} 0
+  add_condition "New Issues"                         new_violations            GT ${GATEID} 0
+  add_condition "Technical Debt ratio"               new_sqale_debt_ratio      GT ${GATEID} 0
+  add_condition "Technical Debt ratio"               sqale_debt_ratio          GT ${GATEID} 5
+  add_condition "Test errors"                        test_errors               GT ${GATEID} 0
+  add_condition "Test failures"                      test_failures             GT ${GATEID} 0
 
 }
 
@@ -254,25 +256,10 @@ stop_sonarqube(){
   pkill -u sonarqube
 }
 
-########################################################
-# function custom_server_config
-#
-# Description :
-# Customize SonarQube server configuration
-# 
-################################################################################
-custom_server_config(){
-  # Disable telemetry
-  sed -i 's/#sonar\.telemetry\.enable=true/sonar\.telemetry\.enable=false/' /opt/sonarqube/conf/sonar.properties
-}
 
-#run_sonarqube&
 create_quality_profiles&&
 create_quality_gates
-custom_server_config
 
-
-#stop_sonarqube
-
+echo "[INFO] Docker CAT is ready to go and find bugs!"
 
 exit 0
