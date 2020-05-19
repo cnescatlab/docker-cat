@@ -24,7 +24,9 @@ You can get SonarQube on GitHub: [SonarSource/sonarqube](https://github.com/Sona
 1. Find group IDs to allow SonarQube analysis to (for Sonar CNES Scan plugin):
     - Using `getent group <group_name> | cut -d : -f3` to reach a group id from a known group name;
     - Using `cat /etc/group`to list all group IDs.
-    
+
+:exclamation: This group should have `read` and `execution` permissions on all the project to analyze (to browse and analyze all files) and  `write` permissions on the root of the workspace (to execute C/C++ tools and sonar-scanner).
+
 2. Find the version you want to use on DockerHub: https://hub.docker.com/r/lequal/docker-cat or simply use the `latest` image which correspond to the master branch of this project.
 
 3. Run the Docker CAT container:
