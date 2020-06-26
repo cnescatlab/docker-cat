@@ -118,8 +118,7 @@ RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >
     && mkdir /opt/python \
     && tar -xvzf /tmp/python/v5.0.0.tar.gz -C /opt/python \
     && rm -rf /tmp/python \
-    && pip install \
-       setuptools==44.0.0 \
+    && pip install --no-cache-dir \
        setuptools-scm==3.5.0 \
        pytest-runner==5.2 \
        wrapt==1.12.1 \
@@ -130,7 +129,6 @@ RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >
        typed-ast==1.4.1 \
        astroid==2.4.0 \
        pylint==2.5.0 \
-    && pip cache purge \
     ## C and C++ tools installation
     && cd /tmp \
     && tar -xvzf expat-2.0.1.tar.gz \
