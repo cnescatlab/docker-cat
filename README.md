@@ -23,7 +23,7 @@ You can get SonarQube on GitHub: [SonarSource/sonarqube](https://github.com/Sona
 ### Quick install
 1. Find group IDs to allow SonarQube analysis to (for Sonar CNES Scan plugin):
     - Using `getent group <group_name> | cut -d : -f3` to reach a group id from a known group name;
-    - Using `cat /etc/group`to list all group IDs.
+    - Using `cat /etc/group` to list all group IDs.
 
 :exclamation: This group should have `read` and `execution` permissions on all the project to analyze (to browse and analyze all files) and  `write` permissions on the root of the workspace (to execute C/C++ tools and sonar-scanner).
 
@@ -116,15 +116,20 @@ You can run an analysis with the classic method by using one of scanners provide
 | :new:Frama-C                                          | `20.0`                                                |
 | expat                                                 | `2.0.1`                                               |
 | rats                                                  | `2.4`                                                 |
-| python                                                | `2.7.13`                                              |
-| colorama                                              | `0.3.3`                                               |
-| python-lazy-object-proxy                              | `1.2.1`                                               |
-| python-six                                            | `1.9.0`                                               |
-| wrapt                                                 | `1.10.5`                                              |
-| astroid                                               | `1.4.9`                                               |
-| Pylint                                                | `1.5`                                                 |
-| cnes-pylint-extension                                 | `1.0`                                                 |
-| python-setuptools                                     | `44.0.0`                                              |
+| python3                                               | `3.8.3`                                               |
+| pip                                                   | `20.1.1`                                              |
+| setuptools                                            | `46.1.3`                                              |
+| setuptools-scm                                        | `3.5.0`                                               |
+| pytest-runner                                         | `5.2`                                                 |
+| wrapt                                                 | `1.12.1`                                              |
+| six                                                   | `1.14.0`                                              |
+| lazy-object-proxy                                     | `1.4.3`                                               |
+| mccabe                                                | `0.6.1`                                               |
+| isort                                                 | `4.3.21`                                              |
+| typed-ast                                             | `1.4.1`                                               |
+| astroid                                               | `2.4.0`                                               |
+| pylint                                                | `2.5.0`                                               |
+| cnes-pylint-extension                                 | `5.0.0`                                               |
  
 | SonarQube plugin                                      | Version                                               | 
 |-------------------------------------------------------|-------------------------------------------------------|

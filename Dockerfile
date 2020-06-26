@@ -62,6 +62,7 @@ ADD https://github.com/checkstyle/sonar-checkstyle/releases/download/4.21/checks
 ADD https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/rough-auditing-tool-for-security/rats-2.4.tgz \
     http://downloads.sourceforge.net/project/expat/expat/2.0.1/expat-2.0.1.tar.gz \
     https://github.com/lequal/i-CodeCNES/releases/download/v4.1.0/icode-4.1.0.zip \
+    https://netix.dl.sourceforge.net/project/cppcheck/cppcheck/1.90/cppcheck-1.90.tar.gz \
     /tmp/
 
 
@@ -70,15 +71,9 @@ ADD https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanne
     /tmp/scanners/
 
 
-# Python, Pylint and CNES pylint setup
-ENV PYTHONPATH $PYTHONPATH:/opt/python/cnes-pylint-extension-1.0/checkers/
-ADD https://github.com/tartley/colorama/archive/v0.3.3.tar.gz \
-    https://github.com/ionelmc/python-lazy-object-proxy/archive/v1.2.1.tar.gz \
-    https://files.pythonhosted.org/packages/16/64/1dc5e5976b17466fd7d712e59cbe9fb1e18bec153109e5ba3ed6c9102f1a/six-1.9.0.tar.gz \
-    https://github.com/GrahamDumpleton/wrapt/archive/1.10.5.tar.gz \
-    https://github.com/PyCQA/astroid/archive/astroid-1.4.9.tar.gz \
-    https://github.com/PyCQA/pylint/archive/pylint-1.5.tar.gz \
-    https://github.com/lequal/cnes-pylint-extension/archive/V1.0.tar.gz \
+# CNES Pylint extension
+ENV PYTHONPATH $PYTHONPATH:/opt/python/cnes-pylint-extension-5.0.0/checkers/
+ADD https://github.com/lequal/cnes-pylint-extension/archive/v5.0.0.tar.gz \
     /tmp/python/
 
 
@@ -90,21 +85,23 @@ ENV PATH /usr/local/bin:${PATH}
 
 ENV HOME /home/sonarqube
 RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >> /etc/apt/sources.list \
-    && apt update -y \
-    && apt install -y \
+    && apt-get update -y \
+    && apt-get install -y \
        unzip \
-       python-setuptools=44.0.0-* \
+       python3 \
+       python3-pip \
        vera\+\+=1.2.1-* \
        shellcheck=0.7.1-* \
        gcc=4:9.2.1-* \
        make=4.2.1-* \
-       cppcheck=1.90-* \
+       g\+\+ \
+       libpcre3 \
+       libpcre3-dev \
        libfindlib-ocaml \
        libocamlgraph-ocaml-dev \
        libzarith-ocaml \
        libyojson-ocaml \
        jq \
-    && apt autoremove -y \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir /home/sonarqube \
     ## Install i-Code CNES
@@ -119,21 +116,21 @@ RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >
     && rm -rf /tmp/scanners \
     ## Python, Pylint & CNES Pylint setup
     && mkdir /opt/python \
-    && find /tmp/python -maxdepth 1 -name \*.tar.gz -exec tar -xvzf {} -C /opt/python \; \
-    && ls /opt/python \
-    && cd /opt/python/colorama-0.3.3/ \
-    && python2 setup.py install \
-    && cd /opt/python/python-lazy-object-proxy-1.2.1/ \
-    && python2 setup.py install \
-    && cd /opt/python/six-1.9.0/ \
-    && python2 setup.py install \
-    && cd /opt/python/wrapt-1.10.5/ \
-    && python2 setup.py install \
-    && cd /opt/python/astroid-astroid-1.4.9/ \
-    && python2 setup.py install \
-    && cd /opt/python/pylint-pylint-1.5/ \
-    && python2 setup.py install \
+    && tar -xvzf /tmp/python/v5.0.0.tar.gz -C /opt/python \
     && rm -rf /tmp/python \
+    && pip install \
+       setuptools==44.0.0 \
+       setuptools-scm==3.5.0 \
+       pytest-runner==5.2 \
+       wrapt==1.12.1 \
+       six==1.14.0 \
+       lazy-object-proxy==1.4.3 \
+       mccabe==0.6.1 \
+       isort==4.3.21 \
+       typed-ast==1.4.1 \
+       astroid==2.4.0 \
+       pylint==2.5.0 \
+    && pip cache purge \
     ## C and C++ tools installation
     && cd /tmp \
     && tar -xvzf expat-2.0.1.tar.gz \
@@ -151,10 +148,17 @@ RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >
     && ./rats \
     && cd .. \
     && rm -rf ./rats-2.4.tgz ./rats-2.4 \
+    && tar -zxvf cppcheck-1.90.tar.gz \
+    && cd cppcheck-1.90/ \
+    && make install MATCHCOMPILER="yes" FILESDIR="/usr/share/cppcheck" HAVE_RULES="yes" CXXFLAGS="-O2 -DNDEBUG -Wall -Wno-sign-compare -Wno-unused-function -Wno-deprecated-declarations" \
+    && cd .. \
+    && rm -rf ./cppcheck-1.90.tar.gz ./cppcheck-1.90/ \
     && chown sonarqube:sonarqube -R /opt \
     && chown sonarqube:sonarqube -R /home \
-    && apt remove -y make \
-    && apt autoremove -y
+    && apt-get autoremove -y \
+       make \
+       g\+\+ \
+       libpcre3-dev
 
 
 ## ====================== CONFIGURATION ===============================
