@@ -105,15 +105,15 @@ You can run an analysis with the classic method by using one of scanners provide
 
 | Tool                                                  | Version                                               | 
 |-------------------------------------------------------|-------------------------------------------------------|
-| :new:SonarQube                                        | `7.9.3`                                               |
-| :new:Sonar Scanner                                    | `4.2.0.1873`                                          |
+| SonarQube                                             | `7.9.3`                                               |
+| Sonar Scanner                                         | `4.2.0.1873`                                          |
 | gcc                                                   | `4:9.2.1`                                             |
 | make                                                  | `4.2.1`                                               |
-| :new:Cppcheck                                         | `1.90`                                                |
-| :new:vera++                                           | `1.2.1`                                               |
-| :new:ShellCheck                                       | `0.7.1`                                               |
-| :new:i-Code CNES                                      | `4.1.0`                                               |
-| :new:Frama-C                                          | `20.0`                                                |
+| Cppcheck                                              | `1.90`                                                |
+| vera++                                                | `1.2.1`                                               |
+| ShellCheck                                            | `0.7.1`                                               |
+| i-Code CNES                                           | `4.1.0`                                               |
+| Frama-C                                               | `20.0`                                                |
 | expat                                                 | `2.0.1`                                               |
 | rats                                                  | `2.4`                                                 |
 | python3                                               | `3.8.3`                                               |
@@ -128,19 +128,19 @@ You can run an analysis with the classic method by using one of scanners provide
 | isort                                                 | `4.3.21`                                              |
 | typed-ast                                             | `1.4.1`                                               |
 | astroid                                               | `2.4.0`                                               |
-| pylint                                                | `2.5.0`                                               |
-| cnes-pylint-extension                                 | `5.0.0`                                               |
+| :new: pylint                                          | `2.5.0`                                               |
+| :new: cnes-pylint-extension                           | `5.0.0`                                               |
  
 | SonarQube plugin                                      | Version                                               | 
 |-------------------------------------------------------|-------------------------------------------------------|
 | Checkstyle sonar plugin                               | `4.21`                                                |
 | Sonar CNES CXX plugin                                 | `1.3.1.1807`                                          |
 | Sonar CNES Export plugin                              | `1.2.0`                                               |
-| :new:Sonar CNES Python plugin                         | `1.3.0`                                               |
-| :new:Sonar CNES i-Code plugin                         | `2.0.2`                                               |
+| Sonar CNES Python plugin                              | `1.3.0`                                               |
+| Sonar CNES i-Code plugin                              | `2.0.2`                                               |
 | Sonar CNES Scan plugin                                | `1.5`                                                 |
-| :new:Sonar CNES frama-c plugin                        | `2.1.1`                                               |
-| :new:Sonar CNES Report                                | `3.2.2`                                               |
+| Sonar CNES frama-c plugin                             | `2.1.1`                                               |
+| Sonar CNES Report                                     | `3.2.2`                                               |
 | Sonar Corbetura plugin                                | `1.9.1`                                               |
 | Sonar C# plugin                                       | `7.15`                                                |
 | Sonar CXX plugin                                      | `1.1.0`                                               |
