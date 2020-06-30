@@ -116,18 +116,18 @@ You can run an analysis with the classic method by using one of scanners provide
 | Frama-C                                               | `20.0`                                                |
 | expat                                                 | `2.0.1`                                               |
 | rats                                                  | `2.4`                                                 |
-| python3                                               | `3.8.3`                                               |
-| pip                                                   | `20.1.1`                                              |
-| setuptools                                            | `46.1.3`                                              |
-| setuptools-scm                                        | `3.5.0`                                               |
-| pytest-runner                                         | `5.2`                                                 |
-| wrapt                                                 | `1.12.1`                                              |
-| six                                                   | `1.14.0`                                              |
-| lazy-object-proxy                                     | `1.4.3`                                               |
-| mccabe                                                | `0.6.1`                                               |
-| isort                                                 | `4.3.21`                                              |
-| typed-ast                                             | `1.4.1`                                               |
-| astroid                                               | `2.4.0`                                               |
+| :new: python3                                               | `3.8.3`                                               |
+| :new: pip                                                   | `20.1.1`                                              |
+| :new: setuptools                                            | `46.1.3`                                              |
+| :new: setuptools-scm                                        | `3.5.0`                                               |
+| :new: pytest-runner                                         | `5.2`                                                 |
+| :new: wrapt                                                 | `1.12.1`                                              |
+| :new: six                                                   | `1.14.0`                                              |
+| :new: lazy-object-proxy                                     | `1.4.3`                                               |
+| :new: mccabe                                                | `0.6.1`                                               |
+| :new: isort                                                 | `4.3.21`                                              |
+| :new: typed-ast                                             | `1.4.1`                                               |
+| :new: astroid                                               | `2.4.0`                                               |
 | :new: pylint                                          | `2.5.0`                                               |
 | :new: cnes-pylint-extension                           | `5.0.0`                                               |
  
