@@ -23,7 +23,7 @@ You can get SonarQube on GitHub: [SonarSource/sonarqube](https://github.com/Sona
 ### Quick install
 1. Find group IDs to allow SonarQube analysis to (for Sonar CNES Scan plugin):
     - Using `getent group <group_name> | cut -d : -f3` to reach a group id from a known group name;
-    - Using `cat /etc/group`to list all group IDs.
+    - Using `cat /etc/group` to list all group IDs.
 
 :exclamation: This group should have `read` and `execution` permissions on all the project to analyze (to browse and analyze all files) and  `write` permissions on the root of the workspace (to execute C/C++ tools and sonar-scanner).
 
@@ -105,37 +105,42 @@ You can run an analysis with the classic method by using one of scanners provide
 
 | Tool                                                  | Version                                               | 
 |-------------------------------------------------------|-------------------------------------------------------|
-| :new:SonarQube                                        | `7.9.3`                                               |
-| :new:Sonar Scanner                                    | `4.2.0.1873`                                          |
+| SonarQube                                             | `7.9.3`                                               |
+| Sonar Scanner                                         | `4.2.0.1873`                                          |
 | gcc                                                   | `4:9.2.1`                                             |
 | make                                                  | `4.2.1`                                               |
-| :new:Cppcheck                                         | `1.90`                                                |
-| :new:vera++                                           | `1.2.1`                                               |
-| :new:ShellCheck                                       | `0.7.1`                                               |
-| :new:i-Code CNES                                      | `4.1.0`                                               |
-| :new:Frama-C                                          | `20.0`                                                |
+| Cppcheck                                              | `1.90`                                                |
+| vera++                                                | `1.2.1`                                               |
+| ShellCheck                                            | `0.7.1`                                               |
+| i-Code CNES                                           | `4.1.0`                                               |
+| Frama-C                                               | `20.0`                                                |
 | expat                                                 | `2.0.1`                                               |
 | rats                                                  | `2.4`                                                 |
-| python                                                | `2.7.13`                                              |
-| colorama                                              | `0.3.3`                                               |
-| python-lazy-object-proxy                              | `1.2.1`                                               |
-| python-six                                            | `1.9.0`                                               |
-| wrapt                                                 | `1.10.5`                                              |
-| astroid                                               | `1.4.9`                                               |
-| Pylint                                                | `1.5`                                                 |
-| cnes-pylint-extension                                 | `1.0`                                                 |
-| python-setuptools                                     | `44.0.0`                                              |
+| :new: python3                                               | `3.8.3`                                               |
+| :new: pip                                                   | `20.1.1`                                              |
+| :new: setuptools                                            | `46.1.3`                                              |
+| :new: setuptools-scm                                        | `3.5.0`                                               |
+| :new: pytest-runner                                         | `5.2`                                                 |
+| :new: wrapt                                                 | `1.12.1`                                              |
+| :new: six                                                   | `1.14.0`                                              |
+| :new: lazy-object-proxy                                     | `1.4.3`                                               |
+| :new: mccabe                                                | `0.6.1`                                               |
+| :new: isort                                                 | `4.3.21`                                              |
+| :new: typed-ast                                             | `1.4.1`                                               |
+| :new: astroid                                               | `2.4.0`                                               |
+| :new: pylint                                          | `2.5.0`                                               |
+| :new: cnes-pylint-extension                           | `5.0.0`                                               |
  
 | SonarQube plugin                                      | Version                                               | 
 |-------------------------------------------------------|-------------------------------------------------------|
 | Checkstyle sonar plugin                               | `4.21`                                                |
 | Sonar CNES CXX plugin                                 | `1.3.1.1807`                                          |
 | Sonar CNES Export plugin                              | `1.2.0`                                               |
-| :new:Sonar CNES Python plugin                         | `1.3.0`                                               |
-| :new:Sonar CNES i-Code plugin                         | `2.0.2`                                               |
+| Sonar CNES Python plugin                              | `1.3.0`                                               |
+| Sonar CNES i-Code plugin                              | `2.0.2`                                               |
 | Sonar CNES Scan plugin                                | `1.5`                                                 |
-| :new:Sonar CNES frama-c plugin                        | `2.1.1`                                               |
-| :new:Sonar CNES Report                                | `3.2.2`                                               |
+| Sonar CNES frama-c plugin                             | `2.1.1`                                               |
+| Sonar CNES Report                                     | `3.2.2`                                               |
 | Sonar Corbetura plugin                                | `1.9.1`                                               |
 | Sonar C# plugin                                       | `7.15`                                                |
 | Sonar CXX plugin                                      | `1.1.0`                                               |
