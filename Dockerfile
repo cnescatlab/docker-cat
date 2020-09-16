@@ -47,13 +47,13 @@ ADD https://github.com/checkstyle/sonar-checkstyle/releases/download/4.21/checks
     https://github.com/spotbugs/sonar-findbugs/releases/download/3.11.0/sonar-findbugs-plugin-3.11.0.jar \
     https://github.com/willemsrb/sonar-rci-plugin/releases/download/sonar-rci-plugin-1.0.1/sonar-rci-plugin-1.0.1.jar \
     https://binaries.sonarsource.com/Distribution/sonar-flex-plugin/sonar-flex-plugin-2.5.1.1831.jar \
-    https://github.com/lequal/sonar-cnes-cxx-plugin/releases/download/v1.1.0/sonar-cnes-cxx-plugin-1.1.jar \
-    https://github.com/lequal/sonar-cnes-export-plugin/releases/download/v1.2.0/sonar-cnes-export-plugin-1.2.jar \
-    https://github.com/lequal/sonar-cnes-python-plugin/releases/download/1.3/sonar-cnes-python-plugin-1.3.jar \
-    https://github.com/lequal/sonar-icode-cnes-plugin/releases/download/2.0.2/sonar-icode-cnes-plugin-2.0.2.jar \
-    https://github.com/lequal/sonar-frama-c-plugin/releases/download/V2.1.1/sonar-frama-c-plugin-2.1.1.jar \
-    https://github.com/lequal/sonar-cnes-scan-plugin/releases/download/1.5.0/sonar-cnes-scan-plugin-1.5.jar \
-    https://github.com/lequal/sonar-cnes-report/releases/download/3.2.2/sonar-cnes-report-3.2.2.jar \
+    https://github.com/cnescatlab/sonar-cnes-cxx-plugin/releases/download/v1.1.0/sonar-cnes-cxx-plugin-1.1.jar \
+    https://github.com/cnescatlab/sonar-cnes-export-plugin/releases/download/v1.2.0/sonar-cnes-export-plugin-1.2.jar \
+    https://github.com/cnescatlab/sonar-cnes-python-plugin/releases/download/1.3/sonar-cnes-python-plugin-1.3.jar \
+    https://github.com/cnescatlab/sonar-icode-cnes-plugin/releases/download/2.0.2/sonar-icode-cnes-plugin-2.0.2.jar \
+    https://github.com/cnescatlab/sonar-frama-c-plugin/releases/download/V2.1.1/sonar-frama-c-plugin-2.1.1.jar \
+    https://github.com/cnescatlab/sonar-cnes-scan-plugin/releases/download/1.5.0/sonar-cnes-scan-plugin-1.5.jar \
+    https://github.com/cnescatlab/sonar-cnes-report/releases/download/3.2.2/sonar-cnes-report-3.2.2.jar \
     https://github.com/jensgerdes/sonar-pmd/releases/download/3.2.1/sonar-pmd-plugin-3.2.1.jar \
     /opt/sonarqube/extensions/plugins/
 
@@ -61,7 +61,7 @@ ADD https://github.com/checkstyle/sonar-checkstyle/releases/download/4.21/checks
 # Download software
 ADD https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/rough-auditing-tool-for-security/rats-2.4.tgz \
     http://downloads.sourceforge.net/project/expat/expat/2.0.1/expat-2.0.1.tar.gz \
-    https://github.com/lequal/i-CodeCNES/releases/download/v4.1.0/icode-4.1.0.zip \
+    https://github.com/cnescatlab/i-CodeCNES/releases/download/v4.1.0/icode-4.1.0.zip \
     https://netix.dl.sourceforge.net/project/cppcheck/cppcheck/1.90/cppcheck-1.90.tar.gz \
     /tmp/
 
@@ -73,7 +73,7 @@ ADD https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanne
 
 # CNES Pylint extension
 ENV PYTHONPATH $PYTHONPATH:/opt/python/cnes-pylint-extension-5.0.0/checkers/
-ADD https://github.com/lequal/cnes-pylint-extension/archive/v5.0.0.tar.gz \
+ADD https://github.com/cnescatlab/cnes-pylint-extension/archive/v5.0.0.tar.gz \
     /tmp/python/
 
 
@@ -181,7 +181,7 @@ RUN ls -lrta /opt/ \
     && echo 'sonar.cxx.vera.reportPath=vera-report.xml' >> /opt/sonar-scanner/conf/sonar-scanner.properties \
 ###### Set default report path for RATS
     && echo 'sonar.cxx.rats.reportPath=rats-report.xml' >> /opt/sonar-scanner/conf/sonar-scanner.properties \
-###### Solve following error: https://github.com/lequal/docker-cat/issues/30
+###### Solve following error: https://github.com/cnescatlab/docker-cat/issues/30
     && chmod -R 777 /opt/sonarqube/temp
 
 

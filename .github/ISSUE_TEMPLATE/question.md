@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-> _Before posting a new question, please read the [documentation](README.md) and check [existing issues](https://github.com/lequal/docker-cat/issues)._
+> _Before posting a new question, please read the [documentation](README.md) and check [existing issues](https://github.com/cnescatlab/docker-cat/issues)._
 
 #### Describe what you need to know
 > _A clear and concise description of what your question is._

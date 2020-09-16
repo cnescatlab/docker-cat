@@ -1,5 +1,5 @@
 # Docker CAT
-[![Build Status](https://travis-ci.org/lequal/docker-cat.svg?branch=master)](https://travis-ci.org/lequal/docker-cat)
+TODO: GitHub Actions and Codacy badges
 [![Docker Image Version (tag latest semver)](https://img.shields.io/docker/v/lequal/docker-cat/latest)](https://hub.docker.com/r/lequal/docker-cat)
 
 Docker Code Analysis Tool (CAT) is a SonarQube Docker image containing custom configuration and plugins to realize code analysis.
@@ -54,7 +54,7 @@ By default, Docker CAT use the embedded H2 database which is integrated to Sonar
 ### Analyzing source code
 
 #### Using web user interface
-Once the container is active, you can use the web interface provided by [Sonar CNES Scan plugin](https://github.com/lequal/sonar-cnes-scan-plugin) to run an analysis directly via your Web browser.
+Once the container is active, you can use the web interface provided by [Sonar CNES Scan plugin](https://github.com/cnescatlab/sonar-cnes-scan-plugin) to run an analysis directly via your Web browser.
 
 ##### 1. If not already done, move your code in `<your_folder>`
 > To be reachable by all included tools, your source code must be placed in the previously mounted Docker volume **and** the group whose GUID has been given to `-e ALLOWED_GROUPS=...` parameter should have permissions on the whole directory.
@@ -161,10 +161,10 @@ If you experienced a problem with the plugin please open an issue. Inside this i
 
 If you want to do a PR, please put inside of it the reason of this pull request. If this pull request fix an issue please insert the number of the issue or explain inside of the PR how to reproduce this issue.
 
-All details are available in [CONTRIBUTING](https://github.com/lequal/docker-cat/CONTRIBUTING.md).
+All details are available in [CONTRIBUTING](https://github.com/cnescatlab/docker-cat/CONTRIBUTING.md).
 
 ### Feedback and Support
-Bugs and Feature requests: https://github.com/lequal/docker-cat/issues
+Bugs and Feature requests: https://github.com/cnescatlab/docker-cat/issues
 
 ### License
 Licensed under the [GNU General Public License, Version 3.0](https://www.gnu.org/licenses/gpl.txt)
