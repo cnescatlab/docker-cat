@@ -1,0 +1,13 @@
+[
+    {
+        "type": "convention",
+        "module": "simplecaesar",
+        "obj": "",
+        "line": 19,
+        "column": 19,
+        "path": "tests/python/src/simplecaesar.py",
+        "symbol": "bad-whitespace",
+        "message": "Exactly one space required around assignment\n            encoded=encoded + letters[x]\n                   ^",
+        "message-id": "C0326"
+    }
+]

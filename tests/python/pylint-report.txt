@@ -1,0 +1,8 @@
+************* Module simplecaesar
+src/simplecaesar.py:19: [C0326(bad-whitespace), ] Exactly one space required around assignment
+            encoded=encoded + letters[x]
+                   ^
+
+-----------------------------------
+Your code has been rated at 9.47/10
+
