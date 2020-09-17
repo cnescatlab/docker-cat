@@ -104,8 +104,7 @@ test_language()
     nbIssuesCnesQp=$8
 
     # Run analysis
-    output=$(docker exec "$CAT_CONTAINER_NAME" \
-                /opt/sonar-scanner/bin/sonar-scanner \
+    output=$(docker exec "$CAT_CONTAINER_NAME" sonar-scanner \
                     "-Dsonar.host.url=http://localhost:9000" \
                     "-Dsonar.projectBaseDir=/media/sf_Shared/tests/$folder" \
                     2>&1)
@@ -118,7 +117,7 @@ test_language()
         then
             [[ $line =~ .*\[(.*)\\\] ]]
             log "$ERROR" "Failed: the scanner did not use ${BASH_REMATCH[1]}."
-            log "$ERROR" "docker exec $CAT_CONTAINER_NAME /opt/sonar-scanner/bin/sonar-scanner -Dsonar.host.url=http://localhost:9000 -Dsonar.projectBaseDir=/media/sf_Shared/tests/$folder"
+            log "$ERROR" "docker exec $CAT_CONTAINER_NAME sonar-scanner -Dsonar.host.url=http://localhost:9000 -Dsonar.projectBaseDir=/media/sf_Shared/tests/$folder"
             >&2 echo -e "$output"
             return 1
         fi
@@ -168,8 +167,7 @@ test_language()
         "$CAT_URL/api/qualityprofiles/add_project"
 
     # Rerun the analysis
-    docker exec "$CAT_CONTAINER_NAME" \
-        /opt/sonar-scanner/bin/sonar-scanner \
+    docker exec "$CAT_CONTAINER_NAME" sonar-scanner \
             "-Dsonar.host.url=http://localhost:9000" \
             "-Dsonar.projectBaseDir=/media/sf_Shared/tests/$folder" \
                 2>&1
@@ -343,8 +341,7 @@ test_import_analysis_results()
     fi
 
     # Analyse the project and collect the analysis files (that match the default names)
-    analysis_output=$(docker exec -w "/media/sf_Shared/$languageFolder" "$CAT_CONTAINER_NAME" \
-                                /opt/sonar-scanner/bin/sonar-scanner \
+    analysis_output=$(docker exec -w "/media/sf_Shared/$languageFolder" "$CAT_CONTAINER_NAME" sonar-scanner \
                                     "-Dsonar.host.url=http://localhost:9000" \
                                     "-Dsonar.projectKey=$projectKey" \
                                     "-Dsonar.projectName=$projectName" \
