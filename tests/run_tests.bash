@@ -35,7 +35,7 @@ then
     docker run --name "$CAT_CONTAINER_NAME" \
             -d --rm \
             -p 9000:9000 \
-            -v tests:/media/sf_Shared:rw \
+            -v "$PWD":/media/sf_Shared:rw \
             -e ALLOWED_GROUPS="$(id -g)" \
             lequal/docker-cat:latest
 

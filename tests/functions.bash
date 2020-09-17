@@ -107,7 +107,7 @@ test_language()
     output=$(docker exec "$CAT_CONTAINER_NAME" \
                 /opt/sonar-scanner/bin/sonar-scanner \
                     "-Dsonar.host.url=http://localhost:9000" \
-                    "-Dsonar.projectBaseDir=/media/sf_Shared/$folder" \
+                    "-Dsonar.projectBaseDir=/media/sf_Shared/tests/$folder" \
                     2>&1)
     echo -e "$output"
 
@@ -118,7 +118,7 @@ test_language()
         then
             [[ $line =~ .*\[(.*)\\\] ]]
             log "$ERROR" "Failed: the scanner did not use ${BASH_REMATCH[1]}."
-            log "$ERROR" "docker exec $CAT_CONTAINER_NAME /opt/sonar-scanner/bin/sonar-scanner -Dsonar.host.url=http://localhost:9000 -Dsonar.projectBaseDir=/media/sf_Shared/$folder"
+            log "$ERROR" "docker exec $CAT_CONTAINER_NAME /opt/sonar-scanner/bin/sonar-scanner -Dsonar.host.url=http://localhost:9000 -Dsonar.projectBaseDir=/media/sf_Shared/tests/$folder"
             >&2 echo -e "$output"
             return 1
         fi
@@ -171,7 +171,7 @@ test_language()
     docker exec "$CAT_CONTAINER_NAME" \
         /opt/sonar-scanner/bin/sonar-scanner \
             "-Dsonar.host.url=http://localhost:9000" \
-            "-Dsonar.projectBaseDir=/media/sf_Shared/$folder" \
+            "-Dsonar.projectBaseDir=/media/sf_Shared/tests/$folder" \
                 2>&1
 
     # Wait for SonarQube to process the results
@@ -198,5 +198,53 @@ test_language()
 
     log "$INFO" "Analysis with $cnesQp QP ran as expected."
     log "$INFO" "Analyses succeeded, $languageName is supported."
+    return 0
+}
+
+# test_analysis_tool
+#
+# This function tests that the image can run a
+# specified code analyzer and that it keeps producing
+# the same result given the same source code.
+#
+# Parameters:
+#   1: tool name
+#   2: tool command line
+#   3: analysis results reference file
+#   4: temporary results file
+#   5: (optional) store the standard output in the temporary result file, either "yes" or "no" (default: "yes")
+#
+# Example:
+#   $ cmd="pylint -f json --rcfile=/opt/python/pylintrc_RNC_sonar_2017_A_B tests/python/src/*.py"
+#   $ test_analysis_tool "pylint" "$cmd" "tests/python/reference-pylint-results.json" "tests/python/tmp-pylint-results.json"
+test_analysis_tool()
+{
+    # Args
+    tool=$1
+    cmd=($2)
+    ref_file=$3
+    tmp_file=$4
+    store_output=$5
+
+    # Run an analysis with the tool
+    if [ "$store_output" = "no" ]
+    then
+        docker exec -w /media/sf_Shared -u "$(id -u):$(id -g)" "$CAT_CONTAINER_NAME" "${cmd[@]}"
+    else
+        docker exec -w /media/sf_Shared -u "$(id -u):$(id -g)" "$CAT_CONTAINER_NAME" "${cmd[@]}" > "$tmp_file"
+    fi
+
+    # Compare result of the analysis with the reference
+    if ! diff "$tmp_file" "$ref_file";
+    then
+        log "$ERROR" "Failed: $tool reports are different."
+        log "$ERROR" "=== Result ==="
+        >&2 cat "$tmp_file"
+        log "$ERROR" "=== Reference ==="
+        >&2 cat "$ref_file"
+        return 1
+    fi
+
+    log "$INFO" "Analysis succeeded, $tool works as expected."
     return 0
 }
