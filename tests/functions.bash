@@ -248,3 +248,159 @@ test_analysis_tool()
     log "$INFO" "Analysis succeeded, $tool works as expected."
     return 0
 }
+
+# test_import_analysis_results
+#
+# This function tests that the analysis results produced
+# by an analysis tool can be imported in SonarQube. The results
+# must be stored in the default file.
+#
+# Parameters:
+#   1: tool name
+#   2: project name
+#   3: project key
+#   4: quality profile to use
+#   5: language key
+#   6: folder to run the sonar-scanner in (relative to the root of the project)
+#   7: folder containing the source files (relative to the previous folder)
+#   8: id of a rule violated by a source file
+#   9: line of output of the sonar-scanner that tells the import sensor is used
+#   10: line of output of the sonar-scanner that tells the result file was imported
+#   11: (optional) "yes" if if the rule violated needs to be activated in the Quality Profile for the import sensor to be run (default "no")
+#
+# Example:
+#   $ ruleViolated="cppcheck:arrayIndexOutOfBounds"
+#   $ expected_sensor="INFO: Sensor C++ (Community) CppCheckSensor \[cxx\]"
+#   $ expected_import="INFO: CXX-CPPCHECK processed = 1"
+#   $ test_import_analysis_results "CppCheck" "CppCheck Dummy Project" "cppcheck-dummy-project" "CNES_C_A" "c++" \
+#       "tests/c_cpp" "cppcheck" "$ruleViolated" "$expected_sensor" "$expected_import"
+test_import_analysis_results()
+{
+    # Args
+    analyzerName=$1
+    projectName=$2
+    projectKey=$3
+    qualityProfile=$4
+    languageKey=$5
+    languageFolder=$6
+    sourceFolder=$7
+    ruleViolated=$8
+    expected_sensor=$9
+    shift
+    expected_import=$9
+    activateRule="no"
+    if [ $# -eq 10 ]
+    then
+        shift
+        activateRule=$9
+    fi
+
+    if [ "$activateRule" = "yes" ]
+    then
+        # Get the key of the Quality Profile to use
+        qpKey=$(curl -su "admin:admin" \
+                        "$CAT_URL/api/qualityprofiles/search?qualityProfile=$qualityProfile" \
+                | jq -r '.profiles[0].key')
+        if [ "$qpKey" = "null" ]
+        then
+            log "$ERROR" "No quality profile named $qualityProfile"
+            exit 1
+        fi
+
+        # Activate the rule in the Quality Profile to allow the Sensor to be used
+        res=$(curl -su "admin:admin" \
+                    --data-urlencode "key=$qpKey" \
+                    --data-urlencode "rule=$ruleViolated" \
+                    "$CAT_URL/api/qualityprofiles/activate_rule")
+        if [ -n "$res" ] && [ "$(echo "$res" | jq -r '.errors | length')" -gt 0 ]
+        then
+            log "$ERROR" "Cannot activate rule $ruleViolated in $qualityProfile because: $(echo "$res" | jq -r '.errors[0].msg')"
+            exit 1
+        fi
+    fi
+
+    # Create a project on SonarQube
+    res=$(curl -su "admin:admin" \
+                --data-urlencode "name=$projectName" \
+                --data-urlencode "project=$projectKey" \
+                "$CAT_URL/api/projects/create")
+    if [ -n "$res" ] && [ "$(echo "$res" | jq -r '.errors | length')" -gt 0 ]
+    then
+        log "$ERROR" "Cannot create a project with key $projectKey because: $(echo "$res" | jq -r '.errors[0].msg')"
+        return 1
+    fi
+
+    # Set its Quality Profile for the given language to the given one
+    res=$(curl -su "admin:admin" \
+                --data-urlencode "language=$languageKey" \
+                --data-urlencode "project=$projectKey" \
+                --data-urlencode "qualityProfile=$qualityProfile" \
+                "$CAT_URL/api/qualityprofiles/add_project")
+    if [ -n "$res" ] && [ "$(echo "$res" | jq -r '.errors | length')" -gt 0 ]
+    then
+        log "$ERROR" "Cannot set Quality profile of project $projectKey to $qualityProfile for $languageKey language because: $(echo "$res" | jq -r '.errors[0].msg')"
+        return 1
+    fi
+
+    # Analyse the project and collect the analysis files (that match the default names)
+    analysis_output=$(docker exec -w "/media/sf_Shared/$languageFolder" "$CAT_CONTAINER_NAME" \
+                                /opt/sonar-scanner/bin/sonar-scanner \
+                                    "-Dsonar.host.url=http://localhost:9000" \
+                                    "-Dsonar.projectKey=$projectKey" \
+                                    "-Dsonar.projectName=$projectName" \
+                                    "-Dsonar.projectVersion=1.0" \
+                                    "-Dsonar.sources=$sourceFolder" \
+                                    "-Dsonar.python.pylint.reportPath=pylint-report.txt" \
+                                        2>&1)
+    for line in "$expected_sensor" "$expected_import"
+    do
+        if ! echo -e "$analysis_output" | grep -q "$line";
+        then
+            log "$ERROR" "Failed: the output of the scanner miss the line: $line"
+            >&2 echo -e "$analysis_output"
+            return 1
+        fi
+    done
+    echo -e "$analysis_output"
+
+    # Wait for SonarQube to process the results
+    sleep 10
+
+    # Check that the issue was added to the project
+    nbIssues=$(curl -su "admin:admin" \
+                    "$CAT_URL/api/issues/search?componentKeys=$projectKey" \
+                | jq -r ".issues | map(select(.rule == \"$ruleViolated\")) | length")
+    if [ "$nbIssues" -ne 1 ]
+    then
+        log "$ERROR" "An issue should have been raised by the rule $ruleViolated"
+        curl -su "admin:admin" "$CAT_URL/api/issues/search?componentKeys=$projectKey" | >&2 jq
+        return 1
+    fi
+
+    # Delete the project
+    res=$(curl -su "admin:admin" \
+                --data-urlencode "project=$projectKey" \
+                "$CAT_URL/api/projects/delete")
+    if [ -n "$res" ] && [ "$(echo "$res" | jq -r '.errors | length')" -gt 0 ]
+    then
+        log "$ERROR" "Cannot delete the project $projectKey because: $(echo "$res" | jq -r '.errors[0].msg')"
+        return 1
+    fi
+
+    if [ "$activateRule" = "yes" ]
+    then
+        # Deactivate the rule in the Quality Profile
+        res=$(curl -su "admin:admin" \
+                    --data-urlencode "key=$qpKey" \
+                    --data-urlencode "rule=$ruleViolated" \
+                    "$CAT_URL/api/qualityprofiles/deactivate_rule")
+        if [ -n "$res" ] && [ "$(echo "$res" | jq -r '.errors | length')" -gt 0 ]
+        then
+            log "$ERROR" "Cannot deactivate rule $ruleViolated in $qualityProfile because: $(echo "$res" | jq -r '.errors[0].msg')"
+            exit 1
+        fi
+    fi
+
+    log "$INFO" "$analyzerName analysis results successfully imported in SonarQube."
+    return 0
+}
