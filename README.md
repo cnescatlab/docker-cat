@@ -1,6 +1,7 @@
 # Docker CAT
 ![](https://github.com/cnescatlab/docker-cat/workflows/CI/badge.svg)
 ![](https://github.com/cnescatlab/docker-cat/workflows/CD/badge.svg)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/6442927b9d034af1b93765797ff06d5c)](https://www.codacy.com/gh/cnescatlab/docker-cat?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=cnescatlab/docker-cat&amp;utm_campaign=Badge_Grade)
 [![Docker Image Version (tag latest semver)](https://img.shields.io/docker/v/lequal/docker-cat/latest)](https://hub.docker.com/r/lequal/docker-cat)
 
 Docker Code Analysis Tool (CAT) is a SonarQube Docker image containing custom configuration and plugins to realize code analysis.
