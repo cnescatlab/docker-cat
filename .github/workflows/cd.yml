@@ -1,0 +1,124 @@
+# Description
+# ===========
+# This workflow is triggered each time the CI workflow succeed
+# on develop.
+# It looks for the first milestone that is completed.
+# It must have a title matching the pattern '[0-9]+\.[0-9]+\.[0-9]+'.
+# It then merges the develop branch into the master branch
+# and tags the master branch with the title of the milestone.
+# Finally, it creates a new Release on GitHub where it writes an
+# automatically generated changelog.
+# It also close the milestone (which is 100% completed).
+---
+name: CD
+
+# This workflow is triggered when the CI workflow ends
+on:
+  workflow_run:
+    workflows: ["CI"]
+    branches: [develop]
+    types:
+      - completed
+
+# Variables to configure the workflow
+env:
+  DOCKERFILE_PATH: '.'
+  DOCKERFILE_FILENAME: 'Dockerfile'
+  DOCKER_IMAGE_NAME: 'lequal/docker-cat'
+
+jobs:
+  # Job to test if a new version is ready to be released
+  deliverability:
+    name: Check if a new version must be released
+    runs-on: ubuntu-latest
+    # The job is run only if the CI workflow succeeded
+    if: github.event.workflow_run.conclusion == 'success'
+    outputs:
+      delivery: ${{ steps.version.outputs.delivery }}
+      version: ${{ steps.version.outputs.version }}
+      milestone_number: ${{ steps.version.outputs.milestone_number }}
+    steps:
+      # Get the version number from the milestone title and that it follows semver
+      - name: Get and check version
+        id: version
+        run: |
+          milestones=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              https://api.github.com/repos/${{ github.repository }}/milestones \
+            | jq -r '. | map(select(.open_issues == 0 and .closed_issues > 0 and .state == "open"))')
+          if [ "$milestones" == "[]" ]
+          then
+            echo No milestone completed, not delivering
+            echo "::set-output name=delivery::forbidden"
+            exit 0
+          fi
+          echo -e "Completed milestones:\n$milestones"
+          version=$(echo "$milestones" | jq -r '.[0].title')
+          milestone_number=$(echo "$milestones" | jq -r '.[0].number')
+          echo Milestone $milestone_number has title $version
+          echo Checking milestone title is a version number
+          if ! [[ $version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          then
+            echo "Malformed milestone title: $version. It must match [0-9]+.[0-9]+.[0-9]+"
+            exit 1
+          fi
+          echo Ready to deliver
+          echo "::set-output name=version::$version"
+          echo "::set-output name=milestone_number::$milestone_number"
+          echo "::set-output name=delivery::allowed"
+  release:
+    name: Release a new version of the docker image
+    runs-on: ubuntu-latest
+    needs: deliverability
+    if: needs.deliverability.outputs.delivery == 'allowed'
+    steps:
+      # git clone
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      # Merge develop into master (fast forward) and tag master
+      - name: Merge and tag
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email catlab@cnes.fr
+          git checkout --track origin/master
+          git merge origin/develop
+          git tag -a ${{ needs.deliverability.outputs.version }} \
+            -m "Release ${{ needs.deliverability.outputs.version }}"
+          git push origin master --follow-tags
+      # Get the tag of the last release
+      - name: Get tag of last release
+        id: last_release
+        run: |
+          tags=($(git tag --sort="-v:refname" | grep -P -e '[0-9]+\.[0-9]+\.[0-9]+'))
+          echo The tag of the previous release is ${tags[1]}
+          echo "::set-output name=tag::${tags[1]}"
+      # Generate the changelog since last release
+      - name: Generate the changelog
+        uses: charmixer/auto-changelog-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          since_tag: ${{ steps.last_release.outputs.tag }}
+      # Append a link to the image on Docker Hub to the changelog
+      - name: Append link to Docker Hub
+        run: |
+          cat CHANGELOG.md > changelog.md
+          echo -e "\nView the image on" \
+            "[DockerHub](https://hub.docker.com/r/$DOCKER_IMAGE_NAME)." \
+            >> changelog.md
+      # Create a new release on GitHub
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ needs.deliverability.outputs.version }}
+          release_name: ${{ env.DOCKER_IMAGE_NAME }}:${{ needs.deliverability.outputs.version }}
+          body_path: changelog.md
+      # Close the milestone (that is now 100% completed)
+      - name: Close milestone
+        run: |
+          curl --request PATCH \
+            --url https://api.github.com/repos/${GITHUB_REPOSITORY}/milestones/${{ needs.deliverability.outputs.milestone_number }} \
+            --header "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            --header 'Content-Type: application/json' \
+            --data '{"state":"closed"}'
