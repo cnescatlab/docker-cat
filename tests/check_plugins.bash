@@ -20,7 +20,7 @@ required_plugins=(
     "LDAP - 2.2 (build 608)"
     "PMD - 3.2.1"
     "Rules Compliance Index (RCI) - 1.0.1"
-    "SAML 2.0 Authentication for SonarQube - 1.1.0 (build 181)"
+    "SAML 2.0 Authentication for SonarQube - 1.2.0 (build 682)"
     "Sonar Frama-C plugin - 2.1.1"
     "Sonar i-Code CNES plugin - 2.0.2"
     "SonarC# - 7.15 (build 8572)"
