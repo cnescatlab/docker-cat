@@ -174,6 +174,8 @@ RUN chmod 750 /tmp/init.bash \
     && echo 'sonar.cxx.vera.reportPath=vera-report.xml' >> /opt/sonar-scanner/conf/sonar-scanner.properties \
 ###### Set default report path for RATS
     && echo 'sonar.cxx.rats.reportPath=rats-report.xml' >> /opt/sonar-scanner/conf/sonar-scanner.properties \
+###### Set default report path for Pylint
+    && echo 'sonar.python.pylint.reportPath=pylint-report.txt' >> /opt/sonar-scanner/conf/sonar-scanner.properties \
 ###### Solve following error: https://github.com/cnescatlab/docker-cat/issues/30
     && chmod -R 777 /opt/sonarqube/temp \
 ###### Create pylint workdir

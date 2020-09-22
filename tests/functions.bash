@@ -347,7 +347,6 @@ test_import_analysis_results()
                                     "-Dsonar.projectName=$projectName" \
                                     "-Dsonar.projectVersion=1.0" \
                                     "-Dsonar.sources=$sourceFolder" \
-                                    "-Dsonar.python.pylint.reportPath=pylint-report.txt" \
                                         2>&1)
     for line in "$expected_sensor" "$expected_import"
     do
