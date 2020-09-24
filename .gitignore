@@ -1,0 +1,8 @@
+# Ignore sonar-scanner folder
+.sonarcache/
+.scannerwork/
+
+# Ignore results of tools
+tmp*results.*
+*.o
+infer-out/

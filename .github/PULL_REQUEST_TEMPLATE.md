@@ -25,7 +25,8 @@ What types of changes does your code introduce to this project?
 - [ ] I have read the [CONTRIBUTING](CONTRIBUTING.md) doc
 - [ ] I agree with the [CODE OF CONDUCT](CODE_OF_CONDUCT.md)
 - [ ] Lint and unit tests pass locally with my changes
-- [ ] SonarCloud and Travis CI tests pass with my changes
+- [ ] Codacy validates the quality of the modifications
+- [ ] GitHub Actions CI workflow passes
 - [ ] I have added tests that prove my fix is effective or that my feature works
 - [ ] I have added necessary documentation (if appropriate)
 - [ ] Any dependent changes have been merged and published in downstream modules

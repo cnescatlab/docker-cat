@@ -13,14 +13,12 @@
 #
 ########################################################
 
-sonar_configuration="INIT"
-
 ########################################################
 # function allow_sonarqube
 #
 # Description :
 # For each GID specified in the env variable ALLOWED_GROUPS, create a new group
-# siwht the specified GID and then add it to Sonarqube.
+# with the specified GID and then add it to Sonarqube.
 ################################################################################
 allow_sonarqube(){
     IFS=";" read -ra GID <<< "${ALLOWED_GROUPS}"
@@ -46,8 +44,7 @@ allow_sonarqube(){
     echo "[INFO] Docker-cat permissions for sonarqube finished."
 }
 
-allow_sonarqube &
-wait %1
+allow_sonarqube
 # Call for configure-cat script to set quality profiles and quality gates.
 bash /tmp/configure-cat.bash &
 su sonarqube -l -c "cd /opt/sonarqube && PATH=${PATH} SONAR_VERSION=${SONAR_VERSION} bin/run.sh"

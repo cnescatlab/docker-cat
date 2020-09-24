@@ -1,41 +1,42 @@
-FROM sonarqube:7.9.3-community AS framac
+FROM sonarqube:7.9.4-community AS framac
 
 ## ====================== INSTALL FRAMA-C =============================
 
 USER root
 WORKDIR /tmp/framac
 
+ADD https://frama-c.com/download/frama-c-20.0-Calcium.tar.gz \
+    /tmp/framac
+
 RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >> /etc/apt/sources.list \
-    && apt-get update -y \
+    && apt-get update \
     && apt-get install -y \
-       git \
-       ocaml \
-       ocaml-native-compilers \
-       liblablgtk2-ocaml-dev \
-       liblablgtksourceview2-ocaml-dev \
-       libocamlgraph-ocaml-dev \
-       menhir \
-       why3 \
-       libyojson-ocaml-dev \
-       libocamlgraph-ocaml-dev \
-       libzarith-ocaml-dev \
-       build-essential \
+        make \
+        unzip \
+        ocaml \
+        ocaml-findlib \
+        libfindlib-ocaml-dev \
+        libocamlgraph-ocaml-dev \
+        libyojson-ocaml-dev \
+        libzarith-ocaml-dev \
+        menhir \
     && rm -rf /var/lib/apt/lists/* \
-    && git clone --single-branch https://github.com/Frama-C/Frama-C-snapshot.git . \
-    && git checkout -b tags/20.0 \
-    && ./configure \
+    && tar -zxvf frama-c-20.0-Calcium.tar.gz \
+    && cd frama-c-20.0-Calcium \
+    && ./configure --disable-gui --disable-wp \
     && make \
     && make install
 
-
 ## ====================== BUILD FINAL IMAGE ===================================
 
-FROM sonarqube:7.9.3-community
-ENV SONAR_RUNNER_HOME=/opt/sonar-scanner
-ENV PATH $PATH:/opt/sonar-scanner
+FROM sonarqube:7.9.4-community
+ENV HOME=/home/sonarqube \
+    SONAR_SCANNER_HOME=/opt/sonar-scanner \
+    SONAR_USER_HOME=/opt/sonar-scanner/.sonar \
+    PATH="$PATH:/opt/sonar-scanner/bin:/usr/local/bin" \
+    PYTHONPATH="$PYTHONPATH:/opt/python/cnes-pylint-extension-5.0.0/checkers/"
 USER root
-RUN mkdir /opt/sonar
-COPY ./conf /tmp/conf
+COPY conf /tmp/conf
 
 
 ## ====================== DOWNLOAD DEPENDENCIES ===============================
@@ -47,13 +48,13 @@ ADD https://github.com/checkstyle/sonar-checkstyle/releases/download/4.21/checks
     https://github.com/spotbugs/sonar-findbugs/releases/download/3.11.0/sonar-findbugs-plugin-3.11.0.jar \
     https://github.com/willemsrb/sonar-rci-plugin/releases/download/sonar-rci-plugin-1.0.1/sonar-rci-plugin-1.0.1.jar \
     https://binaries.sonarsource.com/Distribution/sonar-flex-plugin/sonar-flex-plugin-2.5.1.1831.jar \
-    https://github.com/lequal/sonar-cnes-cxx-plugin/releases/download/v1.1.0/sonar-cnes-cxx-plugin-1.1.jar \
-    https://github.com/lequal/sonar-cnes-export-plugin/releases/download/v1.2.0/sonar-cnes-export-plugin-1.2.jar \
-    https://github.com/lequal/sonar-cnes-python-plugin/releases/download/1.3/sonar-cnes-python-plugin-1.3.jar \
-    https://github.com/lequal/sonar-icode-cnes-plugin/releases/download/2.0.2/sonar-icode-cnes-plugin-2.0.2.jar \
-    https://github.com/lequal/sonar-frama-c-plugin/releases/download/V2.1.1/sonar-frama-c-plugin-2.1.1.jar \
-    https://github.com/lequal/sonar-cnes-scan-plugin/releases/download/1.5.0/sonar-cnes-scan-plugin-1.5.jar \
-    https://github.com/lequal/sonar-cnes-report/releases/download/3.2.2/sonar-cnes-report-3.2.2.jar \
+    https://github.com/cnescatlab/sonar-cnes-cxx-plugin/releases/download/v1.1.0/sonar-cnes-cxx-plugin-1.1.jar \
+    https://github.com/cnescatlab/sonar-cnes-export-plugin/releases/download/v1.2.0/sonar-cnes-export-plugin-1.2.jar \
+    https://github.com/cnescatlab/sonar-cnes-python-plugin/releases/download/1.3/sonar-cnes-python-plugin-1.3.jar \
+    https://github.com/cnescatlab/sonar-icode-cnes-plugin/releases/download/2.0.2/sonar-icode-cnes-plugin-2.0.2.jar \
+    https://github.com/cnescatlab/sonar-frama-c-plugin/releases/download/V2.1.1/sonar-frama-c-plugin-2.1.1.jar \
+    https://github.com/cnescatlab/sonar-cnes-scan-plugin/releases/download/1.5.0/sonar-cnes-scan-plugin-1.5.jar \
+    https://github.com/cnescatlab/sonar-cnes-report/releases/download/3.2.2/sonar-cnes-report-3.2.2.jar \
     https://github.com/jensgerdes/sonar-pmd/releases/download/3.2.1/sonar-pmd-plugin-3.2.1.jar \
     /opt/sonarqube/extensions/plugins/
 
@@ -61,21 +62,17 @@ ADD https://github.com/checkstyle/sonar-checkstyle/releases/download/4.21/checks
 # Download software
 ADD https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/rough-auditing-tool-for-security/rats-2.4.tgz \
     http://downloads.sourceforge.net/project/expat/expat/2.0.1/expat-2.0.1.tar.gz \
-    https://github.com/lequal/i-CodeCNES/releases/download/v4.1.0/icode-4.1.0.zip \
+    https://github.com/cnescatlab/i-CodeCNES/releases/download/v4.1.0/icode-4.1.0.zip \
     https://netix.dl.sourceforge.net/project/cppcheck/cppcheck/1.90/cppcheck-1.90.tar.gz \
+    https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.4.0.2170.zip \
     /tmp/
 
-
-# Sonar Scanner installation
-ADD https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.2.0.1873-linux.zip \
-    /tmp/scanners/
-
-
 # CNES Pylint extension
-ENV PYTHONPATH $PYTHONPATH:/opt/python/cnes-pylint-extension-5.0.0/checkers/
-ADD https://github.com/lequal/cnes-pylint-extension/archive/v5.0.0.tar.gz \
+ADD https://github.com/cnescatlab/cnes-pylint-extension/archive/v5.0.0.tar.gz \
     /tmp/python/
 
+# Add CNES pylintrc A_B, C, D
+COPY pylintrc.d/ /opt/python/
 
 ## ====================== INSTALL DEPENDENCIES ===============================
 
@@ -83,7 +80,6 @@ ADD https://github.com/lequal/cnes-pylint-extension/archive/v5.0.0.tar.gz \
 COPY --from=framac /usr/local/ /usr/local/
 ENV PATH /usr/local/bin:${PATH}
 
-ENV HOME /home/sonarqube
 RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >> /etc/apt/sources.list \
     && apt-get update -y \
     && apt-get install -y \
@@ -92,8 +88,8 @@ RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >
        python3-pip \
        vera\+\+=1.2.1-* \
        shellcheck=0.7.1-* \
-       gcc=4:9.2.1-* \
-       make=4.2.1-* \
+       gcc=4:10.1.0-* \
+       make=4.3-* \
        g\+\+ \
        libpcre3 \
        libpcre3-dev \
@@ -111,11 +107,10 @@ RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >
     && rm -r /tmp/icode \
     && rm /tmp/icode-4.1.0.zip \
     ## Install Sonar Scanner
-    && unzip /tmp/scanners/sonar-scanner-cli-4.2.0.1873-linux.zip -d /opt/ \
-    && mv /opt/sonar-scanner-4.2.0.1873-linux /opt/sonar-scanner \
-    && rm -rf /tmp/scanners \
+    && unzip /tmp/sonar-scanner-cli-4.4.0.2170.zip -d /opt/ \
+    && mv /opt/sonar-scanner-4.4.0.2170 /opt/sonar-scanner \
+    && rm -rf /tmp/sonar-scanner-cli-4.4.0.2170.zip \
     ## Python, Pylint & CNES Pylint setup
-    && mkdir /opt/python \
     && tar -xvzf /tmp/python/v5.0.0.tar.gz -C /opt/python \
     && rm -rf /tmp/python \
     && pip install --no-cache-dir \
@@ -162,15 +157,13 @@ RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >
 ## ====================== CONFIGURATION ===============================
 
 # Entry point files
-COPY ./configure-cat.bash /tmp/
-COPY ./init.bash /tmp/
+COPY configure-cat.bash \
+     init.bash \
+     /tmp/
 
 # Make sonarqube owner of it's installation directories
-RUN ls -lrta /opt/ \
-    && chmod 750 /tmp/init.bash \
+RUN chmod 750 /tmp/init.bash \
     && chown sonarqube:sonarqube -R /tmp/conf \
-    && mkdir -p /opt/sonar/extensions/ \
-    && ln -s /opt/sonarqube/extensions/plugins /opt/sonar/extensions/plugins \
     && mkdir -p /opt/sonarqube/frama-c/ \
     && ln -s /usr/local/bin/frama-c /opt/sonarqube/frama-c/frama-c \
 ###### Disable telemetry
@@ -181,11 +174,16 @@ RUN ls -lrta /opt/ \
     && echo 'sonar.cxx.vera.reportPath=vera-report.xml' >> /opt/sonar-scanner/conf/sonar-scanner.properties \
 ###### Set default report path for RATS
     && echo 'sonar.cxx.rats.reportPath=rats-report.xml' >> /opt/sonar-scanner/conf/sonar-scanner.properties \
-###### Solve following error: https://github.com/lequal/docker-cat/issues/30
-    && chmod -R 777 /opt/sonarqube/temp
+###### Set default report path for Pylint
+    && echo 'sonar.python.pylint.reportPath=pylint-report.txt' >> /opt/sonar-scanner/conf/sonar-scanner.properties \
+###### Solve following error: https://github.com/cnescatlab/docker-cat/issues/30
+    && chmod -R 777 /opt/sonarqube/temp \
+###### Create pylint workdir
+    && mkdir -p "$HOME/.pylint.d" \
+    && chown -R sonarqube:sonarqube "$HOME/.pylint.d" \
+    && chmod -R 777 "$HOME/.pylint.d"
 
 
 ## ====================== STARTING ===============================
 
-WORKDIR $SONARQUBE_HOME
 ENTRYPOINT ["/tmp/init.bash"]
