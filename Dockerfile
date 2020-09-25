@@ -88,7 +88,7 @@ RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >
        python3-pip \
        vera\+\+=1.2.1-* \
        shellcheck=0.7.1-* \
-       gcc=4:10.1.0-* \
+       gcc=4:10.2.0-* \
        make=4.3-* \
        g\+\+ \
        libpcre3 \
