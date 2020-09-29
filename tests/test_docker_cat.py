@@ -1,4 +1,5 @@
-"""Automated integration test of Docker CAT
+"""
+Automated integration test of Docker CAT
 
 Run the tests by launching ``pytest`` from the "tests/" folder.
 
@@ -7,9 +8,7 @@ Pytest documentation: https://docs.pytest.org/en/stable/contents.html
 
 import filecmp
 import os
-import platform
 import re
-import subprocess
 import time
 from pathlib import Path
 
@@ -18,7 +17,8 @@ import requests
 
 
 class TestDockerCAT:
-    """This class test the lequal/docker-cat image.
+    """
+    This class test the lequal/docker-cat image.
     It does not build it.
     Tests can be parametered with environment variables.
 
@@ -44,7 +44,8 @@ class TestDockerCAT:
     # Functions
     @classmethod
     def wait_cat_ready(cls, container_name: str):
-        """This function waits for SonarQube to be configured by
+        """
+        This function waits for SonarQube to be configured by
         the configure.bash script.
 
         :param container_name: name of the container running lequal/sonarqube
@@ -57,7 +58,8 @@ class TestDockerCAT:
     def language(cls, language_name: str, language_key: str, folder: str,
         sensors_info, project_key: str, nb_issues: int, cnes_qp: str = "",
         nb_issues_cnes_qp: int = 0):
-        """This function tests that the image can analyze a project.
+        """
+        This function tests that the image can analyze a project.
 
         Environment variables used:
             CAT_CONTAINER_NAME
@@ -138,7 +140,8 @@ class TestDockerCAT:
 
     @classmethod
     def analysis_tool(cls, tool: str, cmd: str, ref_file: str, tmp_file: str, store_output: bool = True):
-        """This function tests that the image can run a specified code analyzer
+        """
+        This function tests that the image can run a specified code analyzer
         and that it keeps producing the same result given the same source code.
 
         :param tool: tool name
@@ -170,7 +173,8 @@ class TestDockerCAT:
         quality_profile: str, language_key: str, language_folder: str,
         source_folder: str, rule_violated: str, expected_sensor: str,
         expected_import: str, activate_rule: bool = False):
-        """This function tests that the analysis results produced
+        """
+        This function tests that the analysis results produced
         by an analysis tool can be imported in SonarQube. The results
         must be stored in the default files.
 
@@ -250,7 +254,8 @@ class TestDockerCAT:
 
     @classmethod
     def setup_class(cls):
-        """Set up the tests
+        """
+        Set up the tests
         Launch a container and wait for it to be up
         """
         docker_client = docker.from_env()
@@ -274,7 +279,8 @@ class TestDockerCAT:
 
     @classmethod
     def teardown_class(cls):
-        """Stop the container
+        """
+        Stop the container
         """
         if cls.RUN == "yes":
             print(f"Stopping {cls.CAT_CONTAINER_NAME}...")
@@ -282,7 +288,8 @@ class TestDockerCAT:
             docker_client.containers.get(cls.CAT_CONTAINER_NAME).stop()
 
     def test_up(self):
-        """As a user, I want the server to be UP so that I can use it.
+        """
+        As a user, I want the server to be UP so that I can use it.
         """
         status = requests.get(f"{self.CAT_URL}/api/system/status",
                     auth=("admin", "admin")).json()['status']
@@ -290,7 +297,8 @@ class TestDockerCAT:
         assert status == "UP"
 
     def test_check_plugins(self):
-        """As a SonarQube user, I want the plugins listed in the README
+        """
+        As a SonarQube user, I want the plugins listed in the README
         to be installed on the server so that I can use them.
         """
         required_plugins = (
@@ -336,7 +344,8 @@ class TestDockerCAT:
             assert installed_plugins[name] == version
 
     def test_check_qg(self):
-        """As a SonarQube user, I want the SonarQube server to have the CNES
+        """
+        As a SonarQube user, I want the SonarQube server to have the CNES
         Quality Gate configured and set as default so that I can use it.
         """
         quality_gates = requests.get(f"{self.CAT_URL}/api/qualitygates/list").json()['qualitygates']
@@ -346,7 +355,8 @@ class TestDockerCAT:
         assert cnes_quality_gates[0]['isDefault']
 
     def test_check_qp(self):
-        """As a SonarQube user, I want the SonarQube server to have the
+        """
+        As a SonarQube user, I want the SonarQube server to have the
         CNES Quality Profiles available so that I can use them.
         """
         required_quality_profiles = (
@@ -379,7 +389,8 @@ class TestDockerCAT:
 
     # Language tests
     def test_language_c_cpp(self):
-        """As a user of this image, I want to analyze a C/C++ project
+        """
+        As a user of this image, I want to analyze a C/C++ project
         so that I can see its level of quality on the SonarQube server.
         """
         sensors = (
@@ -391,7 +402,8 @@ class TestDockerCAT:
         # C++ (Community) because it does not have any rule enabled.
     
     def test_language_fortran_77(self):
-        """As a user of this image, I want to analyze a fortran 77 project
+        """
+        As a user of this image, I want to analyze a fortran 77 project
         so that I can see its level of quality on the SonarQube server.
         """
         sensors = (
@@ -400,7 +412,8 @@ class TestDockerCAT:
         self.language("Fortran 77", "f77", "fortran77", sensors, "fortran77-dummy-project", 11)
 
     def test_language_fortran_90(self):
-        """As a user of this image, I want to analyze a fortran 90 project
+        """
+        As a user of this image, I want to analyze a fortran 90 project
         so that I can see its level of quality on the SonarQube server.
         """
         sensors = (
@@ -409,7 +422,8 @@ class TestDockerCAT:
         self.language("Fortran 90", "f90", "fortran90", sensors, "fortran90-dummy-project", 14)
 
     def test_language_java(self):
-        """As a user of this image, I want to analyze a java project
+        """
+        As a user of this image, I want to analyze a java project
         so that I can see its level of quality on the SonarQube server.
         """
         sensors = (
@@ -421,13 +435,15 @@ class TestDockerCAT:
         self.language("Java", "java", "java", sensors, "java-dummy-project", 3, "CNES_JAVA_A", 6)
 
     def test_language_python(self):
-        """As a user of this image, I want to analyze a Python project
+        """
+        As a user of this image, I want to analyze a Python project
         so that I can see its level of quality on the SonarQube server.
         """
         self.language("Python", "py", "python", (), "python-dummy-project", 2, "CNES_PYTHON_A", 3)
 
     def test_language_shell(self):
-        """As a user of this image, I want to analyze a shell project
+        """
+        As a user of this image, I want to analyze a shell project
         so that I can see its level of quality on the SonarQube server.
         """
         sensors = (
@@ -437,7 +453,8 @@ class TestDockerCAT:
 
     # Test analysis tools
     def test_tool_cppcheck(self):
-        """As a user of this image, I want to run cppcheck from within a container
+        """
+        As a user of this image, I want to run cppcheck from within a container
         so that it produces a report.
         """
         ref = "tests/c_cpp/reference-cppcheck-results.xml"
@@ -446,7 +463,8 @@ class TestDockerCAT:
         self.analysis_tool("cppcheck", cmd, ref, output, False)
 
     def test_tool_frama_c(self):
-        """As a user of this image, I want to run Frama-C from within a container
+        """
+        As a user of this image, I want to run Frama-C from within a container
         so that it produces a report.
         """
         ref = "tests/c_cpp/reference-framac-results.txt"
@@ -456,14 +474,16 @@ class TestDockerCAT:
         self.analysis_tool("Frama-C", cmd, ref, output)
 
     def test_tool_pylint(self):
-        """As a user of this image, I want to run pylint from within a container
+        """
+        As a user of this image, I want to run pylint from within a container
         so that it produces a report.
         """
         cmd = "pylint --exit-zero -f json --rcfile=/opt/python/pylintrc_RNC_sonar_2017_A_B tests/python/src/simplecaesar.py"
         self.analysis_tool("pylint", cmd, "tests/python/reference-pylint-results.json", "tests/python/tmp-pylint-results.json")
 
     def test_tool_rats(self):
-        """As a user of this image, I want to run RATS from within a container
+        """
+        As a user of this image, I want to run RATS from within a container
         so that it produces a report.
         """
         ref = "tests/c_cpp/reference-rats-results.xml"
@@ -472,14 +492,16 @@ class TestDockerCAT:
         self.analysis_tool("RATS", cmd, ref, output)
 
     def test_tool_shellcheck(self):
-        """As a user of this image, I want to run shellcheck from within a container
+        """
+        As a user of this image, I want to run shellcheck from within a container
         so that it produces a report.
         """
         cmd = "bash -c 'shellcheck -s sh -f checkstyle tests/shell/src/script.sh || true'"
         self.analysis_tool("shellcheck", cmd, "tests/shell/reference-shellcheck-results.xml", "tests/shell/tmp-shellcheck-results.xml")
 
     def test_tool_vera(self):
-        """As a user of this image, I want to run Vera++ from within a container
+        """
+        As a user of this image, I want to run Vera++ from within a container
         so that it produces a report.
         """
         ref = "tests/c_cpp/reference-vera-results.xml"
@@ -489,7 +511,8 @@ class TestDockerCAT:
 
     # Test importation of analysis results
     def test_import_cppcheck_results(self):
-        """As a user of this image, I want to be able to import the results
+        """
+        As a user of this image, I want to be able to import the results
         of a CppCheck analysis to SonarQube.
         """
         rule_violated = "cppcheck:arrayIndexOutOfBounds"
@@ -499,7 +522,8 @@ class TestDockerCAT:
             "CNES_C_A", "c++", "tests/c_cpp", "cppcheck", rule_violated, expected_sensor, expected_import)
 
     def test_import_framac_results(self):
-        """As a user of this image, I want to be able to import the results
+        """
+        As a user of this image, I want to be able to import the results
         of a Frama-C analysis to SonarQube.
         """
         rule_violated = "framac-rules:KERNEL.0"
@@ -509,7 +533,8 @@ class TestDockerCAT:
             "CNES_CPP_A", "c++", "tests/c_cpp", "framac", rule_violated, expected_sensor, expected_import)
 
     def test_import_pylint_results(self):
-        """As a user of this image, I want to be able to import the results
+        """
+        As a user of this image, I want to be able to import the results
         of a pylint analysis to SonarQube.
         """
         rule_violated = "Pylint:C0326"
@@ -519,7 +544,8 @@ class TestDockerCAT:
             "CNES_PYTHON_A", "py", "tests/python", "src", rule_violated, expected_sensor, expected_import)
 
     def test_import_rats_results(self):
-        """As a user of this image, I want to be able to import the results
+        """
+        As a user of this image, I want to be able to import the results
         of a RATS analysis to SonarQube.
         """
         rule_violated = "rats:fixed size global buffer"
@@ -529,7 +555,8 @@ class TestDockerCAT:
             "CNES_CPP_A", "c++", "tests/c_cpp", "rats", rule_violated, expected_sensor, expected_import, True)
 
     def test_import_vera_results(self):
-        """As a user of this image, I want to be able to import the results
+        """
+        As a user of this image, I want to be able to import the results
         of a Vera++ analysis to SonarQube.
         """
         rule_violated = "vera++:T008"
