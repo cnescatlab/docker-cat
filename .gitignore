@@ -1,8 +1,13 @@
 # Ignore sonar-scanner folder
 .sonarcache/
 .scannerwork/
+__pycache__/
+.pytest_cache/
 
 # Ignore results of tools
 tmp*results.*
 *.o
 infer-out/
+
+# Ignore virtual environment
+env/
