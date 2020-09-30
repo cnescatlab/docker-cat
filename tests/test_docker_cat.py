@@ -400,7 +400,7 @@ class TestDockerCAT:
         self.language("C/C++", "c++", "c_cpp", sensors, "c-dummy-project", 0, "CNES_C_A", 1)
         # 0 issue are expected with the Sonar way Quality Profile for
         # C++ (Community) because it does not have any rule enabled.
-    
+
     def test_language_fortran_77(self):
         """
         As a user of this image, I want to analyze a fortran 77 project
