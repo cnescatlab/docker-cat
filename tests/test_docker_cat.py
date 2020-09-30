@@ -84,6 +84,19 @@ class TestDockerCAT:
             self.language("Java", "java", "java", sensors, "java-dummy-project", 3, "CNES_JAVA_A", 6)
         """
         docker_client = docker.from_env()
+
+        # Inner function to factor out some code
+        def get_number_of_issues():
+            """
+            Factor out the resquest to get the number of issues of a project on SonarQube
+
+            :returns: the number of issues
+            """
+            output = requests.get(f"{cls.CAT_URL}/api/issues/search?componentKeys={project_key}",
+                        auth=("admin", "admin")).json()['issues']
+            issues = [ issue for issue in output if issue['status'] in ('OPEN', 'TO_REVIEW') ]
+            return len(issues)
+
         print(f"Analysing project {project_key}...")
         output = docker_client.containers.get(cls.CAT_CONTAINER_NAME).exec_run(
             f"sonar-scanner -Dsonar.host.url=http://localhost:9000 -Dsonar.projectBaseDir=/media/sf_Shared/tests/{folder}"
@@ -100,12 +113,8 @@ class TestDockerCAT:
                         auth=("admin", "admin")).json()
         # Hint: if this test fails, the project is not on the server
         assert output['components'][0]['key'] == project_key
-        # Get the number of issues of the project
-        output = requests.get(f"{cls.CAT_URL}/api/issues/search?componentKeys={project_key}",
-                        auth=("admin", "admin")).json()['issues']
-        issues = [ issue for issue in output if issue['status'] in ('OPEN', 'TO_REVIEW') ]
         # Hint: if this test fails, there should be {nb_issues issues} on the {language_name} dummy project with the Sonar way QP but {len(issues)} were found
-        assert len(issues) == nb_issues
+        assert get_number_of_issues() == nb_issues
         print("Analysis with Sonar way QP ran as expected.")
         # If the language has a specific CNES Quality Profile, it must also be tested
         if cnes_qp:
@@ -131,12 +140,8 @@ class TestDockerCAT:
                     "project": project_key,
                     "qualityProfile": "Sonar way"
                 })
-            # Get the new number of issues
-            output = requests.get(f"{cls.CAT_URL}/api/issues/search?componentKeys={project_key}",
-                auth=("admin", "admin")).json()['issues']
-            issues = [ issue for issue in output if issue['status'] in ('OPEN', 'TO_REVIEW') ]
             # Hint: if this test fails, there should be {nb_issues_cnes_qp} issues on the {language_name} dummy project with the {cnes_qp} QP but {len(issues)} were found
-            assert len(issues) == nb_issues_cnes_qp
+            assert get_number_of_issues() == nb_issues_cnes_qp
 
     @classmethod
     def analysis_tool(cls, tool: str, cmd: str, ref_file: str, tmp_file: str, store_output: bool = True):
