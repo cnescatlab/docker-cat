@@ -47,4 +47,4 @@ allow_sonarqube(){
 allow_sonarqube
 # Call for configure-cat script to set quality profiles and quality gates.
 bash /tmp/configure-cat.bash &
-su sonarqube -l -c "cd /opt/sonarqube && PATH=${PATH} SONAR_VERSION=${SONAR_VERSION} bin/run.sh"
+su sonarqube -l -c "cd /opt/sonarqube && PATH=${PATH} SONAR_VERSION=${SONAR_VERSION} SONARQUBE_JDBC_USERNAME=${SONARQUBE_JDBC_USERNAME} SONARQUBE_JDBC_PASSWORD=${SONARQUBE_JDBC_PASSWORD} bin/run.sh"
