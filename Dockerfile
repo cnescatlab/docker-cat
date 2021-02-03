@@ -54,8 +54,9 @@ ADD https://github.com/checkstyle/sonar-checkstyle/releases/download/4.21/checks
     https://github.com/cnescatlab/sonar-icode-cnes-plugin/releases/download/2.0.2/sonar-icode-cnes-plugin-2.0.2.jar \
     https://github.com/cnescatlab/sonar-frama-c-plugin/releases/download/V2.1.1/sonar-frama-c-plugin-2.1.1.jar \
     https://github.com/cnescatlab/sonar-cnes-scan-plugin/releases/download/1.5.0/sonar-cnes-scan-plugin-1.5.jar \
-    https://github.com/cnescatlab/sonar-cnes-report/releases/download/3.2.2/sonar-cnes-report-3.2.2.jar \
+    https://github.com/cnescatlab/sonar-cnes-report/releases/download/3.3.0/sonar-cnes-report-3.3.0.jar \
     https://github.com/jensgerdes/sonar-pmd/releases/download/3.2.1/sonar-pmd-plugin-3.2.1.jar \
+    https://github.com/cnescatlab/sonar-hadolint-plugin/releases/download/1.0.0/sonar-hadolint-plugin-1.0.0.jar \
     /opt/sonarqube/extensions/plugins/
 
 
@@ -100,6 +101,8 @@ RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >
        jq \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir /home/sonarqube \
+    ## Hadolint tool
+    && curl -ksSLO https://github.com/hadolint/hadolint/releases/download/v1.21.0/hadolint-Linux-x86_64 \
     ## Install i-Code CNES
     && unzip /tmp/icode-4.1.0.zip -d /tmp \
     && chmod +x /tmp/icode/icode \
@@ -168,6 +171,8 @@ RUN chmod 750 /tmp/init.bash \
     && ln -s /usr/local/bin/frama-c /opt/sonarqube/frama-c/frama-c \
 ###### Disable telemetry
     && sed -i 's/#sonar\.telemetry\.enable=true/sonar\.telemetry\.enable=false/' /opt/sonarqube/conf/sonar.properties \
+###### Set list of patterns matching Dockerfiles for hadolint
+    && echo 'sonar.lang.patterns.dockerfile=Dockerfile,Dockerfile.*' >> /opt/sonarqube/conf/sonar-scanner.properties \
 ###### Set default report path for Cppcheck
     && echo 'sonar.cxx.cppcheck.reportPath=cppcheck-report.xml' >> /opt/sonar-scanner/conf/sonar-scanner.properties \
 ###### Set default report path for Vera++
