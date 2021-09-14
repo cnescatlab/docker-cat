@@ -3,6 +3,7 @@
 .scannerwork/
 __pycache__/
 .pytest_cache/
+.cache
 
 # Ignore results of tools
 tmp*results.*

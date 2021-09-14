@@ -118,6 +118,7 @@ You can run an analysis with the classic method by using one of scanners provide
 | Frama-C                                           | 20.0                     |
 | expat                                             | 2.0.1                    |
 | rats                                              | 2.4                      |
+| hadolint                                          | 2.7.0                    |
 | python3                                           | 3.8.3                    |
 | pip                                               | 20.1.1                   |
 | setuptools                                        | 46.1.3                   |
@@ -161,7 +162,8 @@ You can run an analysis with the classic method by using one of scanners provide
 | SonarQube CNES CXX Plugin                         | 1.1                      |
 | SonarQube CNES Export Plugin                      | 1.2                      |
 | SonarQube CNES Python Plugin                      | 1.3                      |
-| SonarQube CNES Report                             | 3.2.2                    |
+| SonarQube CNES Report                             | 3.3.0                    |
+| SonarQube Hadolint Plugin                         | 1.0.0                    |
 | SonarQube CNES Scan Plugin                        | 1.5                      |
 | SonarRuby                                         | 1.5.0 (build 315)        |
 | SonarScala                                        | 1.5.0 (build 315)        |

@@ -62,10 +62,11 @@ ADD https://github.com/checkstyle/sonar-checkstyle/releases/download/4.21/checks
 
 # Download software
 ADD https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/rough-auditing-tool-for-security/rats-2.4.tgz \
-    http://downloads.sourceforge.net/project/expat/expat/2.0.1/expat-2.0.1.tar.gz \
+    http://downloads.sourceforge.net/project/expat/expat/2.4.1/expat-2.4.1.tar.gz \
     https://github.com/cnescatlab/i-CodeCNES/releases/download/v4.1.0/icode-4.1.0.zip \
     https://netix.dl.sourceforge.net/project/cppcheck/cppcheck/1.90/cppcheck-1.90.tar.gz \
     https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.4.0.2170.zip \
+    https://github.com/hadolint/hadolint/releases/download/v2.7.0/hadolint-Linux-x86_64 \
     /tmp/
 
 # CNES Pylint extension
@@ -101,8 +102,6 @@ RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >
        jq \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir /home/sonarqube \
-    ## Hadolint tool
-    && curl -ksSLO https://github.com/hadolint/hadolint/releases/download/v1.21.0/hadolint-Linux-x86_64 \
     ## Install i-Code CNES
     && unzip /tmp/icode-4.1.0.zip -d /tmp \
     && chmod +x /tmp/icode/icode \
@@ -127,15 +126,16 @@ RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >
        typed-ast==1.4.1 \
        astroid==2.4.0 \
        pylint==2.5.0 \
-    ## C and C++ tools installation
+    ## C and C++, and hadolint tools installation
     && cd /tmp \
-    && tar -xvzf expat-2.0.1.tar.gz \
-    && cd expat-2.0.1 \
+    && mv hadolint-Linux-x86_64 hadolint \
+    && tar -xvzf expat-2.4.1.tar.gz \
+    && cd expat-2.4.1 \
     && ./configure \
     && make \
     && make install \
     && cd .. \
-    && rm -rf ./expat-2.0.1.tar.gz ./expat-2.0.1 \
+    && rm -rf ./expat-2.4.1.tar.gz ./expat-2.4.1 \
     && tar -xzvf rats-2.4.tgz \
     && cd rats-2.4 \
     && ./configure --with-expat-lib=/usr/local/lib \

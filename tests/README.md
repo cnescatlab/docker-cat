@@ -62,6 +62,9 @@
 1. Import Frama-C results
     * function: test_import_framac_results
     * purpose: Check that issues revealed by Frama-C and activated in the Quality Profile can be imported in SonarQube.
+1. Hadolint
+    * function: test_tool_hadolint
+    * purpose: Check that hadolint can be launched from within the container to analyze Dockerfiles.
 
 ## How to run all the tests
 

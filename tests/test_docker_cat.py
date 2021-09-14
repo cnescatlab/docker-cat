@@ -479,6 +479,16 @@ class TestDockerCAT:
         cmd = f"frama-c tests/c_cpp/framac/CruiseControl.c tests/c_cpp/framac/CruiseControl_const.c -rte -metrics -report-csv {report}"
         self.analysis_tool("Frama-C", cmd, ref, output)
 
+    def test_tool_hadolint(self):
+        """
+        As a user of this image, I want to run hadolint to lint my Dockerfile
+        so that I can see if my Dockerfile respect best pratices.
+        """
+        ref = "tests/docker/reference-hadolint-results"
+        output = "tests/docker/tmp-hadolint-results"
+        cmd =  "hadolint --no-fail tests/docker/Dockerfile"
+        self.analysis_tool("hadolint", cmd, ref, output)
+
     def test_tool_pylint(self):
         """
         As a user of this image, I want to run pylint from within a container

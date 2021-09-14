@@ -1,0 +1,8 @@
+tests/docker/Dockerfile:3 DL3006 [1m[93mwarning[0m: Always tag the version of an image explicitly
+tests/docker/Dockerfile:4 DL3015 [92minfo[0m: Avoid additional packages by specifying `--no-install-recommends`
+tests/docker/Dockerfile:4 DL3009 [92minfo[0m: Delete the apt-get lists after installing something
+tests/docker/Dockerfile:4 SC2154 [1m[93mwarning[0m: node_verion is referenced but not assigned (did you mean 'node_version'?).
+tests/docker/Dockerfile:6 DL3045 [1m[93mwarning[0m: `COPY` to a relative destination without `WORKDIR` set.
+tests/docker/Dockerfile:7 DL3003 [1m[93mwarning[0m: Use WORKDIR to switch to a directory
+tests/docker/Dockerfile:7 DL3016 [1m[93mwarning[0m: Pin versions in npm. Instead of `npm install <package>` use `npm install <package>@<version>`
+tests/docker/Dockerfile:10 DL3011 [1m[91merror[0m: Valid UNIX ports range from 0 to 65535
