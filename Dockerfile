@@ -5,8 +5,8 @@ FROM sonarqube:7.9.4-community AS framac
 USER root
 WORKDIR /tmp/framac
 
-ADD https://frama-c.com/download/frama-c-20.0-Calcium.tar.gz \
-    /tmp/framac
+RUN cd /tmp/framac \
+    && curl -ksSLO https://frama-c.com/download/frama-c-20.0-Calcium.tar.gz
 
 RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >> /etc/apt/sources.list \
     && apt-get update \
@@ -43,37 +43,37 @@ COPY conf /tmp/conf
 ## ====================== DOWNLOAD DEPENDENCIES ===============================
 
 # Download SonarQube plugins
-ADD https://github.com/checkstyle/sonar-checkstyle/releases/download/4.21/checkstyle-sonar-plugin-4.21.jar \
-    https://github.com/galexandre/sonar-cobertura/releases/download/1.9.1/sonar-cobertura-plugin-1.9.1.jar \
-    https://github.com/SonarOpenCommunity/sonar-cxx/releases/download/cxx-1.3.1/sonar-cxx-plugin-1.3.1.1807.jar \
-    https://github.com/spotbugs/sonar-findbugs/releases/download/3.11.0/sonar-findbugs-plugin-3.11.0.jar \
-    https://github.com/willemsrb/sonar-rci-plugin/releases/download/sonar-rci-plugin-1.0.1/sonar-rci-plugin-1.0.1.jar \
-    https://binaries.sonarsource.com/Distribution/sonar-flex-plugin/sonar-flex-plugin-2.5.1.1831.jar \
-    https://github.com/cnescatlab/sonar-cnes-cxx-plugin/releases/download/v1.1.0/sonar-cnes-cxx-plugin-1.1.jar \
-    https://github.com/cnescatlab/sonar-cnes-export-plugin/releases/download/v1.2.0/sonar-cnes-export-plugin-1.2.jar \
-    https://github.com/cnescatlab/sonar-cnes-python-plugin/releases/download/1.3/sonar-cnes-python-plugin-1.3.jar \
-    https://github.com/cnescatlab/sonar-icode-cnes-plugin/releases/download/2.0.2/sonar-icode-cnes-plugin-2.0.2.jar \
-    https://github.com/cnescatlab/sonar-frama-c-plugin/releases/download/V2.1.1/sonar-frama-c-plugin-2.1.1.jar \
-    https://github.com/cnescatlab/sonar-cnes-scan-plugin/releases/download/1.5.0/sonar-cnes-scan-plugin-1.5.jar \
-    https://github.com/cnescatlab/sonar-cnes-report/releases/download/3.3.0/sonar-cnes-report.jar \
-    https://github.com/jensgerdes/sonar-pmd/releases/download/3.2.1/sonar-pmd-plugin-3.2.1.jar \
-    https://github.com/cnescatlab/sonar-hadolint-plugin/releases/download/1.0.0/sonar-hadolint-plugin-1.0.0.jar \
-    /opt/sonarqube/extensions/plugins/
-
+RUN cd /opt/sonarqube/extensions/plugins \
+    && curl -ksSLO https://github.com/checkstyle/sonar-checkstyle/releases/download/4.21/checkstyle-sonar-plugin-4.21.jar \
+    && curl -ksSLO https://github.com/galexandre/sonar-cobertura/releases/download/1.9.1/sonar-cobertura-plugin-1.9.1.jar \
+    && curl -ksSLO https://github.com/SonarOpenCommunity/sonar-cxx/releases/download/cxx-1.3.1/sonar-cxx-plugin-1.3.1.1807.jar \
+    && curl -ksSLO https://github.com/spotbugs/sonar-findbugs/releases/download/3.11.0/sonar-findbugs-plugin-3.11.0.jar \
+    && curl -ksSLO https://github.com/willemsrb/sonar-rci-plugin/releases/download/sonar-rci-plugin-1.0.1/sonar-rci-plugin-1.0.1.jar \
+    && curl -ksSLO https://binaries.sonarsource.com/Distribution/sonar-flex-plugin/sonar-flex-plugin-2.5.1.1831.jar \
+    && curl -ksSLO https://github.com/cnescatlab/sonar-cnes-cxx-plugin/releases/download/v1.1.0/sonar-cnes-cxx-plugin-1.1.jar \
+    && curl -ksSLO https://github.com/cnescatlab/sonar-cnes-export-plugin/releases/download/v1.2.0/sonar-cnes-export-plugin-1.2.jar \
+    && curl -ksSLO https://github.com/cnescatlab/sonar-cnes-python-plugin/releases/download/1.3/sonar-cnes-python-plugin-1.3.jar \
+    && curl -ksSLO https://github.com/cnescatlab/sonar-icode-cnes-plugin/releases/download/2.0.2/sonar-icode-cnes-plugin-2.0.2.jar \
+    && curl -ksSLO https://github.com/cnescatlab/sonar-frama-c-plugin/releases/download/V2.1.1/sonar-frama-c-plugin-2.1.1.jar \
+    && curl -ksSLO https://github.com/cnescatlab/sonar-cnes-scan-plugin/releases/download/1.5.0/sonar-cnes-scan-plugin-1.5.jar \
+    && curl -ksSLO https://github.com/cnescatlab/sonar-cnes-report/releases/download/3.3.0/sonar-cnes-report.jar \
+    && curl -ksSLO https://github.com/jensgerdes/sonar-pmd/releases/download/3.2.1/sonar-pmd-plugin-3.2.1.jar \
+    && curl -ksSLO https://github.com/cnescatlab/sonar-hadolint-plugin/releases/download/1.0.0/sonar-hadolint-plugin-1.0.0.jar
 
 # Download software
-ADD https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/rough-auditing-tool-for-security/rats-2.4.tgz \
-    http://downloads.sourceforge.net/project/expat/expat/2.4.1/expat-2.4.1.tar.gz \
-    https://github.com/cnescatlab/i-CodeCNES/releases/download/v4.1.0/icode-4.1.0.zip \
-    https://netix.dl.sourceforge.net/project/cppcheck/cppcheck/1.90/cppcheck-1.90.tar.gz \
-    https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.4.0.2170.zip \
-    https://github.com/facebook/infer/releases/download/v0.17.0/infer-linux64-v0.17.0.tar.xz
-    https://github.com/hadolint/hadolint/releases/download/v2.7.0/hadolint-Linux-x86_64 \
-    /tmp/
+RUN cd /tmp \
+    && curl -ksSLO https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/rough-auditing-tool-for-security/rats-2.4.tgz \
+    && curl -ksSLO https://sourceforge.net/projects/expat/files/expat/2.4.1/expat-2.4.1.tar.gz \
+    && curl -ksSLO https://github.com/cnescatlab/i-CodeCNES/releases/download/v4.1.0/icode-4.1.0.zip \
+    && curl -ksSLO https://netix.dl.sourceforge.net/project/cppcheck/cppcheck/1.90/cppcheck-1.90.tar.gz \
+    && curl -ksSLO https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.4.0.2170.zip \
+    && curl -ksSLO https://github.com/facebook/infer/releases/download/v0.17.0/infer-linux64-v0.17.0.tar.xz \
+    && curl -ksSLO https://github.com/hadolint/hadolint/releases/download/v2.7.0/hadolint-Linux-x86_64
 
 # CNES Pylint extension
-ADD https://github.com/cnescatlab/cnes-pylint-extension/archive/v5.0.0.tar.gz \
-    /tmp/python/
+RUN mkdir -p /tmp/python \
+    && cd /tmp/python \
+    && curl -ksSLO https://github.com/cnescatlab/cnes-pylint-extension/archive/v5.0.0.tar.gz
 
 # Add CNES pylintrc A_B, C, D
 COPY pylintrc.d/ /opt/python/
@@ -107,11 +107,11 @@ RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >
        libyojson-ocaml \
        jq \
        # Needed by Infer
-       libsqlite3-0=3.33.0-* \
-       libtinfo5=6.2-* \
+       libsqlite3-0=3.34.1-* \
+       libtinfo5=6.2* \
        python2.7=2.7.18-* \
        # Compilation tools needed by Infer
-       clang=1:9.0-* \
+       clang=1:11.0-* \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir /home/sonarqube \
     ## Install i-Code CNES
