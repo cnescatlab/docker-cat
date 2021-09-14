@@ -65,6 +65,10 @@
 1. Hadolint
     * function: test_tool_hadolint
     * purpose: Check that hadolint can be launched from within the container to analyze Dockerfiles.
+1. Infer
+    * function: test_tool_infer
+    * purpose: Check that Infer can be launched from within the container to analyze C/C++ projects.
+
 
 ## How to run all the tests
 

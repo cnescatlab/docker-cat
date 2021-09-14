@@ -489,6 +489,14 @@ class TestDockerCAT:
         cmd =  "hadolint --no-fail tests/docker/Dockerfile"
         self.analysis_tool("hadolint", cmd, ref, output)
 
+    def test_tool_infer(self):
+        """
+        As a user of this image, I want to run Infer from within a container
+        so that it produces results.
+        """
+        cmd = "infer -q run -- gcc -c tests/c_cpp/infer/hello.c -o tests/c_cpp/infer/hello.o"
+        self.analysis_tool("Infer", cmd, "tests/c_cpp/reference-infer-results.json", "infer-out/report.json", False)
+
     def test_tool_pylint(self):
         """
         As a user of this image, I want to run pylint from within a container

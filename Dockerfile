@@ -13,6 +13,7 @@ RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >
     && apt-get install -y \
         make \
         unzip \
+        xz-utils \
         ocaml \
         ocaml-findlib \
         libfindlib-ocaml-dev \
@@ -66,6 +67,7 @@ ADD https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.
     https://github.com/cnescatlab/i-CodeCNES/releases/download/v4.1.0/icode-4.1.0.zip \
     https://netix.dl.sourceforge.net/project/cppcheck/cppcheck/1.90/cppcheck-1.90.tar.gz \
     https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.4.0.2170.zip \
+    https://github.com/facebook/infer/releases/download/v0.17.0/infer-linux64-v0.17.0.tar.xz
     https://github.com/hadolint/hadolint/releases/download/v2.7.0/hadolint-Linux-x86_64 \
     /tmp/
 
@@ -86,20 +88,30 @@ RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >
     && apt-get update -y \
     && apt-get install -y \
        unzip \
+       # Needed by Pylint
        python3 \
        python3-pip \
+       # Needed by Vera++
        vera\+\+=1.2.1-* \
+       # Needed by Shellcheck
        shellcheck=0.7.1-* \
        gcc=4:10.2.1-* \
        make=4.3-* \
        g\+\+ \
        libpcre3 \
        libpcre3-dev \
+       # Needed by Frama-C
        libfindlib-ocaml \
        libocamlgraph-ocaml-dev \
        libzarith-ocaml \
        libyojson-ocaml \
        jq \
+       # Needed by Infer
+       libsqlite3-0=3.33.0-* \
+       libtinfo5=6.2-* \
+       python2.7=2.7.18-* \
+       # Compilation tools needed by Infer
+       clang=1:9.0-* \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir /home/sonarqube \
     ## Install i-Code CNES
@@ -149,6 +161,7 @@ RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >
     && make install MATCHCOMPILER="yes" FILESDIR="/usr/share/cppcheck" HAVE_RULES="yes" CXXFLAGS="-O2 -DNDEBUG -Wall -Wno-sign-compare -Wno-unused-function -Wno-deprecated-declarations" \
     && cd .. \
     && rm -rf ./cppcheck-1.90.tar.gz ./cppcheck-1.90/ \
+    && tar -C /opt -Jxvf infer-linux64-v0.17.0.tar.xz \
     && chown sonarqube:sonarqube -R /opt \
     && chown sonarqube:sonarqube -R /home \
     && apt-get autoremove -y \
@@ -169,6 +182,7 @@ RUN chmod 750 /tmp/init.bash \
     && chown sonarqube:sonarqube -R /tmp/conf \
     && mkdir -p /opt/sonarqube/frama-c/ \
     && ln -s /usr/local/bin/frama-c /opt/sonarqube/frama-c/frama-c \
+    && ln -s "/opt/infer-linux64-v0.17.0/bin/infer" /usr/local/bin/infer \
 ###### Disable telemetry
     && sed -i 's/#sonar\.telemetry\.enable=true/sonar\.telemetry\.enable=false/' /opt/sonarqube/conf/sonar.properties \
 ###### Set list of patterns matching Dockerfiles for hadolint

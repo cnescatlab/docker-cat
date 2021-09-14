@@ -133,6 +133,7 @@ You can run an analysis with the classic method by using one of scanners provide
 | astroid                                           | 2.4.0                    |
 | pylint                                            | 2.5.0                    |
 | cnes-pylint-extension                             | 5.0.0                    |
+| Infer                                             | 0.17.0                   |
  
 | SonarQube plugins                                 | Versions                 |
 |---------------------------------------------------|--------------------------|
