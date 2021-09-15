@@ -141,6 +141,8 @@ RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >
     ## C and C++, and hadolint tools installation
     && cd /tmp \
     && mv hadolint-Linux-x86_64 hadolint \
+    && chmod 777 hadolint \
+    && mv hadolint /usr/local/bin \
     && tar -xvzf expat-2.4.1.tar.gz \
     && cd expat-2.4.1 \
     && ./configure \
