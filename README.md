@@ -55,6 +55,3 @@ Once the container is active, use the [Sonar CNES Scan plugin](https://github.co
 - Sonar PHP plugin 2.10.0.2087
 - Sonar PMD plugin 2.6
 - Sonar Python plugin 1.8.0.149
-
-
-
