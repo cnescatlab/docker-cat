@@ -1,5 +1,7 @@
 # docker-cat
+#
 Docker Code Analysis Tools (CAT) is a SonarQube docker image containing configuration to realize code analysis.
+#
 # Quick install
 Step by step : 
 
