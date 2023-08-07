@@ -1,0 +1,17 @@
+[MASTER]
+
+# List of plugins (as comma separated values of python modules names) to load,
+# usually to register additional checkers.
+load-plugins=cnes_checker,pylint.extensions.check_elif
+
+[DESIGN]
+
+# Maximum number of return / yield for function / method body
+max-returns=1
+
+# Maximum number of statements in function / method body
+max-statements=100
+
+# force the detection of all the missing parameters (docstrings with a mere
+# description won't be tolerated)
+accept-no-param-doc=n
