@@ -69,49 +69,154 @@ add_condition(){
 
 create_quality_gates(){
 
-  log_info "creating CNES quality gate"
-  RES=$(curl -su admin:admin -X POST "${SONARQUBE_URL}/api/qualitygates/create?name=CNES")
-  if [ "$(echo ${RES} | jq '(.errors | length)')" == "0" ]
+  FILE=$1
+  NAME=$(jq -r '.name' "$FILE")
+  log_info "creating '$NAME' quality gate."
+  res=$(curl -su "admin:admin" \
+                --data-urlencode "name=$NAME" \
+                "${SONARQUBE_URL}/api/qualitygates/create")
+  if [ "$(echo "${res}" | jq '(.errors | length)')" == "0" ]
   then
-    log_info "successfully created CNES quality gate... now configuring it."
+      log_info "successfully created '$NAME' quality gate... now configuring it."
   else
-    log_warning "impossible to create quality gate" "$( echo ${RES} | jq '.errors[].msg' )"
+      log_warning "impossible to create quality gate" "$(echo "${res}" | jq '.errors[].msg')"
   fi
 
   # Retrieve CNES quality gates ID
-  log_info "retrieving CNES quality gate ID"
-  RES=$(curl -su admin:admin -X POST "${SONARQUBE_URL}/api/qualitygates/show?name=CNES")
-  if [ "$( echo ${RES} | jq '(.errors | length)')" == "0" ]
+  log_info "retrieving '$NAME' quality gate ID."
+  res=$(curl -su "admin:admin" \
+              -G \
+              --data-urlencode "name=$NAME" \
+              "${SONARQUBE_URL}/api/qualitygates/show")
+  if [ "$(echo "${res}" | jq '(.errors | length)')" == "0" ]
   then
-    GATEID=$(curl -su admin:admin -X POST "${SONARQUBE_URL}/api/qualitygates/show?name=CNES" |  jq '.id')
-    log_info "successfully retrived CNES quality gate ID (ID=$GATEID)"
+      GATEID="$(echo "${res}" |  jq -r '.id')"
+      log_info "successfully retrieved quality gate ID (ID=$GATEID)."
   else
-    log_error "impossible to reach CNES quality gate ID" "$( echo ${RES} | jq '.errors[].msg' )"
+      log_error "impossible to reach quality gate ID" "$(echo "${res}" | jq '.errors[].msg')"
   fi
 
-  # Configure ratio comment
-  log_info "setting CNES quality get as default gate"
-  RES=$(curl -su admin:admin -X POST "${SONARQUBE_URL}/api/qualitygates/set_as_default?id=${GATEID}")
-  if [ "$( echo ${RES} | jq '(.errors | length)')" == "0" ]
+  # Setting it as default quality gate
+  if [ "$NAME" = "CNES" ]
   then
-    log_info "successfully set CNES quality gate ID as default gate"
-  else
-    log_warning "impossible to set CNES quality gate as default gate" "$( echo ${RES} | jq '.errors[].msg' )"
+      log_info "setting CNES quality gate as default gate."
+      res=$(curl -su "admin:admin" \
+                  --data-urlencode "id=${GATEID}" \
+                  "${SONARQUBE_URL}/api/qualitygates/set_as_default")
+      if [ -z "$res" ]
+      then
+          log_info "successfully set CNES quality gate as default gate."
+      else
+          log_error "impossible to set CNES quality gate as default gate" "$(echo "${res}" | jq '.errors[].msg')"
+      fi
   fi
 
   # add quality gate conditions
-  add_condition "Blocker violations"                 blocker_violations        GT ${GATEID} 0
-  add_condition "Comment (%)"                        comment_lines_density     LT ${GATEID} 20
-  add_condition "Critical Issues"                    critical_violations       GT ${GATEID} 0
-  add_condition "Duplicated Lines (%)"               duplicated_lines_density  GT ${GATEID} 10
-  add_condition "Duplicated Lines on New Code (%)"   new_duplicated_lines      GT ${GATEID} 0
-  add_condition "Major Issues"                       major_violations          GT ${GATEID} 0
-  add_condition "New Issues"                         new_violations            GT ${GATEID} 0
-  add_condition "Technical Debt ratio"               new_sqale_debt_ratio      GT ${GATEID} 0
-  add_condition "Technical Debt ratio"               sqale_debt_ratio          GT ${GATEID} 5
-  add_condition "Test errors"                        test_errors               GT ${GATEID} 0
-  add_condition "Test failures"                      test_failures             GT ${GATEID} 0
+  # Adding all conditions of the JSON file
+    log_info "adding all conditions of $FILE to the gate."
+    len=$(jq '(.conditions | length)' "$FILE")
+    cnes_quality_gate=$(jq '(.conditions)' "$FILE")
+    actual_quality_gate=$(curl -su "admin:admin" \
+                -G \
+                --data-urlencode "name=$NAME" \
+                "${SONARQUBE_URL}/api/qualitygates/show")
+    conditions=$(echo "$actual_quality_gate" | jq -r '.conditions[]')
+    for i in $(seq 0 $((len - 1)))
+    do
+        metric=$(echo "$cnes_quality_gate" | jq -r '(.['"$i"'].metric)')
+        op=$(echo "$cnes_quality_gate" | jq -r '(.['"$i"'].op)')
+        error=$(echo "$cnes_quality_gate" | jq -r '(.['"$i"'].error)')
+        add_condition_to_quality_gate "$GATEID" "$conditions" "$metric" "$op" "$error"
+    done
+}
 
+# add_condition_to_quality_gate
+#
+# This function adds a condition to an existing Quality Gate
+# on a SonarQube server.
+#
+# Parameters:
+#   1: gate_id
+#   2: conditions
+#   3: metric_key
+#   4: metric_operator (EQ, NE, LT or GT)
+#   5: metric's error threshold ("none" not to set it)
+#
+# Example:
+#   $ add_condition_to_quality_gate "blocker_violations" "GT" "$GATEID" 0
+add_condition_to_quality_gate()
+{
+    gate_id=$1
+    conditions=$2
+    metric_key=$3
+    metric_operator=$4
+    metric_errors=$5
+
+    # Check if the metric is already configured
+    existing_condition=$(echo "${conditions}" | jq -r "select(.metric == \"${metric_key}\")")
+
+    # If the metric is already configured, update it
+    if [ -n "$existing_condition" ]; then
+        log_info "The metric '${metric}' is already configured. Updating it."
+        condition_id=$(echo "${existing_condition}" | jq -r ".id")
+        update_condition "$condition_id" "$metric_key" "$metric_operator" "$metric_errors"
+    else
+        # Add the new condition
+        log_info "adding CNES quality gate condition: ${metric_key} ${metric_operator} ${metric_errors}."
+
+        threshold=()
+        if [ "${metric_errors}" != "none" ]
+        then
+            threshold=("--data-urlencode" "error=${metric_errors}")
+        fi
+
+        res=$(curl -su "admin:admin" \
+                    --data-urlencode "gateId=${gate_id}" \
+                    --data-urlencode "metric=${metric_key}" \
+                    --data-urlencode "op=${metric_operator}" \
+                    "${threshold[@]}" \
+                    "${SONARQUBE_URL}/api/qualitygates/create_condition")
+        if [ "$(echo "${res}" | jq '(.errors | length)')" != "0" ]; then
+            log_warning "impossible to add ${metric_key} condition" "$(echo "${res}" | jq '.errors[].msg')"  
+        fi
+    fi
+}
+
+# update_condition
+#
+# Updates a condition in an existing Quality Gate
+# on a SonarQube server.
+#
+# Parameters:
+#   1: condition_id
+#   2: metric_key
+#   3: metric_operator (EQ, NE, LT or GT)
+#   4: metric's error threshold ("none" not to set it)
+#
+# Example:
+#   $ add_condition_to_quality_gate "blocker_violations" "GT" "$GATEID" 0
+update_condition()
+{
+    condition_id=$1
+    metric_key=$2
+    metric_operator=$3
+    metric_errors=$4
+
+    threshold=()
+    if [ "${metric_errors}" != "none" ]
+    then
+        threshold=("--data-urlencode" "error=${metric_errors}")
+    fi
+
+    res=$(curl -su "admin:admin" \
+                --data-urlencode "id=${condition_id}" \
+                --data-urlencode "metric=${metric_key}" \
+                --data-urlencode "op=${metric_operator}" \
+                "${threshold[@]}" \
+                "${SONARQUBE_URL}/api/qualitygates/update_condition")
+    if [ "$(echo "${res}" | jq '(.errors | length)')" != "0" ]; then
+        log_warning "Impossible to update ${metric_key} condition" "$(echo "${res}" | jq '.errors[].msg')"
+    fi
 }
 
 
@@ -136,69 +241,6 @@ add_profile(){
     log_warning "impossible to create ${file} quality profile" "$( echo ${RES} | jq '.errors[].msg' )"
   fi
 }
-#############################################################################################
-# function add_rules
-#
-# Parameters :
-# - 1 : Rules file in JSON format correponding the the following format (Sonarqube 6.7.1 API /api/rules answer)
-#
-# Description :
-# Read JSON formatted file and add each rules in it with it's parameters into SonarQube's configuration.
-#
-#
-##############################################################################################
-add_rules(){
-   file=$1
-   log_info "Processing rules addition from file ${file}"
-   total=$(jq '.total' ${file})
-   total=$((${total}-1))
-   for i in $(seq 0 ${total});
-   do
-	log_info "Adding custom rule $(jq -r '.rules['${i}'].key' ${file})"
-	############## /API/RULES/CREATE
-	#### Rules informations regristred using the rules creation API
-	custom_key=$(jq -r '.rules['${i}'].key' ${file})
-	markdown_description=$(jq '.rules['${i}'].mdDesc' ${file})
-	name=$(jq -r '.rules['${i}'].name' ${file})
-	severity=$(jq -r '.rules['${i}'].severity' ${file})
-	status=$(jq -r '.rules['${i}'].status' ${file})
-	template_key=$(jq -r '.rules['${i}'].templateKey' ${file})
-        type=$(jq -r '.rules['${i}'].type' ${file})
-	### Handling parameters
-	parameters="params="
-	for j in $(seq 0 $(($(jq '.rules['${i}'].params | length' ${file})-1)) );
-	do
-    param_key=$(jq -r '.rules['$i'].params['$j'].key' ${file})
-    param_value=$(jq -r '.rules['$i'].params['$j'].defaultValue' ${file})
-    parameters="${parameters}${param_key}=\"${param_value}\";"
-	done
-  parameters="${parameters::-1}"
-  RES=$(curl -su admin:admin -X POST -d "custom_key=${custom_key}&markdown_description=${markdown_description}&name=${name}&severity=${severity}&status=${status}&template_key=${template_key}&type=${type}&${parameters}" 'http://localhost:9000/api/rules/create')
-  key=$(echo $RES | jq -r '.rule.key')
-  if [ "$(echo ${RES} | jq '(.errors | length)')" == "0" ]
-	then
-	    log_info "rule ${name} created in Sonarqube.."
-        else
-	    log_warning "impossible to create the rule ${name}" "$( echo ${RES} | jq '.errors[].msg' )"
-	fi
-	############ /API/RULES/UPDATE
-	### Rules informations registred using the rule's update API.
-	remediation_fn_base_effort=$(jq -r '.rules['${i}'].remFnBaseEffort' ${file})
-	remediation_fn_type=$(jq -r '.rules['${i}'].defaultDebtRemFnType' ${file})
-  RES=$(curl -su admin:admin -X POST "${SONARQUBE_URL}/api/rules/update?key=$key&${parameters}")
-	RES=$(curl -su admin:admin -X POST "${SONARQUBE_URL}/api/rules/update?key=$key&remediation_fn_base_effort=${remediation_fn_base_effort}&remediation_fn_type=${remediation_fn_type}")
-	if [ "$(echo ${RES} | jq '(.errors | length)')" == "0" ]
-	then
-	    log_info "rule ${name} updated in Sonarqube."
-        else
-	    log_warning  "impossible to update the rule ${name}" "$( echo ${RES} | jq '.errors[].msg' )"
-	fi
-   done
-
-}
-
-
-
 
 ########################################################
 # function create_quality_profiles
@@ -213,25 +255,18 @@ create_quality_profiles(){
   sleep 15
   while [ "${sonar_status}" != "UP" ]
   do
-    sleep 8
+    sleep 20
     log_info "retrieving Sonarqube's service status."
     sonar_status=$(curl -s -X GET "${SONARQUBE_URL}/api/system/status" | jq -r '.status')
     log_info "detected status ${sonar_status} for Sonarqube, expecting it to be UP."
   done
   log_info "detected status ${sonar_status} for Sonarqube, starting configuration of quality profiles."
-  # Not executed : expecting news from https://community.sonarsource.com/t/using-rules-create-api/1243
-  # API is returnin no detail informations
-  # Find all rules templates named "*-rules-template.json" in the folder /tmp/conf and add rules into sonarqube configuration.
-  find /tmp/conf -name "*-rules-template.json" -type f -print0 | while IFS= read -rd $'\0' file; do
-      add_rules ${file}
-  done
 
-  # Find all files named "*-quality-profile.xml" in the folder /tmp/conf and add it in Sonarqube Quality profiles
-  find /tmp/conf -name "*-quality-profile.xml" -type f -print0 | while IFS= read -rd $'\0' file; do
+  for file in $(find /tmp/conf/quality_profiles -mindepth 2 -maxdepth 2 -type f)
+  do
     add_profile "${file}"
   done
-
-  log_info "finished to configure quality profiles".
+  log_info "added all quality profiles."
 }
 
 run_sonarqube(){
@@ -257,8 +292,14 @@ stop_sonarqube(){
 }
 
 
-create_quality_profiles&&
-create_quality_gates
+create_quality_profiles
+
+for qg_file in /tmp/conf/quality_gates/*
+do
+  create_quality_gates "$qg_file"
+done
+
+
 
 echo "[INFO] Docker CAT is ready to go and find bugs!"
 

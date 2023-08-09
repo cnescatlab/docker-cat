@@ -12,20 +12,20 @@ name: CI
 on:
   push:
     branches:
-      - '*'
+      - "*"
     paths-ignore:
-      - '*.md'
+      - "*.md"
   pull_request:
     branches:
-      - '*'
+      - "*"
     paths-ignore:
-      - '*.md'
+      - "*.md"
 
 # Variables to configure the workflow
 env:
-  DOCKERFILE_PATH: '.'
-  DOCKERFILE_FILENAME: 'Dockerfile'
-  DOCKER_IMAGE_NAME: 'lequal/docker-cat'
+  DOCKERFILE_PATH: "."
+  DOCKERFILE_FILENAME: "Dockerfile"
+  DOCKER_IMAGE_NAME: "lequal/docker-cat"
 
 jobs:
   # Job that builds the image and upload it as an artifact
