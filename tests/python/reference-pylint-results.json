@@ -1,13 +1,28 @@
 [
     {
+        "type": "refactor",
+        "module": "simplecaesar",
+        "obj": "",
+        "line": 1,
+        "column": 0,
+        "endLine": null,
+        "endColumn": null,
+        "path": "tests/python/src/simplecaesar.py",
+        "symbol": "too-few-comments",
+        "message": "Too few comments (14.29/30 %)",
+        "message-id": "R5201"
+    },
+    {
         "type": "convention",
         "module": "simplecaesar",
         "obj": "",
-        "line": 19,
-        "column": 19,
+        "line": 13,
+        "column": 3,
+        "endLine": 13,
+        "endColumn": 29,
         "path": "tests/python/src/simplecaesar.py",
-        "symbol": "bad-whitespace",
-        "message": "Exactly one space required around assignment\n            encoded=encoded + letters[x]\n                   ^",
-        "message-id": "C0326"
+        "symbol": "unneeded-not",
+        "message": "Consider changing \"not not choice == 'encode'\" to \"choice == 'encode'\"",
+        "message-id": "C0113"
     }
 ]
