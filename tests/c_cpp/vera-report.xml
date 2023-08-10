@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<checkstyle version="5.0">
-    <file name="vera/main.cpp">
-        <error source="T013" severity="info" line="1" message="no copyright notice found" />
-        <error source="T008" severity="info" line="5" message="keyword &apos;for&apos; not followed by a single space" />
-        <error source="T019" severity="info" line="6" message="full block {} expected in the control structure" />
-        <error source="L001" severity="info" line="7" message="trailing whitespace" />
-    </file>
-</checkstyle>
