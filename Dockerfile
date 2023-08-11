@@ -7,7 +7,9 @@ ENV HOME=/home/sonarqube \
     SONAR_SCANNER_HOME=/opt/sonar-scanner \
     SONAR_USER_HOME=/opt/sonar-scanner/.sonar \
     PATH="$PATH:/opt/sonar-scanner/bin:/usr/local/bin" \
-    PYTHONPATH="$PYTHONPATH:/opt/python/cnes-pylint-extension-6.0.0/checkers/"
+    PYTHONPATH="$PYTHONPATH:/opt/python/cnes-pylint-extension-6.0.0/checkers/" \
+    PYLINTHOME="$HOME/.pylint.d"
+
 USER root
 COPY conf/. /tmp/conf/
 
