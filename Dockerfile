@@ -1,7 +1,7 @@
 # This image is based on a LTS version of SonarQube
 FROM sonarqube:9.9.1-community
 
-LABEL maintainer="CATLab"
+LABEL maintainer="CNES CAT Lab"
 
 ENV HOME=/home/sonarqube \
     SONAR_SCANNER_HOME=/opt/sonar-scanner \
