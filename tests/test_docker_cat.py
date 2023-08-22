@@ -40,8 +40,66 @@ class TestDockerCAT:
     CAT_URL = os.environ.get("CAT_URL", "http://localhost:9000")
     _DOCKER_CAT_IMAGE = "lequal/docker-cat:latest"
     _PROJECT_ROOT_DIR = str(Path(os.getcwd()).parent)
+    _SONARQUBE_TOKEN = ""
 
+    @classmethod
+    def setup_class(cls):
+        """
+        Set up the tests
+        Launch a container and wait for it to be up
+        """
+        # Launch a CNES SonarQube container
+        if cls.RUN == "yes":
+            print(f"Launching lequal/sonarqube container (name={cls.CAT_CONTAINER_NAME})...")
+            docker_client = docker.from_env()
+            docker_client.containers.run(cls._DOCKER_CAT_IMAGE,
+                name=cls.CAT_CONTAINER_NAME,
+                detach=True,
+                auto_remove=True,
+                environment={"ALLOWED_GROUPS": os.getgid()},
+                ports={9000: 9000},
+                volumes={
+                    f"{cls._PROJECT_ROOT_DIR}": {'bind': '/media/sf_Shared', 'mode': 'rw'},
+                })
+        else:
+            print(f"Using container {cls.CAT_CONTAINER_NAME}")
+        # Wait for the SonarQube server inside it to be set up
+        print(f"Waiting for {cls.CAT_CONTAINER_NAME} to be up...")
+        cls.wait_cat_ready(cls.CAT_CONTAINER_NAME)
+        # Retrieve the token
+        cls.get_sonarqube_token()
+
+    @classmethod
+    def teardown_class(cls):
+        """
+        Stop the container
+        """
+        # Revoke the token
+        requests.post(f"{cls.CAT_URL}/api/user_tokens/revoke",
+                      auth=("admin", "admin"),
+                    params={
+                        "name": "global_token"
+                    })
+        if cls.RUN == "yes":
+            print(f"Stopping {cls.CAT_CONTAINER_NAME}...")
+            docker_client = docker.from_env()
+            docker_client.containers.get(cls.CAT_CONTAINER_NAME).stop()
+   
     # Functions
+    @classmethod
+    def get_sonarqube_token(cls):
+        """
+        Retrieve SonarQube token with global analysis from the server
+        """
+        sonarqube_token = requests.post(f"{cls.CAT_URL}/api/user_tokens/generate",
+                                            auth=("admin", "admin"),
+                                            params={
+                                                "name": "global_token",
+                                                "type": "GLOBAL_ANALYSIS_TOKEN",
+                                                "login": "admin"
+                                            })
+        cls._SONARQUBE_TOKEN = sonarqube_token.json()["token"]
+
     @classmethod
     def wait_cat_ready(cls, container_name: str):
         """
@@ -99,7 +157,9 @@ class TestDockerCAT:
 
         print(f"Analysing project {project_key}...")
         output = docker_client.containers.get(cls.CAT_CONTAINER_NAME).exec_run(
-            f"sonar-scanner -Dsonar.host.url=http://localhost:9000 -Dsonar.projectBaseDir=/media/sf_Shared/tests/{folder}"
+            f"sonar-scanner -Dsonar.host.url=http://localhost:9000 \
+            -Dsonar.projectBaseDir=/media/sf_Shared/tests/{folder} \
+            -Dsonar.login={cls._SONARQUBE_TOKEN}"
             ).output.decode("utf-8")
         print(output)
         # Make sure all non-default for this language plugins were executed by the scanner
@@ -128,7 +188,9 @@ class TestDockerCAT:
                 })
             # Rerun the analysis
             docker_client.containers.get(cls.CAT_CONTAINER_NAME).exec_run(
-                f"sonar-scanner -Dsonar.host.url=http://localhost:9000 -Dsonar.projectBaseDir=/media/sf_Shared/tests/{folder}"
+                f"sonar-scanner -Dsonar.host.url=http://localhost:9000 \
+                -Dsonar.projectBaseDir=/media/sf_Shared/tests/{folder} \
+                -Dsonar.login={cls._SONARQUBE_TOKEN}"
                 )
             # Wait for SonarQube to process the results
             time.sleep(8)
@@ -164,7 +226,6 @@ class TestDockerCAT:
         # Run an analysis with the tool
         docker_client = docker.from_env()
         output = docker_client.containers.get(cls.CAT_CONTAINER_NAME).exec_run(cmd,
-            user=f"{os.getuid()}:{os.getgid()}",
             workdir="/media/sf_Shared").output.decode("utf-8")
         if store_output:
             with open(os.path.join(cls._PROJECT_ROOT_DIR, tmp_file), "w", encoding="utf8") as f:
@@ -231,7 +292,10 @@ class TestDockerCAT:
         # Analyse the project and collect the analysis files (that match the default names)
         docker_client = docker.from_env()
         analysis_output = docker_client.containers.get(cls.CAT_CONTAINER_NAME).exec_run(
-            f"sonar-scanner -Dsonar.host.url=http://localhost:9000 -Dsonar.projectKey={project_key} -Dsonar.projectName=\"{project_name}\" -Dsonar.projectVersion=1.0 -Dsonar.sources={source_folder}",
+            f"sonar-scanner -Dsonar.host.url=http://localhost:9000 \
+            -Dsonar.projectKey={project_key} -Dsonar.projectName=\"{project_name}\" \
+            -Dsonar.projectVersion=1.0 -Dsonar.sources={source_folder} \
+            -Dsonar.login={cls._SONARQUBE_TOKEN}",
             workdir=f"/media/sf_Shared/{language_folder}").output.decode("utf-8")
         for line in (expected_sensor, expected_import):
             # Hint: if this test fails, the sensor for the tool or for the importation was not launched
@@ -257,41 +321,6 @@ class TestDockerCAT:
                     "rule": rule_violated
                 })
 
-    @classmethod
-    def setup_class(cls):
-        """
-        Set up the tests
-        Launch a container and wait for it to be up
-        """
-        docker_client = docker.from_env()
-        # Launch a CNES SonarQube container
-        if cls.RUN == "yes":
-            print(f"Launching lequal/sonarqube container (name={cls.CAT_CONTAINER_NAME})...")
-            docker_client.containers.run(cls._DOCKER_CAT_IMAGE,
-                name=cls.CAT_CONTAINER_NAME,
-                detach=True,
-                auto_remove=True,
-                environment={"ALLOWED_GROUPS": os.getgid()},
-                ports={9000: 9000},
-                volumes={
-                    f"{cls._PROJECT_ROOT_DIR}": {'bind': '/media/sf_Shared', 'mode': 'rw'},
-                })
-        else:
-            print(f"Using container {cls.CAT_CONTAINER_NAME}")
-        # Wait for the SonarQube server inside it to be set up
-        print(f"Waiting for {cls.CAT_CONTAINER_NAME} to be up...")
-        cls.wait_cat_ready(cls.CAT_CONTAINER_NAME)
-
-    @classmethod
-    def teardown_class(cls):
-        """
-        Stop the container
-        """
-        if cls.RUN == "yes":
-            print(f"Stopping {cls.CAT_CONTAINER_NAME}...")
-            docker_client = docker.from_env()
-            docker_client.containers.get(cls.CAT_CONTAINER_NAME).stop()
-
     def test_up(self):
         """
         As a user, I want the server to be UP so that I can use it.
@@ -307,42 +336,39 @@ class TestDockerCAT:
         to be installed on the server so that I can use them.
         """
         required_plugins = (
-            ("C++ (Community)", "1.3.1 (build 1807)"),
-            ("Checkstyle", "4.21"),
-            ("Cobertura", "1.9.1"),
-            ("Findbugs", "3.11.0"),
-            ("Git", "1.8 (build 1574)"),
-            ("GitHub Authentication for SonarQube", "1.5 (build 870)"),
-            ("JaCoCo", "1.0.2 (build 475)"),
-            ("LDAP", "2.2 (build 608)"),
-            ("PMD", "3.2.1"),
-            ("Rules Compliance Index (RCI)", "1.0.1"),
-            ("SAML 2.0 Authentication for SonarQube", "1.2.0 (build 682)"),
-            ("Sonar Frama-C plugin", "2.1.1"),
-            ("Sonar i-Code CNES plugin", "2.0.2"),
-            ("SonarC#", "7.15 (build 8572)"),
-            ("SonarCSS", "1.1.1 (build 1010)"),
-            ("SonarFlex", "2.5.1 (build 1831)"),
-            ("SonarGo", "1.1.1 (build 2000)"),
-            ("SonarHTML", "3.1 (build 1615)"),
-            ("SonarJS", "5.2.1 (build 7778)"),
-            ("SonarJava", "5.13.1 (build 18282)"),
-            ("SonarKotlin", "1.5.0 (build 315)"),
-            ("SonarPHP", "3.2.0.4868"),
-            ("SonarPython", "1.14.1 (build 3143)"),
-            ("SonarQube CNES CXX Plugin", "1.1"),
-            ("SonarQube CNES Export Plugin", "1.2"),
-            ("SonarQube CNES Python Plugin", "1.3"),
-            ("SonarQube CNES Report", "3.2.2"),
-            ("SonarQube CNES Scan Plugin", "1.5"),
-            ("SonarRuby", "1.5.0 (build 315)"),
-            ("SonarScala", "1.5.0 (build 315)"),
-            ("SonarTS", "1.9 (build 3766)"),
-            ("SonarVB", "7.15 (build 8572)"),
-            ("SonarXML", "2.0.1 (build 2020)"),
-            ("Svn", "1.9.0.1295")
+            ("Ansible Lint", "2.5.1"),
+            ("C# Code Quality and Security","8.51 (build 59060)"),
+            ("C++ (Community)", "2.1 (build 428)"),
+            ("Checkstyle", "10.9.3"),
+            ("Clover","4.1"),
+            ("Cobertura", "2.0"),
+            ("Community Branch Plugin", "1.14.0"),
+            ("Configuration detection fot Code Quality and Security", "1.2 (build 267)"),
+            ("Findbugs", "4.2.3"),
+            ("Flex Code Quality and Security","2.8 (build 3166)"),
+            ("Go Code Quality and Security","1.11.0 (build 3905)"),
+            ("HTML Code Quality and Security","3.7.1 (build 3306)"),
+            ("IaC Code Quality and Security", "1.11 (build 2847)"),
+            ("JaCoCo", "1.3.0 (build 1538)"),
+            ("Java Code Quality and Security","7.16 (build 30901)"),
+            ("JavaScript/TypeScript/CSS Code Quality and Security","9.13 (build 20537)"),
+            ("Kotlin Code Quality and Security","2.12.0 (build 1956)"),
+            ("PHP Code Quality and Security","3.27.1 (build 9352)"),
+            ("PMD", "3.4.0"),
+            ("Python Code Quality and Security","3.24 (build 10784)"),
+            ("Ruby Code Quality and Security","1.11.0 (build 3905)"),
+            ("Scala Code Quality and Security","1.11.0 (build 3905)"),
+            ("ShellCheck Analyzer","2.5.0"),
+            ("Sonar i-Code CNES plugin", "3.1.1"),
+            ("SonarQube CNES Report", "4.2.0"),
+            ("SonarTS", "2.1 (build 4362)"),
+            ("VB.NET Code Quality and Security","8.51 (build 59060)"),
+            ("VHDLRC","3.4"),
+            ("XML Code Quality and Security","2.7 (build 3820)"),
+            ("YAML Analyzer","1.7.0")
         )
-        sonar_plugins = requests.get(f"{self.CAT_URL}/api/plugins/installed").json()['plugins']
+        sonar_plugins = requests.get(f"{self.CAT_URL}/api/plugins/installed",
+            auth =("admin", "admin")).json()['plugins']
         installed_plugins = { plugin['name']: plugin['version'] for plugin in sonar_plugins }
         for name, version in required_plugins:
             # Hint: if this test fails, one or more plugins may be missing or installed with an outdated version
@@ -353,44 +379,57 @@ class TestDockerCAT:
         As a SonarQube user, I want the SonarQube server to have the CNES
         Quality Gate configured and set as default so that I can use it.
         """
-        quality_gates = requests.get(f"{self.CAT_URL}/api/qualitygates/list").json()['qualitygates']
+        quality_gates = requests.get(f"{self.CAT_URL}/api/qualitygates/list",
+            auth =("admin", "admin")).json()['qualitygates']
         cnes_quality_gates = [ gate for gate in quality_gates if gate['name'] == "CNES" ]
         # Hint: if one of these tests fails, the CNES Quality Gate may not have been added correctly, check the container logs
         assert cnes_quality_gates # not empty
         assert cnes_quality_gates[0]['isDefault']
+        
 
     def test_check_qp(self):
         """
         As a SonarQube user, I want the SonarQube server to have the
         CNES Quality Profiles available so that I can use them.
         """
-        required_quality_profiles = (
-            "CNES_JAVA_A",
-            "CNES_JAVA_B",
-            "CNES_JAVA_C",
-            "CNES_JAVA_D",
-            "CNES_PYTHON_A",
-            "CNES_PYTHON_B",
-            "CNES_PYTHON_C",
-            "CNES_PYTHON_D",
-            "CNES_CPP_A",
-            "CNES_CPP_B",
-            "CNES_CPP_C",
-            "CNES_CPP_D",
-            "CNES_C_A",
-            "CNES_C_B",
-            "CNES_C_C",
-            "CNES_C_D",
-            "CNES_C_EMBEDDED_A",
-            "CNES_C_EMBEDDED_B",
-            "CNES_C_EMBEDDED_C",
-            "CNES_C_EMBEDDED_D"
-        )
-        quality_profiles = requests.get(f"{self.CAT_URL}/api/qualityprofiles/search").json()['profiles']
-        cnes_quality_profiles = [ qp['name'] for qp in quality_profiles if re.match(r'CNES_\w+_[ABCD]', qp['name']) ]
-        for profile in required_quality_profiles:
-            # Hint: if this test fails, one or more Quality Profiles may be missing, check the container logs
-            assert profile in cnes_quality_profiles
+        required_quality_profiles = {
+            'java': (
+                "RNC A",
+                "RNC B",
+                "RNC C",
+                "RNC D"
+            ),
+            'py': (
+                "RNC A",
+                "RNC B",
+                "RNC C",
+                "RNC D"
+            ),
+            'cxx': (
+                "RNC C A",
+                "RNC C B",
+                "RNC C C",
+                "RNC C D",
+                "RNC CPP A",
+                "RNC CPP B",
+                "RNC CPP C",
+                "RNC CPP D"
+            ),
+            'shell': (
+                "RNC ALL SHELLCHECK A",
+                "RNC ALL SHELLCHECK B",
+                "RNC ALL SHELLCHECK C",
+                "RNC ALL SHELLCHECK D",
+                "RNC SHELL"
+            )
+        }
+        quality_profiles = requests.get(f"{self.CAT_URL}/api/qualityprofiles/search",
+            auth =("admin", "admin")).json()['profiles']
+        cnes_quality_profiles = { lang: [qp['name'] for qp in quality_profiles if re.match(r'^RNC.*', qp['name']) and qp['language'] == lang] for lang in required_quality_profiles }
+        for lang, profiles in required_quality_profiles.items():
+            for profile in profiles:
+                # Hint: if this test fails, one or more Quality Profiles may be missing, check the container logs
+                assert profile in cnes_quality_profiles[lang]
 
     # Language tests
     def test_language_c_cpp(self):
@@ -399,10 +438,9 @@ class TestDockerCAT:
         so that I can see its level of quality on the SonarQube server.
         """
         sensors = (
-            "Sensor C++ (Community) SquidSensor [cxx]",
-            "Sensor SonarFrama-C [framac]"
+            "INFO: Sensor CXX [cxx]",
         )
-        self.language("C/C++", "c++", "c_cpp", sensors, "c-dummy-project", 0, "CNES_C_A", 1)
+        self.language("C/C++", "cx", "c_cpp", sensors, "c-dummy-project", 0, "RNC C A", 0)
         # 0 issue are expected with the Sonar way Quality Profile for
         # C++ (Community) because it does not have any rule enabled.
 
@@ -437,14 +475,14 @@ class TestDockerCAT:
             "INFO: Sensor PmdSensor [pmd]",
             "INFO: Sensor CoberturaSensor [cobertura]"
         )
-        self.language("Java", "java", "java", sensors, "java-dummy-project", 3, "CNES_JAVA_A", 6)
+        self.language("Java", "java", "java", sensors, "java-dummy-project", 3, "RNC A", 6)
 
     def test_language_python(self):
         """
         As a user of this image, I want to analyze a Python project
         so that I can see its level of quality on the SonarQube server.
         """
-        self.language("Python", "py", "python", (), "python-dummy-project", 2, "CNES_PYTHON_A", 3)
+        self.language("Python", "py", "python", (), "python-dummy-project", 3, "RNC A", 2)
 
     def test_language_shell(self):
         """
@@ -452,9 +490,9 @@ class TestDockerCAT:
         so that I can see its level of quality on the SonarQube server.
         """
         sensors = (
-            "INFO: Sensor Sonar i-Code [icode]",
+            "INFO: Sensor ShellCheck Sensor [shellcheck]",
         )
-        self.language("Shell", "shell", "shell", sensors, "shell-dummy-project", 58)
+        self.language("Shell", "shell", "shell", sensors, "shell-dummy-project", 53, "RNC SHELL", 11)
 
     # Test analysis tools
     def test_tool_cppcheck(self):
@@ -467,34 +505,14 @@ class TestDockerCAT:
         cmd = f"cppcheck --xml-version=2 tests/c_cpp/cppcheck/main.c --output-file={output}"
         self.analysis_tool("cppcheck", cmd, ref, output, False)
 
-    def test_tool_frama_c(self):
-        """
-        As a user of this image, I want to run Frama-C from within a container
-        so that it produces a report.
-        """
-        ref = "tests/c_cpp/reference-framac-results.txt"
-        output = "tests/c_cpp/tmp-framac-results.txt"
-        report = "tests/c_cpp/frama-c.csv"
-        cmd = f"frama-c tests/c_cpp/framac/CruiseControl.c tests/c_cpp/framac/CruiseControl_const.c -rte -metrics -report-csv {report}"
-        self.analysis_tool("Frama-C", cmd, ref, output)
-
     def test_tool_pylint(self):
         """
         As a user of this image, I want to run pylint from within a container
         so that it produces a report.
         """
-        cmd = "pylint --exit-zero -f json --rcfile=/opt/python/pylintrc_RNC_sonar_2017_A_B tests/python/src/simplecaesar.py"
-        self.analysis_tool("pylint", cmd, "tests/python/reference-pylint-results.json", "tests/python/tmp-pylint-results.json")
+        cmd = "pylint --exit-zero -f json --rcfile=/opt/python/pylintrc_RNC2015_A_B tests/python/src/simplecaesar.py"
 
-    def test_tool_rats(self):
-        """
-        As a user of this image, I want to run RATS from within a container
-        so that it produces a report.
-        """
-        ref = "tests/c_cpp/reference-rats-results.xml"
-        output = "tests/c_cpp/tmp-rats-results.xml"
-        cmd = "rats --quiet --nofooter --xml -w 3 tests/c_cpp/rats"
-        self.analysis_tool("RATS", cmd, ref, output)
+        self.analysis_tool("pylint", cmd, "tests/python/reference-pylint-results.json", "tests/python/tmp-pylint-results.json")
 
     def test_tool_shellcheck(self):
         """
@@ -504,16 +522,6 @@ class TestDockerCAT:
         cmd = "bash -c 'shellcheck -s sh -f checkstyle tests/shell/src/script.sh || true'"
         self.analysis_tool("shellcheck", cmd, "tests/shell/reference-shellcheck-results.xml", "tests/shell/tmp-shellcheck-results.xml")
 
-    def test_tool_vera(self):
-        """
-        As a user of this image, I want to run Vera++ from within a container
-        so that it produces a report.
-        """
-        ref = "tests/c_cpp/reference-vera-results.xml"
-        output = "tests/c_cpp/tmp-vera-results.xml"
-        cmd = f"vera++ -s -c {output} tests/c_cpp/vera/main.cpp"
-        self.analysis_tool("Vera++", cmd, ref, output, False)
-
     # Test importation of analysis results
     def test_import_cppcheck_results(self):
         """
@@ -521,51 +529,18 @@ class TestDockerCAT:
         of a CppCheck analysis to SonarQube.
         """
         rule_violated = "cppcheck:arrayIndexOutOfBounds"
-        expected_sensor = "INFO: Sensor C++ (Community) CppCheckSensor [cxx]"
-        expected_import = "INFO: CXX-CPPCHECK processed = 1"
+        expected_sensor = "INFO: Sensor CXX [cxx]"
+        expected_import = "INFO: Sensor CXX Cppcheck report import"
         self.import_analysis_results("CppCheck Dummy Project", "cppcheck-dummy-project",
-            "CNES_C_A", "c++", "tests/c_cpp", "cppcheck", rule_violated, expected_sensor, expected_import)
-
-    def test_import_framac_results(self):
-        """
-        As a user of this image, I want to be able to import the results
-        of a Frama-C analysis to SonarQube.
-        """
-        rule_violated = "framac-rules:KERNEL.0"
-        expected_sensor = "INFO: Sensor SonarFrama-C [framac]"
-        expected_import = "INFO: Results file frama-c.csv has been found and will be processed."
-        self.import_analysis_results("Frama-C Dummy Project", "framac-dummy-project",
-            "CNES_CPP_A", "c++", "tests/c_cpp", "framac", rule_violated, expected_sensor, expected_import)
+            "RNC CPP A", "cxx", "tests/c_cpp", "cppcheck", rule_violated, expected_sensor, expected_import)
 
     def test_import_pylint_results(self):
         """
         As a user of this image, I want to be able to import the results
         of a pylint analysis to SonarQube.
         """
-        rule_violated = "Pylint:C0326"
-        expected_sensor = "INFO: Sensor PylintSensor [python]"
-        expected_import = "INFO: Sensor PylintImportSensor [python]"
+        rule_violated = "external_pylint:C0326"
+        expected_sensor = "INFO: Sensor Python Sensor [python]"
+        expected_import = "INFO: Sensor Import of Pylint issues [python]"
         self.import_analysis_results("Pylint Dummy Project", "pylint-dummy-project",
-            "CNES_PYTHON_A", "py", "tests/python", "src", rule_violated, expected_sensor, expected_import)
-
-    def test_import_rats_results(self):
-        """
-        As a user of this image, I want to be able to import the results
-        of a RATS analysis to SonarQube.
-        """
-        rule_violated = "rats:fixed size global buffer"
-        expected_sensor = "INFO: Sensor C++ (Community) RatsSensor [cxx]"
-        expected_import = "INFO: CXX-RATS processed = 1"
-        self.import_analysis_results("RATS Dummy Project", "rats-dummy-project",
-            "CNES_CPP_A", "c++", "tests/c_cpp", "rats", rule_violated, expected_sensor, expected_import, True)
-
-    def test_import_vera_results(self):
-        """
-        As a user of this image, I want to be able to import the results
-        of a Vera++ analysis to SonarQube.
-        """
-        rule_violated = "vera++:T008"
-        expected_sensor = "INFO: Sensor C++ (Community) VeraxxSensor [cxx]"
-        expected_import = "INFO: CXX-VERA++ processed = 4"
-        self.import_analysis_results("Vera++ Dummy Project", "vera-dummy-project",
-            "CNES_CPP_A", "c++", "tests/c_cpp", "vera", rule_violated, expected_sensor, expected_import)
+            "Sonar way", "py", "tests/python", "src", rule_violated, expected_sensor, expected_import)

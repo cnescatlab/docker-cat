@@ -6,7 +6,7 @@
 # IMPORTANT :
 # This file is intended to run be run while running SonarQube on the docker image "docker-cat".
 # This file should be run as an ENTRYPOINT of docker's image. If you re-use the docker-cat image, call this file inside your entrypoint.
-# The Dockerfile docker-cat inherit Sonarqube 6.7.7 image. This script run Sonarqube's entrypoint.
+# The Dockerfile docker-cat inherit Sonarqube 9.1.1 image. This script run Sonarqube's entrypoint.
 #
 # Description :
 # This file configure Sonarqube, also, it's perform permissions modifications to allow CNES scanner to involve in the project (creating sonar-properties files, etc...).
@@ -47,4 +47,4 @@ allow_sonarqube(){
 allow_sonarqube
 # Call for configure-cat script to set quality profiles and quality gates.
 bash /tmp/configure-cat.bash &
-su sonarqube -l -c "cd /opt/sonarqube && PATH=${PATH} SONAR_VERSION=${SONAR_VERSION} bin/run.sh"
+su sonarqube -l -c "cd /opt/sonarqube && PATH=${PATH} SONAR_VERSION=${SONAR_VERSION} docker/entrypoint.sh"
