@@ -71,31 +71,33 @@ COPY pylintrc.d/ /opt/python/
 
 ENV PATH /usr/local/bin:${PATH}
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends gpg dirmngr \
+RUN apt-get update -y \
+    && apt-get install -y --no-install-recommends \
+    gpg=2.2.27-* \
+    dirmngr=2.2.27-* \
     && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 648ACFD622F3D138 \
     && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 0E98404D386FA1D9 \
     && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 605C66F00D6C9793 \
     && rm -rf /var/lib/apt/lists/*
 
-RUN echo 'deb http://ftp.fr.debian.org/debian/ bullseye main contrib non-free' >> /etc/apt/sources.list \
-    && apt-get update -y \
+RUN apt-get update -y \
     && apt-get install -y \
     unzip=6.0-* \
-    python3 \
-    python3-pip \
-    curl \
-    shellcheck=0.7.1-* \
-    gcc \
+    python3=3.10.4-* \
+    python3-minimal=3.10.4-* \
+    libpython3-stdlib=3.10.4-* \
+    python3-distutils=3.10.4-* \
+    python3-lib2to3=3.10.4-* \
+    python3-pip=22.0.2* \
+    curl=7.81.0-* \
+    shellcheck=0.8.0-* \
+    gcc=4:11.2.0-* \
     make=4.3-* \
-    g\+\+ \
-    libpcre3 \
+    g\+\+=4:11.2.0-* \
+    libpcre3=2:8.39-* \
     xz-utils=5.2.5-* \
     libpcre3-dev=2:8.39-* \
-    libfindlib-ocaml \
-    libocamlgraph-ocaml-dev \
-    libzarith-ocaml \
-    jq \
+    jq=1.6-* \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir /home/sonarqube \
     ## Install i-Code CNES
