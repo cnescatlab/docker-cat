@@ -6,24 +6,22 @@
 <error line='6' column='5' severity='warning' message='Tilde does not expand in quotes. Use &#36;HOME.' source='ShellCheck.SC2088' />
 <error line='7' column='7' severity='error' message='Double quote array expansions to avoid re&#45;splitting elements.' source='ShellCheck.SC2068' />
 <error line='8' column='6' severity='info' message='Expressions don&#39;t expand in single quotes&#44; use double quotes for that.' source='ShellCheck.SC2016' />
-<error line='9' column='1' severity='warning' message='In POSIX sh&#44; &#91;&#91; &#93;&#93; is undefined.' source='ShellCheck.SC2039' />
+<error line='9' column='1' severity='warning' message='In POSIX sh&#44; &#91;&#91; &#93;&#93; is undefined.' source='ShellCheck.SC3010' />
 <error line='9' column='6' severity='warning' message='This expression is constant. Did you forget the &#36; on a variable&#63;' source='ShellCheck.SC2050' />
-<error line='10' column='1' severity='warning' message='In POSIX sh&#44; &#91;&#91; &#93;&#93; is undefined.' source='ShellCheck.SC2039' />
+<error line='10' column='1' severity='warning' message='In POSIX sh&#44; &#91;&#91; &#93;&#93; is undefined.' source='ShellCheck.SC3010' />
 <error line='10' column='7' severity='error' message='&#45;e doesn&#39;t work with globs. Use a for loop.' source='ShellCheck.SC2144' />
-<error line='11' column='1' severity='warning' message='In POSIX sh&#44; &#91;&#91; &#93;&#93; is undefined.' source='ShellCheck.SC2039' />
+<error line='11' column='1' severity='warning' message='In POSIX sh&#44; &#91;&#91; &#93;&#93; is undefined.' source='ShellCheck.SC3010' />
 <error line='11' column='8' severity='error' message='You need spaces around the comparison operator.' source='ShellCheck.SC2077' />
-<error line='12' column='1' severity='warning' message='In POSIX sh&#44; &#91;&#91; &#93;&#93; is undefined.' source='ShellCheck.SC2039' />
+<error line='12' column='1' severity='warning' message='In POSIX sh&#44; &#91;&#91; &#93;&#93; is undefined.' source='ShellCheck.SC3010' />
 <error line='12' column='12' severity='error' message='Argument to &#45;n is always true due to literal strings.' source='ShellCheck.SC2157' />
-<error line='13' column='1' severity='warning' message='In POSIX sh&#44; &#91;&#91; &#93;&#93; is undefined.' source='ShellCheck.SC2039' />
-<error line='13' column='12' severity='error' message='Don&#39;t quote right&#45;hand side of &#61;&#126;&#44; it&#39;ll match literally rather than as a regex.' source='ShellCheck.SC2076' />
-<error line='14' column='7' severity='warning' message='In POSIX sh&#44; &#61;&#126; regex matching is undefined.' source='ShellCheck.SC2039' />
+<error line='13' column='1' severity='warning' message='In POSIX sh&#44; &#91;&#91; &#93;&#93; is undefined.' source='ShellCheck.SC3010' />
+<error line='13' column='12' severity='warning' message='Remove quotes from right&#45;hand side of &#61;&#126; to match as a regex rather than literally.' source='ShellCheck.SC2076' />
 <error line='14' column='7' severity='warning' message='This expression is constant. Did you forget the &#36; on a variable&#63;' source='ShellCheck.SC2050' />
+<error line='14' column='7' severity='warning' message='In POSIX sh&#44; &#61;&#126; regex matching is undefined.' source='ShellCheck.SC3015' />
 <error line='15' column='3' severity='info' message='Double quote to prevent globbing and word splitting.' source='ShellCheck.SC2086' />
-<error line='15' column='10' severity='error' message='Numerical &#45;eq does not dereference in &#91;..&#93;. Expand or use string operator.' source='ShellCheck.SC2170' />
-<error line='16' column='3' severity='warning' message='n is referenced but not assigned.' source='ShellCheck.SC2154' />
+<error line='15' column='10' severity='error' message='Invalid number for &#45;eq. Use &#61; to compare as string &#40;or use &#36;var to expand as a variable&#41;.' source='ShellCheck.SC2170' />
 <error line='16' column='3' severity='info' message='Double quote to prevent globbing and word splitting.' source='ShellCheck.SC2086' />
 <error line='16' column='6' severity='error' message='Instead of &#91; a &#38;&#38; b &#93;&#44; use &#91; a &#93; &#38;&#38; &#91; b &#93;.' source='ShellCheck.SC2107' />
-<error line='16' column='9' severity='warning' message='m is referenced but not assigned.' source='ShellCheck.SC2154' />
 <error line='16' column='9' severity='info' message='Double quote to prevent globbing and word splitting.' source='ShellCheck.SC2086' />
 <error line='17' column='1' severity='error' message='Shells disambiguate &#40;&#40; differently or not at all. For subshell&#44; add spaces around &#40; . For &#40;&#40;&#44; fix parsing errors.' source='ShellCheck.SC1105' />
 <error line='17' column='2' severity='warning' message='&#40;..&#41; is a subshell. Did you mean &#91; .. &#93;&#44; a test expression&#63;' source='ShellCheck.SC2205' />
@@ -34,26 +32,27 @@
 <error line='21' column='7' severity='error' message='Aliases can&#39;t use positional parameters. Use a function.' source='ShellCheck.SC2142' />
 <error line='22' column='8' severity='info' message='Don&#39;t use &#91;&#93; around classes in tr&#44; it replaces literal square brackets.' source='ShellCheck.SC2021' />
 <error line='23' column='1' severity='warning' message='Remove &#34;exec &#34; if script should continue after this command.' source='ShellCheck.SC2093' />
-<error line='24' column='5' severity='error' message='Don&#39;t put spaces around the &#61; in assignments &#40;or quote to make it literal&#41;.' source='ShellCheck.SC1068' />
-<error line='25' column='2' severity='error' message='Don&#39;t use &#36; on the left side of assignments.' source='ShellCheck.SC1066' />
-<error line='26' column='5' severity='warning' message='In POSIX sh&#44; arrays are undefined.' source='ShellCheck.SC2039' />
+<error line='24' column='5' severity='error' message='Remove spaces around &#61; to assign &#40;or use &#91; &#93; to compare&#44; or quote &#39;&#61;&#39; if literal&#41;.' source='ShellCheck.SC2283' />
+<error line='25' column='1' severity='error' message='Don&#39;t use &#36; on the left side of assignments.' source='ShellCheck.SC2281' />
 <error line='26' column='5' severity='warning' message='Use spaces&#44; not commas&#44; to separate array elements.' source='ShellCheck.SC2054' />
+<error line='26' column='5' severity='warning' message='In POSIX sh&#44; arrays are undefined.' source='ShellCheck.SC3030' />
 <error line='27' column='6' severity='error' message='Use braces when expanding arrays&#44; e.g. &#36;&#123;array&#91;idx&#93;&#125; &#40;or &#36;&#123;var&#125;&#91;.. to quiet&#41;.' source='ShellCheck.SC1087' />
 <error line='27' column='6' severity='warning' message='Expanding an array without an index only gives the first element.' source='ShellCheck.SC2128' />
+<error line='27' column='6' severity='info' message='Double quote to prevent globbing and word splitting.' source='ShellCheck.SC2086' />
 <error line='28' column='22' severity='error' message='Braces are required for positionals over 9&#44; e.g. &#36;&#123;10&#125;.' source='ShellCheck.SC1037' />
 <error line='29' column='3' severity='error' message='&#91; false &#93; is true. Remove the brackets.' source='ShellCheck.SC2158' />
 <error line='30' column='1' severity='info' message='Consider using &#123; cmd1&#59; cmd2&#59; &#125; &#62;&#62; file instead of individual redirects.' source='ShellCheck.SC2129' />
-<error line='31' column='19' severity='info' message='Use &#36;&#40;...&#41; notation instead of legacy backticked &#96;...&#96;.' source='ShellCheck.SC2006' />
+<error line='31' column='19' severity='info' message='Use &#36;&#40;...&#41; notation instead of legacy backticks &#96;...&#96;.' source='ShellCheck.SC2006' />
 <error line='32' column='1' severity='warning' message='Use &#39;cd ... &#124;&#124; exit&#39; or &#39;cd ... &#124;&#124; return&#39; in case cd fails.' source='ShellCheck.SC2164' />
 <error line='32' column='17' severity='info' message='Use ./&#42;glob&#42; or &#45;&#45; &#42;glob&#42; so names with dashes won&#39;t become options.' source='ShellCheck.SC2035' />
 <error line='32' column='20' severity='info' message='Use a &#40; subshell &#41; to avoid having to cd back.' source='ShellCheck.SC2103' />
-<error line='33' column='6' severity='warning' message='In POSIX sh&#44; &#36;&#91;..&#93; in place of &#36;&#40;&#40;..&#41;&#41; is undefined.' source='ShellCheck.SC2039' />
+<error line='33' column='6' severity='warning' message='In POSIX sh&#44; &#36;&#91;..&#93; in place of &#36;&#40;&#40;..&#41;&#41; is undefined.' source='ShellCheck.SC3007' />
 <error line='33' column='6' severity='info' message='Use &#36;&#40;&#40;..&#41;&#41; instead of deprecated &#36;&#91;..&#93;' source='ShellCheck.SC2007' />
 <error line='34' column='6' severity='info' message='Useless echo&#63; Instead of &#39;echo &#36;&#40;cmd&#41;&#39;&#44; just use &#39;cmd&#39;.' source='ShellCheck.SC2005' />
 <error line='35' column='5' severity='info' message='Useless cat. Consider &#39;cmd &#60; file &#124; ..&#39; or &#39;cmd file &#124; ..&#39; instead.' source='ShellCheck.SC2002' />
 <error line='36' column='1' severity='warning' message='args appears unused. Verify use &#40;or export if used externally&#41;.' source='ShellCheck.SC2034' />
 <error line='36' column='6' severity='warning' message='Assigning an array to a string&#33; Assign as array&#44; or use &#42; instead of &#64; to concatenate.' source='ShellCheck.SC2124' />
-<error line='37' column='7' severity='warning' message='In POSIX sh&#44; arrays are undefined.' source='ShellCheck.SC2039' />
+<error line='37' column='7' severity='warning' message='In POSIX sh&#44; arrays are undefined.' source='ShellCheck.SC3030' />
 <error line='37' column='24' severity='warning' message='Expanding an array without an index only gives the first element.' source='ShellCheck.SC2128' />
 <error line='38' column='8' severity='warning' message='This format string has 2 variables&#44; but is passed 1 arguments.' source='ShellCheck.SC2183' />
 <error line='39' column='8' severity='info' message='Don&#39;t use variables in the printf format string. Use printf &#39;..&#37;s..&#39; &#34;&#36;foo&#34;.' source='ShellCheck.SC2059' />

@@ -492,7 +492,7 @@ class TestDockerCAT:
         sensors = (
             "INFO: Sensor ShellCheck Sensor [shellcheck]",
         )
-        self.language("Shell", "shell", "shell", sensors, "shell-dummy-project", 53, "RNC SHELL", 11)
+        self.language("Shell", "shell", "shell", sensors, "shell-dummy-project", 60, "RNC SHELL", 19)
 
     # Test analysis tools
     def test_tool_cppcheck(self):
