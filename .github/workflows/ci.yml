@@ -31,7 +31,7 @@ jobs:
   # Job that builds the image and upload it as an artifact
   build:
     name: Build the docker image
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
       - name: Build docker image
@@ -46,7 +46,7 @@ jobs:
   # Job that tests the image
   test:
     name: Test the Docker image
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: build
     steps:
       - uses: actions/checkout@v2
