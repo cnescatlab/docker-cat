@@ -133,7 +133,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          images: topin2001/test_docker_cat
+          images: ${{ env.DOCKER_IMAGE_NAME }}}
 
       - name: Build and push Docker image to version number
         uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
@@ -141,7 +141,7 @@ jobs:
           context: .
           file: ${{ env.DOCKERFILE_PATH }}/${{ env.DOCKERFILE_FILENAME }}
           push: true
-          tags: topin2001/test_docker_cat:${{ needs.deliverability.outputs.version }}
+          tags: ${{ env.DOCKER_IMAGE_NAME}}:${{ needs.deliverability.outputs.version }}
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Build and push Docker image to  lastest repo
@@ -150,7 +150,7 @@ jobs:
           context: .
           file: ${{ env.DOCKERFILE_PATH }}/${{ env.DOCKERFILE_FILENAME }}
           push: true
-          tags: topin2001/test_docker_cat:latest
+          tags: ${{ env.DOCKER_IMAGE_NAME }}:latest
           labels: ${{ steps.meta.outputs.labels }}
 
   close_milestone:
