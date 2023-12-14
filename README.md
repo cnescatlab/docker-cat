@@ -15,14 +15,25 @@ You can get SonarQube on GitHub: [SonarSource/sonarqube](https://github.com/Sona
 
 ### Table of contents
 
-- [Quick install](#Quick-install)
-- [Advanced configuration](#Advanced-configuration)
-- [Analyzing source code](#Analyzing-source-code)
-- [Image compatibility matrix](#Image-compatibility-matrix)
-- [Configuration of the latest image](#Configuration-of-the-latest-image)
-- [How to contribute](#How-to-contribute)
-- [Feedback and Support](#Feedback-and-Support)
-- [License](#License)
+- [Docker CAT](#docker-cat)
+    - [Table of contents](#table-of-contents)
+    - [Quick install](#quick-install)
+    - [Advanced configuration](#advanced-configuration)
+      - [Default account](#default-account)
+      - [Persisting your Docker CAT instance](#persisting-your-docker-cat-instance)
+    - [Analyzing source code](#analyzing-source-code)
+      - [Using web user interface](#using-web-user-interface)
+        - [1. If not already done, move your code in `<your_folder>`](#1-if-not-already-done-move-your-code-in-your_folder)
+        - [2. Go to Docker CAT web interface](#2-go-to-docker-cat-web-interface)
+        - [3. Go to CNES Analysis page](#3-go-to-cnes-analysis-page)
+        - [4. Fill in the form](#4-fill-in-the-form)
+        - [5. Run the analysis](#5-run-the-analysis)
+      - [Using classical way](#using-classical-way)
+    - [Image compatibility matrix](#image-compatibility-matrix)
+    - [Configuration of the latest image](#configuration-of-the-latest-image)
+    - [How to contribute](#how-to-contribute)
+    - [Feedback and Support](#feedback-and-support)
+    - [License](#license)
 
 ### Quick install
 
@@ -122,23 +133,23 @@ You can run an analysis with the classic method by using one of scanners provide
 
 | Tools                       | Versions   |
 | --------------------------- | ---------- |
-| :new: SonarQube             | 9.9.1      |
-| :new: Sonar Scanner         | 4.8.0.2856 |
-| :new: Cppcheck              | 2.10       |
-| :new: i-Code CNES           | 4.1.2      |
-| :new: python3               | 3.9.2      |
-| :new: pip                   | 20.3.4     |
-| :new: setuptools-scm        | 7.1.0      |
-| :new: pytest-runner         | 6.0.0      |
-| :new: wrapt                 | 1.15.0     |
-| :new: six                   | 1.16.0     |
-| :new: lazy-object-proxy     | 1.9.0      |
-| :new: mccabe                | 0.7.0      |
-| :new: isort                 | 5.12.0     |
-| :new: typed-ast             | 1.5.4      |
-| :new: astroid               | 2.15.2     |
-| :new: pylint                | 2.17.2     |
-| :new: cnes-pylint-extension | 6.0.0      |
+| :new: SonarQube             | 9.9.3      |
+| Sonar Scanner         | 4.8.0.2856 |
+| Cppcheck              | 2.10       |
+| i-Code CNES           | 4.1.2      |
+| python3               | 3.9.2      |
+| pip                   | 20.3.4     |
+| setuptools-scm        | 7.1.0      |
+| pytest-runner         | 6.0.0      |
+| wrapt                 | 1.15.0     |
+| six                   | 1.16.0     |
+| lazy-object-proxy     | 1.9.0      |
+| mccabe                | 0.7.0      |
+| isort                 | 5.12.0     |
+| typed-ast             | 1.5.4      |
+| astroid               | 2.15.2     |
+| pylint                | 2.17.2     |
+| cnes-pylint-extension | 6.0.0      |
 | make                        | 4.3        |
 | gcc                         | 4:10.1.0   |
 | ShellCheck                  | 0.7.1      |
