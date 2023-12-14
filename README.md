@@ -15,25 +15,14 @@ You can get SonarQube on GitHub: [SonarSource/sonarqube](https://github.com/Sona
 
 ### Table of contents
 
-- [Docker CAT](#docker-cat)
-    - [Table of contents](#table-of-contents)
-    - [Quick install](#quick-install)
-    - [Advanced configuration](#advanced-configuration)
-      - [Default account](#default-account)
-      - [Persisting your Docker CAT instance](#persisting-your-docker-cat-instance)
-    - [Analyzing source code](#analyzing-source-code)
-      - [Using web user interface](#using-web-user-interface)
-        - [1. If not already done, move your code in `<your_folder>`](#1-if-not-already-done-move-your-code-in-your_folder)
-        - [2. Go to Docker CAT web interface](#2-go-to-docker-cat-web-interface)
-        - [3. Go to CNES Analysis page](#3-go-to-cnes-analysis-page)
-        - [4. Fill in the form](#4-fill-in-the-form)
-        - [5. Run the analysis](#5-run-the-analysis)
-      - [Using classical way](#using-classical-way)
-    - [Image compatibility matrix](#image-compatibility-matrix)
-    - [Configuration of the latest image](#configuration-of-the-latest-image)
-    - [How to contribute](#how-to-contribute)
-    - [Feedback and Support](#feedback-and-support)
-    - [License](#license)
+- [Quick install](#Quick-install)
+- [Advanced configuration](#Advanced-configuration)
+- [Analyzing source code](#Analyzing-source-code)
+- [Image compatibility matrix](#Image-compatibility-matrix)
+- [Configuration of the latest image](#Configuration-of-the-latest-image)
+- [How to contribute](#How-to-contribute)
+- [Feedback and Support](#Feedback-and-Support)
+- [License](#License)
 
 ### Quick install
 
