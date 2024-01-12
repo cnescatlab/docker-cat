@@ -48,7 +48,7 @@ jobs:
           if [ "$milestones" == "[]" ]
           then
             echo No milestone completed, not delivering
-            echo "::set-output name=delivery::forbidden"
+            echo "delivery=forbidden" >> $GITHUB_OUTPUT
             exit 0
           fi
           echo -e "Completed milestones:\n$milestones"
@@ -62,9 +62,9 @@ jobs:
             exit 1
           fi
           echo Ready to deliver
-          echo "::set-output name=version::$version"
-          echo "::set-output name=milestone_number::$milestone_number"
-          echo "::set-output name=delivery::allowed"
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "milestone_number=$milestone_number" >> $GITHUB_OUTPUT
+          echo "delivery=allowed" >> $GITHUB_OUTPUT
   release:
     name: Release a new version of the docker image
     runs-on: ubuntu-20.04
@@ -91,7 +91,7 @@ jobs:
         run: |
           tags=($(git tag --sort="-v:refname" | grep -P -e '[0-9]+\.[0-9]+\.[0-9]+'))
           echo The tag of the previous release is ${tags[1]}
-          echo "::set-output name=tag::${tags[1]}"
+          echo "tag=${tags[1]}" >> $GITHUB_OUTPUT
       # Generate the changelog since last release
       - name: Generate the changelog
         uses: charmixer/auto-changelog-action@v1
