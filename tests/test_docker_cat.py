@@ -355,7 +355,7 @@ class TestDockerCAT:
             ("Kotlin Code Quality and Security","2.12.0 (build 1956)"),
             ("PHP Code Quality and Security","3.27.1 (build 9352)"),
             ("PMD", "3.4.0"),
-            ("Python Code Quality and Security","3.24 (build 10784)"),
+            ("Python Code Quality and Security","3.24.1 (build 11916)"),
             ("Ruby Code Quality and Security","1.11.0 (build 3905)"),
             ("Scala Code Quality and Security","1.11.0 (build 3905)"),
             ("ShellCheck Analyzer","2.5.0"),
@@ -381,7 +381,7 @@ class TestDockerCAT:
         """
         quality_gates = requests.get(f"{self.CAT_URL}/api/qualitygates/list",
             auth =("admin", "admin")).json()['qualitygates']
-        cnes_quality_gates = [ gate for gate in quality_gates if gate['name'] == "CNES" ]
+        cnes_quality_gates = [ gate for gate in quality_gates if gate['name'] == "CNES CAYCode FromScratch" ]
         # Hint: if one of these tests fails, the CNES Quality Gate may not have been added correctly, check the container logs
         assert cnes_quality_gates # not empty
         assert cnes_quality_gates[0]['isDefault']
