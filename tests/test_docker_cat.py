@@ -330,6 +330,7 @@ class TestDockerCAT:
         # Hint: if this test fails, the server might still be starting
         assert status == "UP"
 
+
     def test_check_qg(self):
         """
         As a SonarQube user, I want the SonarQube server to have the CNES
@@ -337,7 +338,7 @@ class TestDockerCAT:
         """
         quality_gates = requests.get(f"{self.CAT_URL}/api/qualitygates/list",
             auth =("admin", "admin")).json()['qualitygates']
-        cnes_quality_gates = [ gate for gate in quality_gates if gate['name'] == "CNES" ]
+        cnes_quality_gates = [ gate for gate in quality_gates if gate['name'] == "CNES CAYCode FromScratch" ]
         # Hint: if one of these tests fails, the CNES Quality Gate may not have been added correctly, check the container logs
         assert cnes_quality_gates # not empty
         assert cnes_quality_gates[0]['isDefault']

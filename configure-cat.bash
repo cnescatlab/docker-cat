@@ -97,7 +97,7 @@ create_quality_gates(){
   fi
 
   # Setting it as default quality gate
-  if [ "$NAME" = "CNES" ]
+  if [ "$NAME" = "CNES CAYCode FromScratch" ]
   then
       log_info "setting CNES quality gate as default gate."
       res=$(curl -su "admin:admin" \
