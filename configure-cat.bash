@@ -262,7 +262,7 @@ create_quality_profiles(){
   done
   log_info "detected status ${sonar_status} for Sonarqube, starting configuration of quality profiles."
 
-  for file in $(find /tmp/conf/quality_profiles -mindepth 2 -maxdepth 2 -type f)
+  for file in $(find /opt/sonarqube/conf/quality_profiles -mindepth 2 -maxdepth 2 -type f)
   do
     add_profile "${file}"
   done
@@ -294,7 +294,7 @@ stop_sonarqube(){
 
 create_quality_profiles
 
-for qg_file in /tmp/conf/quality_gates/*
+for qg_file in /opt/sonarqube/conf/quality_gates/*
 do
   create_quality_gates "$qg_file"
 done

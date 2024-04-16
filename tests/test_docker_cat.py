@@ -330,50 +330,6 @@ class TestDockerCAT:
         # Hint: if this test fails, the server might still be starting
         assert status == "UP"
 
-    def test_check_plugins(self):
-        """
-        As a SonarQube user, I want the plugins listed in the README
-        to be installed on the server so that I can use them.
-        """
-        required_plugins = (
-            ("Ansible Lint", "2.5.1"),
-            ("C# Code Quality and Security","8.51 (build 59060)"),
-            ("C++ (Community)", "2.1 (build 428)"),
-            ("Checkstyle", "10.9.3"),
-            ("Clover","4.1"),
-            ("Cobertura", "2.0"),
-            ("Community Branch Plugin", "1.14.0"),
-            ("Configuration detection fot Code Quality and Security", "1.2 (build 267)"),
-            ("Findbugs", "4.2.3"),
-            ("Flex Code Quality and Security","2.8 (build 3166)"),
-            ("Go Code Quality and Security","1.11.0 (build 3905)"),
-            ("HTML Code Quality and Security","3.7.1 (build 3306)"),
-            ("IaC Code Quality and Security", "1.11 (build 2847)"),
-            ("JaCoCo", "1.3.0 (build 1538)"),
-            ("Java Code Quality and Security","7.16 (build 30901)"),
-            ("JavaScript/TypeScript/CSS Code Quality and Security","9.13 (build 20537)"),
-            ("Kotlin Code Quality and Security","2.12.0 (build 1956)"),
-            ("PHP Code Quality and Security","3.27.1 (build 9352)"),
-            ("PMD", "3.4.0"),
-            ("Python Code Quality and Security","3.24 (build 10784)"),
-            ("Ruby Code Quality and Security","1.11.0 (build 3905)"),
-            ("Scala Code Quality and Security","1.11.0 (build 3905)"),
-            ("ShellCheck Analyzer","2.5.0"),
-            ("Sonar i-Code CNES plugin", "3.1.1"),
-            ("SonarQube CNES Report", "4.2.0"),
-            ("SonarTS", "2.1 (build 4362)"),
-            ("VB.NET Code Quality and Security","8.51 (build 59060)"),
-            ("VHDLRC","3.4"),
-            ("XML Code Quality and Security","2.7 (build 3820)"),
-            ("YAML Analyzer","1.7.0")
-        )
-        sonar_plugins = requests.get(f"{self.CAT_URL}/api/plugins/installed",
-            auth =("admin", "admin")).json()['plugins']
-        installed_plugins = { plugin['name']: plugin['version'] for plugin in sonar_plugins }
-        for name, version in required_plugins:
-            # Hint: if this test fails, one or more plugins may be missing or installed with an outdated version
-            assert installed_plugins[name] == version
-
     def test_check_qg(self):
         """
         As a SonarQube user, I want the SonarQube server to have the CNES

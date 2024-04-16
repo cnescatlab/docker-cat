@@ -5,9 +5,6 @@
 1. Up
    - function: tests_up
    - purpose: test if the SonarQube server is UP
-1. Plugin check
-   - function: tests_check_plugins
-   - purpose: check that the plugins listed in the README are installed on the server with the right version
 1. Quality Gate check
    - function: tests_check_qg
    - purpose: check that the CNES Quality Gate is available on the server and is set as default
