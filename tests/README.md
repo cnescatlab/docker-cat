@@ -69,8 +69,9 @@ $ pip install -r requirements.txt
 1. Wait until it is configured
    - The message `[INFO] Docker CAT is ready to go and find bugs!` is logged.
 1. Run a specific test with `pytest` and specify some environment variables
+
    ```sh
-   $ RUN=no pytest -k "<name of the test>"
+   RUN=no pytest -k "<name of the test>"
    ```
 
 ## List of options and environment variables used by the tests
@@ -83,4 +84,4 @@ Environment variables:
 
 - `RUN`: "no" not to run a container at the start of the tests, the default is to run one.
 - `CAT_CONTAINER_NAME`: the name to give to the container running the image.
-- `CAT_URL`: URL of `lequal/docker-cat` container if already running without trailing `/` from the host. e.g. http://localhost:9000
+- `CAT_URL`: URL of `lequal/docker-cat` container if already running without trailing `/` from the host. e.g. <http://localhost:9000>

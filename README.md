@@ -1,9 +1,8 @@
 # Docker CAT
 
-![](https://github.com/cnescatlab/docker-cat/workflows/CI/badge.svg)
-![](https://github.com/cnescatlab/docker-cat/workflows/CD/badge.svg)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/6442927b9d034af1b93765797ff06d5c)](https://www.codacy.com/gh/cnescatlab/docker-cat?utm_source=github.com&utm_medium=referral&utm_content=cnescatlab/docker-cat&utm_campaign=Badge_Grade)
-[![Docker Image Version (tag latest semver)](https://img.shields.io/docker/v/lequal/docker-cat/latest)](https://hub.docker.com/r/lequal/docker-cat)
+![Workflow CI Badge](https://github.com/cnescatlab/docker-cat/workflows/CI/badge.svg)
+![Workflow CD Badge](https://github.com/cnescatlab/docker-cat/workflows/CD/badge.svg)
+[![Docker Image Version (tag latest)](https://img.shields.io/docker/v/lequal/docker-cat/latest)](https://hub.docker.com/r/lequal/docker-cat)
 
 Docker Code Analysis Tool (CAT) is a SonarQube Docker image containing custom configuration and plugins to realize code analysis.
 
@@ -13,16 +12,16 @@ This project is free software; you can redistribute it and/or modify it under th
 
 You can get SonarQube on GitHub: [SonarSource/sonarqube](https://github.com/SonarSource/sonarqube).
 
-### Table of contents
+## Table of contents
 
-- [Quick install](#Quick-install)
-- [Advanced configuration](#Advanced-configuration)
-- [Analyzing source code](#Analyzing-source-code)
-- [Image compatibility matrix](#Image-compatibility-matrix)
-- [Configuration of the latest image](#Configuration-of-the-latest-image)
-- [How to contribute](#How-to-contribute)
-- [Feedback and Support](#Feedback-and-Support)
-- [License](#License)
+- [Quick install](#quick-install)
+- [Advanced configuration](#advanced-configuration)
+- [Analyzing source code](#analyzing-source-code)
+- [Image compatibility matrix](#image-compatibility-matrix)
+- [Configuration of the latest image](#configuration-of-the-latest-image)
+- [How to contribute](#how-to-contribute)
+- [Feedback and Support](#feedback-and-support)
+- [License](#license)
 
 ### Quick install
 
@@ -30,13 +29,13 @@ You can get SonarQube on GitHub: [SonarSource/sonarqube](https://github.com/Sona
    - Using `getent group <group_name> | cut -d : -f3` to reach a group id from a known group name;
    - Using `cat /etc/group` to list all group IDs.
 
-:exclamation: This group should have `read` and `execution` permissions on all the project to analyze (to browse and analyze all files) and `write` permissions on the root of the workspace (to execute C/C++ tools and sonar-scanner).
+   :exclamation: This group should have `read` and `execution` permissions on all the project to analyze (to browse and analyze all files) and `write` permissions on the root of the workspace (to execute C/C++ tools and sonar-scanner).
 
-2. Find the version you want to use on DockerHub: https://hub.docker.com/r/lequal/docker-cat or simply use the `latest` image which correspond to the master branch of this project.
+2. Find the version you want to use on DockerHub: <https://hub.docker.com/r/lequal/docker-cat> or simply use the `latest` image which correspond to the master branch of this project.
 
 3. Run the Docker CAT container:
 
-```
+```shell
 docker pull lequal/docker-cat
 docker run --rm --name=cat -v <your_folder>:/media/sf_Shared:rw -p 9000:9000 -e ALLOWED_GROUPS="<GID_1>;<GID_2>;<GID_...>" lequal/docker-cat:<version>
 ```
@@ -64,7 +63,7 @@ By default, Docker CAT use the embedded H2 database which is integrated to Sonar
 
 #### Using web user interface
 
-Once the container is active, you can use the web interface provided by [Sonar CNES Scan plugin](https://github.com/cnescatlab/sonar-cnes-scan-plugin) to run an analysis directly via your Web browser.
+Once the container is active, you can use the web interface provided by [Sonar CNES Scan plugin](https://github.com/cnescatlab/sonar-cnes-scan-plugin) to run an analysis directly via your Web browser. #TODO
 
 ##### 1. If not already done, move your code in `<your_folder>`
 
@@ -110,6 +109,7 @@ You can run an analysis with the classic method by using one of scanners provide
 
 | Docker CAT version | Linux (Centos & Debian) |   Mac OS   |      Windows       |
 | :----------------: | :---------------------: | :--------: | :----------------: |
+|      `3.2.2`       |   :heavy_check_mark:    | :question: |     :question:     |
 |      `3.0.0`       |   :heavy_check_mark:    | :question: |     :question:     |
 |      `2.1.0`       |   :heavy_check_mark:    | :question: |     :question:     |
 |      `2.0.2`       |   :heavy_check_mark:    | :question: |     :question:     |
@@ -122,60 +122,26 @@ You can run an analysis with the classic method by using one of scanners provide
 
 | Tools                       | Versions   |
 | --------------------------- | ---------- |
-| :new: SonarQube             | 9.9.3      |
-| Sonar Scanner         | 4.8.0.2856 |
-| Cppcheck              | 2.10       |
-| i-Code CNES           | 4.1.2      |
-| python3               | 3.9.2      |
-| pip                   | 20.3.4     |
-| setuptools-scm        | 7.1.0      |
-| pytest-runner         | 6.0.0      |
-| wrapt                 | 1.15.0     |
-| six                   | 1.16.0     |
-| lazy-object-proxy     | 1.9.0      |
-| mccabe                | 0.7.0      |
-| isort                 | 5.12.0     |
-| typed-ast             | 1.5.4      |
-| astroid               | 2.15.2     |
-| pylint                | 2.17.2     |
-| cnes-pylint-extension | 6.0.0      |
+| :new: SonarQube-catlab      | 3.2.2      |
+| :new: Sonar Scanner         | 5.0.1.3006 |
+| :new: Cppcheck              | 2.13.0     |
+| :new: i-Code CNES           | 4.1.2      |
+| python3                     | 3.10.4     |
+| pip                         | 22.0.2     |
+| setuptools-scm              | 7.1.0      |
+| pytest-runner               | 6.0.0      |
+| wrapt                       | 1.15.0     |
+| six                         | 1.16.0     |
+| lazy-object-proxy           | 1.9.0      |
+| mccabe                      | 0.7.0      |
+| isort                       | 5.12.0     |
+| typed-ast                   | 1.5.4      |
+| astroid                     | 2.15.2     |
+| pylint                      | 2.17.2     |
+| cnes-pylint-extension       | 6.0.0      |
 | make                        | 4.3        |
-| gcc                         | 4:10.1.0   |
-| ShellCheck                  | 0.7.1      |
-
-| SonarQube plugin                                      | Version             | URL                                                                         |
-| ----------------------------------------------------- | ------------------- | --------------------------------------------------------------------------- |
-| Ansible Lint                                          | 2.5.1               | https://github.com/sbaudoin/sonar-ansible/sonar-ansible-plugin              |
-| C# Code Quality and Security                          | 8.51 (build 59060)  | http://redirect.sonarsource.com/plugins/csharp.html                         |
-| C++ (Community)                                       | 2.1 (build 428)     | https://github.com/SonarOpenCommunity/sonar-cxx/wiki                        |
-| Checkstyle                                            | 10.9.3              | n/a                                                                         |
-| Clover                                                | 4.1                 | https://github.com/sfeir-open-source/sonar-clover                           |
-| Cobertura                                             | 2.0                 | https://github.com/galexandre/sonar-cobertura                               |
-| Community Branch Plugin                               | 1.14.0              | https://github.com/mc1arke/sonarqube-community-branch-plugin                |
-| Configuration detection fot Code Quality and Security | 1.2 (build 267)     | http://docs.sonarqube.org/display/PLUG/Plugin+Library/sonar-config/sonar-co |
-| Findbugs                                              | 4.2.3               | https://github.com/spotbugs/sonar-findbugs/                                 |
-| Flex Code Quality and Security                        | 2.8 (build 3166)    | http://redirect.sonarsource.com/plugins/flex.html                           |
-| Go Code Quality and Security                          | 1.11.0 (build 3905) | http://redirect.sonarsource.com/plugins/go.html                             |
-| HTML Code Quality and Security                        | 3.7.1 (build 3306)  | http://redirect.sonarsource.com/plugins/web.html                            |
-| IaC Code Quality and Security                         | 1.11 (build 2847)   | http://docs.sonarqube.org/display/PLUG/Plugin+Library/iac/sonar-iac-plugin  |
-| JaCoCo                                                | 1.3.0 (build 1538)  | n/a                                                                         |
-| Java Code Quality and Security                        | 7.16 (build 30901)  | http://redirect.sonarsource.com/plugins/java.html                           |
-| JavaScript/TypeScript/CSS Code Quality and Security   | 9.13 (build 20537)  | http://redirect.sonarsource.com/plugins/javascript.html                     |
-| Kotlin Code Quality and Security                      | 2.12.0 (build 1956) | https://redirect.sonarsource.com/plugins/kotlin.html                        |
-| PHP Code Quality and Security                         | 3.27.1 (build 9352) | http://redirect.sonarsource.com/plugins/php.html                            |
-| PMD                                                   | 3.4.0               | https://github.com/jborgers/sonar-pmd                                       |
-| Python Code Quality and Security                      | 3.24 (build 10784)  | http://redirect.sonarsource.com/plugins/python.html                         |
-| Ruby Code Quality and Security                        | 1.11.0 (build 3905) | http://redirect.sonarsource.com/plugins/ruby.html                           |
-| Scala Code Quality and Security                       | 1.11.0 (build 3905) | http://redirect.sonarsource.com/plugins/scala.html                          |
-| ShellCheck Analyzer                                   | 2.5.0               | https://github.com/sbaudoin/sonar-shellcheck                                |
-| Sonar i-Code CNES plugin                              | 3.1.1               | https://github.com/cnescatlab/sonar-icode-cnes-plugin                       |
-| SonarQube CNES Report                                 | 4.2.0               | https://github.com/cnescatlab/sonar-cnes-report                             |
-| SonarTS                                               | 2.1 (build 4362)    | http://redirect.sonarsource.com/plugins/typescript.html                     |
-| Text Code Quality and Security                        | 2.0.2 (build 1090)  | http://docs.sonarqube.org/display/PLUG/Plugin+Library/text/sonar-text-plugi |
-| VB.NET Code Quality and Security                      | 8.51 (build 59060)  | http://redirect.sonarsource.com/plugins/vbnet.html                          |
-| VHDLRC                                                | 3.4                 | https://www.linty-services.com                                              |
-| XML Code Quality and Security                         | 2.7 (build 3820)    | http://redirect.sonarsource.com/plugins/xml.html                            |
-| YAML Analyzer                                         | 1.7.0               | https://github.com/sbaudoin/sonar-yaml                                      |
+| gcc                         | 4:11.2.0   |
+| ShellCheck                  | 0.8.0      |
 
 ### How to contribute
 
@@ -187,7 +153,7 @@ All details are available in [CONTRIBUTING](https://github.com/cnescatlab/docker
 
 ### Feedback and Support
 
-Bugs and Feature requests: https://github.com/cnescatlab/docker-cat/issues
+Bugs and Feature requests: <https://github.com/cnescatlab/docker-cat/issues>
 
 ### License
 

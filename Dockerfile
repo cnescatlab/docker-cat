@@ -13,9 +13,9 @@ ENV HOME=/home/sonarqube \
 USER root
 
 # Download software
-ADD https://github.com/cnescatlab/i-CodeCNES/releases/download/v4.1.0/icode-4.1.0.zip \
-    https://github.com/danmar/cppcheck/archive/refs/tags/2.10.tar.gz \
-    https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856.zip \
+ADD https://github.com/cnescatlab/i-CodeCNES/releases/download/4.1.2/icode-4.1.2.zip \
+    https://github.com/danmar/cppcheck/archive/refs/tags/2.13.0.tar.gz \
+    https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006.zip \
     /tmp/
 
 # CNES Pylint extension
@@ -59,15 +59,15 @@ RUN apt-get update -y \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir /home/sonarqube \
     ## Install i-Code CNES
-    && unzip /tmp/icode-4.1.0.zip -d /tmp \
+    && unzip /tmp/icode-4.1.2.zip -d /tmp \
     && chmod +x /tmp/icode/icode \
     && mv /tmp/icode/* /usr/bin \
     && rm -r /tmp/icode \
-    && rm /tmp/icode-4.1.0.zip \
+    && rm /tmp/icode-4.1.2.zip \
     ## Install Sonar Scanner
-    && unzip /tmp/sonar-scanner-cli-4.8.0.2856.zip -d /opt/ \
-    && mv /opt/sonar-scanner-4.8.0.2856 /opt/sonar-scanner \
-    && rm -rf /tmp/sonar-scanner-cli-4.8.0.2856.zip
+    && unzip /tmp/sonar-scanner-cli-5.0.1.3006.zip -d /opt/ \
+    && mv /opt/sonar-scanner-5.0.1.3006 /opt/sonar-scanner \
+    && rm -rf /tmp/sonar-scanner-cli-5.0.1.3006.zip
 
 ## Python, Pylint & CNES Pylint setup
 RUN tar -xvzf /tmp/python/v6.0.0.tar.gz -C /opt/python \
@@ -86,10 +86,10 @@ RUN tar -xvzf /tmp/python/v6.0.0.tar.gz -C /opt/python \
 
 ## C and C++ tools installation
 RUN cd /tmp \
-    && tar -zxvf 2.10.tar.gz \
-    && make -C cppcheck-2.10/ install MATCHCOMPILER="yes" FILESDIR="/usr/share/cppcheck" HAVE_RULES="yes" CXXFLAGS="-O2 -DNDEBUG -Wall -Wno-sign-compare -Wno-unused-function -Wno-deprecated-declarations" \
+    && tar -zxvf 2.13.0.tar.gz \
+    && make -C cppcheck-2.13.0/ install MATCHCOMPILER="yes" FILESDIR="/usr/share/cppcheck" HAVE_RULES="yes" CXXFLAGS="-O2 -DNDEBUG -Wall -Wno-sign-compare -Wno-unused-function -Wno-deprecated-declarations" \
     && cd .. \
-    && rm -rf ./2.10.tar.gz ./cppcheck-2.10/ \
+    && rm -rf ./2.13.0.tar.gz ./cppcheck-2.13.0/ \
     && chown sonarqube:sonarqube -R /opt \
     && chown sonarqube:sonarqube -R /home \
     && apt-get autoremove -y \
