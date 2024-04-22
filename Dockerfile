@@ -73,14 +73,14 @@ RUN apt-get update -y \
 RUN tar -xvzf /tmp/python/v6.0.0.tar.gz -C /opt/python \
     && rm -rf /tmp/python \
     && pip install --no-cache-dir \
-    setuptools-scm==7.1.0 \
-    pytest-runner==6.0.0 \
-    wrapt==1.15.0 \
+    setuptools-scm==8.0.4 \
+    pytest-runner==6.0.1 \
+    wrapt==1.16.0 \
     six==1.16.0 \
-    lazy-object-proxy==1.9.0 \
+    lazy-object-proxy==1.10.0 \
     mccabe==0.7.0 \
-    isort==5.12.0 \
-    typed-ast==1.5.4 \
+    isort==5.13.2 \
+    typed-ast==1.5.5 \
     astroid==2.15.2 \
     pylint==2.17.2
 

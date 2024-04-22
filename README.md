@@ -126,16 +126,16 @@ You can run an analysis with the classic method by using one of scanners provide
 | :new: Sonar Scanner         | 5.0.1.3006 |
 | :new: Cppcheck              | 2.13.0     |
 | :new: i-Code CNES           | 4.1.2      |
-| python3                     | 3.10.4     |
-| pip                         | 22.0.2     |
-| setuptools-scm              | 7.1.0      |
-| pytest-runner               | 6.0.0      |
-| wrapt                       | 1.15.0     |
+| :new: python3               | 3.10.4     |
+| :new: pip                   | 22.0.2     |
+| :new: setuptools-scm        | 8.0.4      |
+| :new: pytest-runner         | 6.0.1      |
+| :new: wrapt                 | 1.16.0     |
 | six                         | 1.16.0     |
-| lazy-object-proxy           | 1.9.0      |
+| :new: lazy-object-proxy     | 1.10.0     |
 | mccabe                      | 0.7.0      |
-| isort                       | 5.12.0     |
-| typed-ast                   | 1.5.4      |
+| :new: isort                 | 5.13.2     |
+| :new: typed-ast             | 1.5.5      |
 | astroid                     | 2.15.2     |
 | pylint                      | 2.17.2     |
 | cnes-pylint-extension       | 6.0.0      |
