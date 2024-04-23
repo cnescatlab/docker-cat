@@ -6,9 +6,7 @@ LABEL maintainer="CATLab"
 ENV HOME=/home/sonarqube \
     SONAR_SCANNER_HOME=/opt/sonar-scanner \
     SONAR_USER_HOME=/opt/sonar-scanner/.sonar \
-    PATH="$PATH:/opt/sonar-scanner/bin:/usr/local/bin" \
-    PYTHONPATH="$PYTHONPATH:/opt/python/cnes-pylint-extension-6.0.0/checkers/" \
-    PYLINTHOME="$HOME/.pylint.d"
+    PATH="$PATH:/opt/sonar-scanner/bin:/usr/local/bin"
 
 USER root
 
@@ -17,10 +15,6 @@ ADD https://github.com/cnescatlab/i-CodeCNES/releases/download/4.1.2/icode-4.1.2
     https://github.com/danmar/cppcheck/archive/refs/tags/2.13.0.tar.gz \
     https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006.zip \
     /tmp/
-
-# CNES Pylint extension
-ADD https://github.com/cnescatlab/cnes-pylint-extension/archive/refs/tags/v6.0.0.tar.gz \
-    /tmp/python/
 
 # Add CNES pylintrc A_B, C, D
 COPY pylintrc.d/ /opt/python/
@@ -70,9 +64,7 @@ RUN apt-get update -y \
     && rm -rf /tmp/sonar-scanner-cli-5.0.1.3006.zip
 
 ## Python, Pylint & CNES Pylint setup
-RUN tar -xvzf /tmp/python/v6.0.0.tar.gz -C /opt/python \
-    && rm -rf /tmp/python \
-    && pip install --no-cache-dir \
+RUN pip install --no-cache-dir \
     setuptools-scm==8.0.4 \
     pytest-runner==6.0.1 \
     wrapt==1.16.0 \
@@ -81,8 +73,10 @@ RUN tar -xvzf /tmp/python/v6.0.0.tar.gz -C /opt/python \
     mccabe==0.7.0 \
     isort==5.13.2 \
     typed-ast==1.5.5 \
-    astroid==2.15.2 \
-    pylint==2.17.2
+    astroid==3.1.0 \
+    pylint==3.1.0 \
+    pylint_sonarjson_catlab==2.0.0 \
+    cnes-pylint-extension==7.0.0
 
 ## C and C++ tools installation
 RUN cd /tmp \
