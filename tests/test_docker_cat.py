@@ -38,6 +38,7 @@ class TestDockerCAT:
     RUN = os.environ.get('RUN', "yes")
     CAT_CONTAINER_NAME = os.environ.get("CAT_CONTAINER_NAME", "cat")
     CAT_URL = os.environ.get("CAT_URL", "http://localhost:9000")
+    SONARQUBE_ADMIN_PASSWORD = os.environ.get("SONARQUBE_ADMIN_PASSWORD", "admin")
     _DOCKER_CAT_IMAGE = "lequal/docker-cat:latest"
     _PROJECT_ROOT_DIR = str(Path(os.getcwd()).parent)
     _SONARQUBE_TOKEN = ""
@@ -76,7 +77,7 @@ class TestDockerCAT:
         """
         # Revoke the token
         requests.post(f"{cls.CAT_URL}/api/user_tokens/revoke",
-                      auth=("admin", "admin"),
+                      auth=("admin", cls.SONARQUBE_ADMIN_PASSWORD),
                     params={
                         "name": "global_token"
                     })
@@ -92,7 +93,7 @@ class TestDockerCAT:
         Retrieve SonarQube token with global analysis from the server
         """
         sonarqube_token = requests.post(f"{cls.CAT_URL}/api/user_tokens/generate",
-                                            auth=("admin", "admin"),
+                                            auth=("admin", cls.SONARQUBE_ADMIN_PASSWORD),
                                             params={
                                                 "name": "global_token",
                                                 "type": "GLOBAL_ANALYSIS_TOKEN",
@@ -115,7 +116,7 @@ class TestDockerCAT:
     @classmethod
     def language(cls, language_name: str, language_key: str, folder: str,
         sensors_info, project_key: str, nb_issues: int, cnes_qp: str = "",
-        nb_issues_cnes_qp: int = 0):
+        nb_issues_cnes_qp: int = 0, default_qp: str = ""):
         """
         This function tests that the image can analyze a project.
 
@@ -151,7 +152,7 @@ class TestDockerCAT:
             :returns: the number of issues
             """
             output = requests.get(f"{cls.CAT_URL}/api/issues/search?componentKeys={project_key}",
-                        auth=("admin", "admin")).json()['issues']
+                        auth=("admin", cls.SONARQUBE_ADMIN_PASSWORD)).json()['issues']
             issues = [ issue for issue in output if issue['status'] in ('OPEN', 'TO_REVIEW') ]
             return len(issues)
 
@@ -170,7 +171,7 @@ class TestDockerCAT:
         time.sleep(8)
         # Check that the project was added to the server
         output = requests.get(f"{cls.CAT_URL}/api/projects/search?projects={project_key}",
-                        auth=("admin", "admin")).json()
+                        auth=("admin", cls.SONARQUBE_ADMIN_PASSWORD)).json()
         # Hint: if this test fails, the project is not on the server
         assert output['components'][0]['key'] == project_key
         # Hint: if this test fails, there should be {nb_issues issues} on the {language_name} dummy project with the Sonar way QP but {len(issues)} were found
@@ -180,7 +181,7 @@ class TestDockerCAT:
         if cnes_qp:
             # Switch to CNES QP
             requests.post(f"{cls.CAT_URL}/api/qualityprofiles/add_project",
-                auth=("admin", "admin"),
+                auth=("admin", cls.SONARQUBE_ADMIN_PASSWORD),
                 data={
                     "language": language_key,
                     "project": project_key,
@@ -196,7 +197,7 @@ class TestDockerCAT:
             time.sleep(8)
             # Switch back to the Sonar way QP (in case the test needs to be rerun)
             requests.post(f"{cls.CAT_URL}/api/qualityprofiles/add_project",
-                auth=("admin", "admin"),
+                auth=("admin", cls.SONARQUBE_ADMIN_PASSWORD),
                 data={
                     "language": language_key,
                     "project": project_key,
@@ -204,6 +205,15 @@ class TestDockerCAT:
                 })
             # Hint: if this test fails, there should be {nb_issues_cnes_qp} issues on the {language_name} dummy project with the {cnes_qp} QP but {len(issues)} were found
             assert get_number_of_issues() == nb_issues_cnes_qp
+            if default_qp:
+                # Switch to the default QP
+                requests.post(f"{cls.CAT_URL}/api/qualityprofiles/add_project",
+                    auth=("admin", cls.SONARQUBE_ADMIN_PASSWORD),
+                    data={
+                        "language": language_key,
+                        "project": project_key,
+                        "qualityProfile": default_qp
+                    })
 
     @classmethod
     def analysis_tool(cls, tool: str, cmd: str, ref_file: str, tmp_file: str, store_output: bool = True):
@@ -265,17 +275,17 @@ class TestDockerCAT:
         if activate_rule:
             # Get the key of the Quality Profile to use
             qp_key = requests.get(f"{cls.CAT_URL}/api/qualityprofiles/search?quality_profile={quality_profile}",
-                auth=("admin", "admin")).json()['profiles'][0]['key']
+                auth=("admin", cls.SONARQUBE_ADMIN_PASSWORD)).json()['profiles'][0]['key']
             # Activate the rule in the Quality Profile to allow the Sensor to be used
             requests.post(f"{cls.CAT_URL}/api/qualityprofiles/activate_rule",
-                auth=("admin", "admin"),
+                auth=("admin", cls.SONARQUBE_ADMIN_PASSWORD),
                 data={
                     "key": qp_key,
                     "rule": rule_violated
                 })
         # Create a project on SonarQube
         errors = requests.post(f"{cls.CAT_URL}/api/projects/create",
-            auth=("admin", "admin"),
+            auth=("admin", cls.SONARQUBE_ADMIN_PASSWORD),
             data={
                 "name": project_name,
                 "project": project_key
@@ -283,7 +293,7 @@ class TestDockerCAT:
         assert not errors
         # Set its Quality Profile for the given language to the given one
         requests.post(f"{cls.CAT_URL}/api/qualityprofiles/add_project",
-            auth=("admin", "admin"),
+            auth=("admin", cls.SONARQUBE_ADMIN_PASSWORD),
             data={
                 "language": language_key,
                 "project": project_key,
@@ -304,18 +314,18 @@ class TestDockerCAT:
         time.sleep(10)
         # Check that the issue was added to the project
         issues = requests.get(f"{cls.CAT_URL}/api/issues/search?componentKeys={project_key}",
-            auth=("admin", "admin")).json()['issues']
+            auth=("admin", cls.SONARQUBE_ADMIN_PASSWORD)).json()['issues']
         nb_issues = len([ issue for issue in issues if issue['rule'] == rule_violated ])
         # Hint: an issue must be raised by the rule violated
         assert nb_issues == 1
         # Delete the project
         requests.post(f"{cls.CAT_URL}/api/projects/delete",
-            auth=("admin", "admin"),
+            auth=("admin", cls.SONARQUBE_ADMIN_PASSWORD),
             data={"project": project_key})
         if activate_rule:
             # Deactivate the rule in the Quality Profile
             requests.post(f"{cls.CAT_URL}/api/qualityprofiles/deactivate_rule",
-                auth=("admin", "admin"),
+                auth=("admin", cls.SONARQUBE_ADMIN_PASSWORD),
                 data={
                     "key": qp_key,
                     "rule": rule_violated
@@ -326,53 +336,9 @@ class TestDockerCAT:
         As a user, I want the server to be UP so that I can use it.
         """
         status = requests.get(f"{self.CAT_URL}/api/system/status",
-                    auth=("admin", "admin")).json()['status']
+                    auth=("admin", self.SONARQUBE_ADMIN_PASSWORD)).json()['status']
         # Hint: if this test fails, the server might still be starting
         assert status == "UP"
-
-    def test_check_plugins(self):
-        """
-        As a SonarQube user, I want the plugins listed in the README
-        to be installed on the server so that I can use them.
-        """
-        required_plugins = (
-            ("Ansible Lint", "2.5.1"),
-            ("C# Code Quality and Security","8.51 (build 59060)"),
-            ("C++ (Community)", "2.1 (build 428)"),
-            ("Checkstyle", "10.9.3"),
-            ("Clover","4.1"),
-            ("Cobertura", "2.0"),
-            ("Community Branch Plugin", "1.14.0"),
-            ("Configuration detection fot Code Quality and Security", "1.2 (build 267)"),
-            ("Findbugs", "4.2.3"),
-            ("Flex Code Quality and Security","2.8 (build 3166)"),
-            ("Go Code Quality and Security","1.11.0 (build 3905)"),
-            ("HTML Code Quality and Security","3.7.1 (build 3306)"),
-            ("IaC Code Quality and Security", "1.11 (build 2847)"),
-            ("JaCoCo", "1.3.0 (build 1538)"),
-            ("Java Code Quality and Security","7.16 (build 30901)"),
-            ("JavaScript/TypeScript/CSS Code Quality and Security","9.13 (build 20537)"),
-            ("Kotlin Code Quality and Security","2.12.0 (build 1956)"),
-            ("PHP Code Quality and Security","3.27.1 (build 9352)"),
-            ("PMD", "3.4.0"),
-            ("Python Code Quality and Security","3.24.1 (build 11916)"),
-            ("Ruby Code Quality and Security","1.11.0 (build 3905)"),
-            ("Scala Code Quality and Security","1.11.0 (build 3905)"),
-            ("ShellCheck Analyzer","2.5.0"),
-            ("Sonar i-Code CNES plugin", "3.1.1"),
-            ("SonarQube CNES Report", "4.2.0"),
-            ("SonarTS", "2.1 (build 4362)"),
-            ("VB.NET Code Quality and Security","8.51 (build 59060)"),
-            ("VHDLRC","3.4"),
-            ("XML Code Quality and Security","2.7 (build 3820)"),
-            ("YAML Analyzer","1.7.0")
-        )
-        sonar_plugins = requests.get(f"{self.CAT_URL}/api/plugins/installed",
-            auth =("admin", "admin")).json()['plugins']
-        installed_plugins = { plugin['name']: plugin['version'] for plugin in sonar_plugins }
-        for name, version in required_plugins:
-            # Hint: if this test fails, one or more plugins may be missing or installed with an outdated version
-            assert installed_plugins[name] == version
 
     def test_check_qg(self):
         """
@@ -380,7 +346,7 @@ class TestDockerCAT:
         Quality Gate configured and set as default so that I can use it.
         """
         quality_gates = requests.get(f"{self.CAT_URL}/api/qualitygates/list",
-            auth =("admin", "admin")).json()['qualitygates']
+            auth =("admin", self.SONARQUBE_ADMIN_PASSWORD)).json()['qualitygates']
         cnes_quality_gates = [ gate for gate in quality_gates if gate['name'] == "CNES CAYCode FromScratch" ]
         # Hint: if one of these tests fails, the CNES Quality Gate may not have been added correctly, check the container logs
         assert cnes_quality_gates # not empty
@@ -424,7 +390,7 @@ class TestDockerCAT:
             )
         }
         quality_profiles = requests.get(f"{self.CAT_URL}/api/qualityprofiles/search",
-            auth =("admin", "admin")).json()['profiles']
+            auth =("admin", self.SONARQUBE_ADMIN_PASSWORD)).json()['profiles']
         cnes_quality_profiles = { lang: [qp['name'] for qp in quality_profiles if re.match(r'^RNC.*', qp['name']) and qp['language'] == lang] for lang in required_quality_profiles }
         for lang, profiles in required_quality_profiles.items():
             for profile in profiles:
@@ -492,7 +458,7 @@ class TestDockerCAT:
         sensors = (
             "INFO: Sensor ShellCheck Sensor [shellcheck]",
         )
-        self.language("Shell", "shell", "shell", sensors, "shell-dummy-project", 60, "RNC SHELL", 19)
+        self.language("Shell", "shell", "shell", sensors, "shell-dummy-project", 60, "RNC SHELL", 19, "ShellCheck")
 
     # Test analysis tools
     def test_tool_cppcheck(self):

@@ -21,8 +21,8 @@
         "endLine": 13,
         "endColumn": 29,
         "path": "tests/python/src/simplecaesar.py",
-        "symbol": "unneeded-not",
+        "symbol": "unnecessary-negation",
         "message": "Consider changing \"not not choice == 'encode'\" to \"choice == 'encode'\"",
-        "message-id": "C0113"
+        "message-id": "C0117"
     }
 ]
