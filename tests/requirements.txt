@@ -1,7 +1,7 @@
 attrs==23.2.0
 certifi==2024.2.2
 chardet==5.2.0
-requests==2.31.0
+requests==2.32.2
 docker==7.0.0
 idna==3.7
 iniconfig==2.0.0
