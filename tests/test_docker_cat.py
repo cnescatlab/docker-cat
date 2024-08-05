@@ -307,6 +307,7 @@ class TestDockerCAT:
             -Dsonar.projectVersion=1.0 -Dsonar.sources={source_folder} \
             -Dsonar.login={cls._SONARQUBE_TOKEN}",
             workdir=f"/media/sf_Shared/{language_folder}").output.decode("utf-8")
+        print(analysis_output)
         for line in (expected_sensor, expected_import):
             # Hint: if this test fails, the sensor for the tool or for the importation was not launched
             assert line in analysis_output
@@ -319,9 +320,9 @@ class TestDockerCAT:
         # Hint: an issue must be raised by the rule violated
         assert nb_issues == 1
         # Delete the project
-        requests.post(f"{cls.CAT_URL}/api/projects/delete",
-            auth=("admin", cls.SONARQUBE_ADMIN_PASSWORD),
-            data={"project": project_key})
+        # requests.post(f"{cls.CAT_URL}/api/projects/delete",
+        #     auth=("admin", cls.SONARQUBE_ADMIN_PASSWORD),
+        #     data={"project": project_key})
         if activate_rule:
             # Deactivate the rule in the Quality Profile
             requests.post(f"{cls.CAT_URL}/api/qualityprofiles/deactivate_rule",
@@ -487,6 +488,15 @@ class TestDockerCAT:
         """
         cmd = "bash -c 'shellcheck -s sh -f checkstyle tests/shell/src/script.sh || true'"
         self.analysis_tool("shellcheck", cmd, "tests/shell/reference-shellcheck-results.xml", "tests/shell/tmp-shellcheck-results.xml")
+    
+    def test_tool_hadolint(self):
+        """
+        As a user of this image, I want to run hadolint from within a container
+        so that it produces a report.
+        """
+        cmd = "hadolint -f sonarqube --no-fail tests/docker/src/Dockerfile"
+        self.analysis_tool("hadolint", cmd, "tests/docker/reference-hadolint-results.json", "tests/docker/tmp-hadolint-results.json")
+
 
     # Test importation of analysis results
     def test_import_cppcheck_results(self):
@@ -495,8 +505,8 @@ class TestDockerCAT:
         of a CppCheck analysis to SonarQube.
         """
         rule_violated = "cppcheck:arrayIndexOutOfBounds"
-        expected_sensor = "INFO: Sensor CXX [cxx]"
-        expected_import = "INFO: Sensor CXX Cppcheck report import"
+        expected_sensor = "INFO: Sensor CXX Cppcheck report import [cxx]"
+        expected_import = "INFO: Sensor CXX Cppcheck report import [cxx] (done)"
         self.import_analysis_results("CppCheck Dummy Project", "cppcheck-dummy-project",
             "RNC CPP A", "cxx", "tests/c_cpp", "cppcheck", rule_violated, expected_sensor, expected_import)
 
@@ -506,7 +516,18 @@ class TestDockerCAT:
         of a pylint analysis to SonarQube.
         """
         rule_violated = "external_pylint:C0326"
-        expected_sensor = "INFO: Sensor Python Sensor [python]"
-        expected_import = "INFO: Sensor Import of Pylint issues [python]"
+        expected_sensor = "INFO: Sensor Import of Pylint issues [python]"
+        expected_import = "INFO: Sensor Import of Pylint issues [python] (done)"
         self.import_analysis_results("Pylint Dummy Project", "pylint-dummy-project",
             "Sonar way", "py", "tests/python", "src", rule_violated, expected_sensor, expected_import)
+
+    def test_import_hadolint_results(self):
+        """
+        As a user of this image, I want to be able to import the results
+        of a hadolint analysis to SonarQube.
+        """
+        rule_violated = "external_Hadolint:DL3003"
+        expected_sensor = "INFO: Sensor Import external issues report"
+        expected_import = "INFO: Sensor Import external issues report (done)"
+        self.import_analysis_results("Hadolint Dummy Project", "hadolint-dummy-project",
+            "Sonar way", "docker", "tests/docker", "src", rule_violated, expected_sensor, expected_import)
